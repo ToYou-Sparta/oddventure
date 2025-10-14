@@ -5,7 +5,6 @@ import org.example.oddventure.match.enums.MatchStatus;
 import org.example.oddventure.match.enums.MatchWinner;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public record MatchResponse(
@@ -14,8 +13,8 @@ public record MatchResponse(
         String teamB,
         BigDecimal totalAmountA,
         BigDecimal totalAmountB,
-        LocalDate startTime,
-        LocalDate endTime,
+        LocalDateTime startTime,
+        LocalDateTime endTime,
         MatchStatus status,
         MatchWinner winner,
         LocalDateTime createdAt

@@ -1,9 +1,6 @@
 package org.example.oddventure.match.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +10,7 @@ import org.example.oddventure.match.enums.MatchStatus;
 import org.example.oddventure.match.enums.MatchWinner;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -24,30 +21,37 @@ public class Match extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, unique = true)
     private String teamA;
 
+    @Column(nullable = false, unique = true)
     private String teamB;
 
-    private BigDecimal amountTeamA;
+    @Column(nullable = false)
+    private BigDecimal totalAmountA;
 
-    private BigDecimal amountTeamB;
+    @Column(nullable = false)
+    private BigDecimal totalAmountB;
 
-    private LocalDate startTime;
+    @Column(nullable = false)
+    private LocalDateTime startTime;
 
-    private LocalDate endTime;
+    private LocalDateTime endTime;
 
+    @Enumerated(EnumType.STRING)
     private MatchStatus status;
 
+    @Enumerated(EnumType.STRING)
     private MatchWinner winner;
 
     @Builder
-    public Match(String teamA, String teamB, LocalDate startTime) {
+    public Match(String teamA, String teamB, LocalDateTime startTime) {
         this.teamA = teamA;
         this.teamB = teamB;
         this.startTime = startTime;
         this.status = MatchStatus.SCHEDULED;
         this.winner = MatchWinner.NO_MATCH;
-        this.amountTeamA = BigDecimal.ZERO;
-        this.amountTeamB = BigDecimal.ZERO;
+        this.totalAmountA = BigDecimal.ZERO;
+        this.totalAmountB = BigDecimal.ZERO;
     }
 }
