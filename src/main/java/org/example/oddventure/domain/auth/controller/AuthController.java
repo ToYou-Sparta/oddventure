@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/v1/auth")
 public class AuthController {
 
     @PostMapping("/signup")
@@ -29,8 +29,7 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<Object>> logout(
-            @RequestHeader("Authorization") String token,
-            @RequestBody WithdrawRequest withdrawRequest) {
+            @RequestHeader("Authorization") String token) {
 
         return null;
     }
