@@ -1,5 +1,6 @@
 package org.example.oddventure.domain.auth.dto.response;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record SignupResponse(
@@ -7,7 +8,7 @@ public record SignupResponse(
         String username,
         String email,
         String role,
-        Integer point,
+        BigDecimal point,
         LocalDateTime created_at
 ) {
 }
