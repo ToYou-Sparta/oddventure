@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.oddventure.bet.enums.SelectedTeam;
 import org.example.oddventure.common.entity.BaseEntity;
+import org.example.oddventure.user.entity.User;
+import org.example.oddventure.match.entity.Match;
 
 import java.math.BigDecimal;
 
@@ -17,6 +19,14 @@ public class Bet extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "match_id", nullable = false)
+    private Match match;
 
     @Column(nullable = false)
     private SelectedTeam selectedTeam;
