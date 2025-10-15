@@ -1,12 +1,11 @@
-package org.example.oddventure.match.dto.response;
+package org.example.oddventure.domain.match.dto.response;
 
-
-import org.example.oddventure.match.entity.Match;
-import org.example.oddventure.match.enums.MatchStatus;
-import org.example.oddventure.match.enums.MatchWinner;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import org.example.oddventure.domain.match.entity.Match;
+import org.example.oddventure.domain.match.enums.MatchStatus;
+import org.example.oddventure.domain.match.enums.MatchWinner;
 
 public record MatchResponse(
         Long matchId,
@@ -20,6 +19,7 @@ public record MatchResponse(
         MatchWinner winner,
         LocalDateTime createdAt
 ) {
+
     public static MatchResponse from(Match match) {
         return new MatchResponse(
                 match.getId(),

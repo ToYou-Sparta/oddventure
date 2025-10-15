@@ -1,4 +1,4 @@
-package org.example.oddventure.match.enums;
+package org.example.oddventure.domain.match.enums;
 
 public enum MatchStatus {
     SCHEDULED,

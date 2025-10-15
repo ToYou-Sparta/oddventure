@@ -1,16 +1,21 @@
-package org.example.oddventure.match.entity;
+package org.example.oddventure.domain.match.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.oddventure.common.entity.BaseEntity;
-import org.example.oddventure.match.enums.MatchStatus;
-import org.example.oddventure.match.enums.MatchWinner;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import org.example.oddventure.domain.match.enums.MatchStatus;
+import org.example.oddventure.domain.match.enums.MatchWinner;
 
 @Entity
 @Getter
@@ -21,10 +26,10 @@ public class Match extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String teamA;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String teamB;
 
     @Column(nullable = false)
