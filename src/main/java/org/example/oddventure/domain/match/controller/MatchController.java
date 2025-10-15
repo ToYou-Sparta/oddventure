@@ -4,16 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.example.oddventure.common.dto.reponse.ApiPageResponse;
 import org.example.oddventure.common.dto.reponse.ApiResponse;
 import org.example.oddventure.domain.match.dto.response.MatchResponse;
-import org.example.oddventure.domain.match.entity.Match;
-import org.example.oddventure.domain.match.enums.MatchStatus;
 import org.example.oddventure.domain.match.service.MatchService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -42,11 +38,11 @@ public class MatchController {
         return ApiResponse.success(matchService.getMatch(matchId));
     }
 
-    @GetMapping("/search")
-    public List<Match> searchMatches(
-            @RequestParam(required = false) String teamName,
-            @RequestParam(required = false) MatchStatus status
-    ) {
-        return matchService.searchMatches(teamName, status);
-    }
+//    @GetMapping("/search")
+//    public List<Match> searchMatches(
+//            @RequestParam(required = false) String teamName,
+//            @RequestParam(required = false) MatchStatus status
+//    ) {
+//        return matchService.searchMatches(teamName, status);
+//    }
 }
