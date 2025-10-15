@@ -3,14 +3,11 @@ package org.example.oddventure.domain.match.service;
 import lombok.RequiredArgsConstructor;
 import org.example.oddventure.domain.match.dto.response.MatchResponse;
 import org.example.oddventure.domain.match.entity.Match;
-import org.example.oddventure.domain.match.enums.MatchStatus;
 import org.example.oddventure.domain.match.repository.MatchRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -35,8 +32,8 @@ public class MatchService {
         return MatchResponse.from(match);
     }
 
-    @Transactional(readOnly = true)
-    public List<Match> searchMatches(String teamName, MatchStatus status) {
-        return matchRepository.findByConditions(teamName, status);
-    }
+//    @Transactional(readOnly = true)
+//    public List<Match> searchMatches(String teamName, MatchStatus status) {
+//        return matchRepository.findByConditions(teamName, status);
+//    }
 }
