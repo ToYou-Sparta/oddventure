@@ -1,4 +1,4 @@
-package org.example.oddventure.bet.enums;
+package org.example.oddventure.domain.bet.enums;
 
 public enum SelectedTeam {
     Team_A,
