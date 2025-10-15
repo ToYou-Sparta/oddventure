@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.oddventure.bet.enums.SelectedTeam;
 import org.example.oddventure.common.entity.BaseEntity;
-import org.example.oddventure.user.entity.User;
+import org.example.oddventure.domain.user.entity.User;
 import org.example.oddventure.match.entity.Match;
 
 import java.math.BigDecimal;
