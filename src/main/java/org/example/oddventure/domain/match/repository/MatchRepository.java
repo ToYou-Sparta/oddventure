@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MatchRepository extends JpaRepository<Match, Long> {
 
-    // TODO: JPQL로 구현
+    // TODO: 검색 기능 작업 때 구현 예정
 //    List<Match> findByConditions(String teamName, MatchStatus status);
 }

@@ -20,6 +20,7 @@ public record MatchResponse(
         MatchWinner winner,
         LocalDateTime createdAt
 ) {
+
     public static MatchResponse from(Match match) {
         return new MatchResponse(
                 match.getId(),

@@ -21,10 +21,10 @@ public class Match extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String teamA;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String teamB;
 
     @Column(nullable = false)
