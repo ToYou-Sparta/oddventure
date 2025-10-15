@@ -1,4 +1,4 @@
-package org.example.oddventure.bet.controller;
+package org.example.oddventure.domain.bet.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;

@@ -1,4 +1,4 @@
-package org.example.oddventure.bet.service;
+package org.example.oddventure.domain.bet.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

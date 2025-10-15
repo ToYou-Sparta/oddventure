@@ -1,4 +1,4 @@
-package org.example.oddventure.bet.exception;
+package org.example.oddventure.domain.bet.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
