@@ -49,6 +49,9 @@ public class Match extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private MatchWinner winner;
 
+    @Column(nullable = false)
+    private Long viewCount = 0L;
+
     @Builder
     public Match(String teamA, String teamB, LocalDateTime startTime) {
         this.teamA = teamA;
@@ -58,5 +61,9 @@ public class Match extends BaseEntity {
         this.winner = MatchWinner.NO_MATCH;
         this.totalAmountA = BigDecimal.ZERO;
         this.totalAmountB = BigDecimal.ZERO;
+    }
+
+    public void increaseViewCount() {
+        this.viewCount++;
     }
 }

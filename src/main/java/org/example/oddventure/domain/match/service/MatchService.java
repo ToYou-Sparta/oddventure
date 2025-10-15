@@ -3,6 +3,8 @@ package org.example.oddventure.domain.match.service;
 import lombok.RequiredArgsConstructor;
 import org.example.oddventure.domain.match.dto.response.MatchResponse;
 import org.example.oddventure.domain.match.entity.Match;
+import org.example.oddventure.domain.match.exception.MatchErrorCode;
+import org.example.oddventure.domain.match.exception.MatchException;
 import org.example.oddventure.domain.match.repository.MatchRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,11 +25,12 @@ public class MatchService {
         return matches.map(MatchResponse::from);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public MatchResponse getMatch(Long matchId) {
 
         Match match = matchRepository.findById(matchId)
-                .orElseThrow(() -> new RuntimeException("해당 경기 일정을 찾을 수 없습니다."));
+                .orElseThrow(() -> new MatchException(MatchErrorCode.MATCH_NOT_FOUND));
+        match.increaseViewCount();
 
         return MatchResponse.from(match);
     }

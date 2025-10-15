@@ -17,6 +17,7 @@ public record MatchResponse(
         LocalDateTime endTime,
         MatchStatus status,
         MatchWinner winner,
+        Long viewCount,
         LocalDateTime createdAt
 ) {
 
@@ -31,6 +32,7 @@ public record MatchResponse(
                 match.getEndTime(),
                 match.getStatus(),
                 match.getWinner(),
+                match.getViewCount(),
                 match.getCreatedAt()
         );
     }

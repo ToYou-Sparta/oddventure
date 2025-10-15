@@ -1,12 +1,15 @@
 package org.example.oddventure.match.unit;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import org.example.oddventure.domain.match.dto.response.MatchResponse;
 import org.example.oddventure.domain.match.entity.Match;
+import org.example.oddventure.domain.match.exception.MatchException;
 import org.example.oddventure.domain.match.repository.MatchRepository;
 import org.example.oddventure.domain.match.service.MatchService;
 import org.junit.jupiter.api.DisplayName;
@@ -61,5 +64,44 @@ class MatchServiceTest {
                 result.getContent().get(1).startTime());
         assertThat(result.getContent().get(0).teamA()).isEqualTo("T1");
         assertThat(result.getContent().get(1).teamB()).isEqualTo("DRX");
+    }
+
+    @Test
+    @DisplayName("경기 상세 조회 성공")
+    void getMatch() {
+
+        // given
+        Long matchId = 1L;
+        Match match = Match.builder()
+                .teamA("T1")
+                .teamB("GEN.G")
+                .startTime(LocalDateTime.now().plusDays(1))
+                .build();
+
+        when(matchRepository.findById(matchId)).thenReturn(Optional.of(match));
+
+        // when
+        MatchResponse result = matchService.getMatch(matchId);
+
+        // then
+        assertThat(result).isNotNull();
+        assertThat(result.teamA()).isEqualTo("T1");
+        assertThat(result.startTime()).isEqualTo(match.getStartTime());
+        assertThat(result.viewCount()).isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("경기 상세 조회 실패 - 일정이 존재하지 않는 경우")
+    void getMatch_matchNotFound() {
+
+        // given
+        Long matchId = 1L;
+        when(matchRepository.findById(matchId)).thenReturn(Optional.empty());
+
+        // when
+        MatchException exception = assertThrows(MatchException.class, () -> matchService.getMatch(matchId));
+
+        // then
+        assertThat(exception.getMessage()).isEqualTo("해당 경기 정보를 찾을 수 없습니다.");
     }
 }
