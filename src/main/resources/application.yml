@@ -15,3 +15,7 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
+
+jwt:
+  secret:
+    key: "${SECRET_KEY}"

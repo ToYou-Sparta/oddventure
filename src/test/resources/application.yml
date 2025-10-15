@@ -8,3 +8,7 @@ spring:
     hibernate:
       ddl-auto: create-drop
     show-sql: true
+
+jwt:
+  secret:
+    key: zQi9fSVo#YGmd9JLyPobovd8msSbxfLv+iykL%o$2Ss=
