@@ -2,7 +2,7 @@ package org.example.oddventure.domain.admin.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.oddventure.common.dto.reponse.ApiResponse;
+import org.example.oddventure.common.dto.response.ApiResponse;
 import org.example.oddventure.domain.admin.dto.request.MatchCreateRequest;
 import org.example.oddventure.domain.admin.dto.request.MatchUpdateRequest;
 import org.example.oddventure.domain.admin.dto.response.MatchAdminResponse;

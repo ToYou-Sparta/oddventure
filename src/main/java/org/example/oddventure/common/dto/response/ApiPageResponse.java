@@ -1,10 +1,9 @@
-package org.example.oddventure.common.dto.reponse;
+package org.example.oddventure.common.dto.response;
 
+import java.util.List;
 import lombok.Getter;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-
-import java.util.List;
 
 @Getter
 public class ApiPageResponse<T> {
@@ -24,8 +23,7 @@ public class ApiPageResponse<T> {
     }
 
     /**
-     * 성공적인 요청에 대한 페이징 응답을 반환하는 메서드
-     * 주어진 데이터를 포함하여 HTTP 200 OK 상태 코드와 함께 응답을 반환
+     * 성공적인 요청에 대한 페이징 응답을 반환하는 메서드 주어진 데이터를 포함하여 HTTP 200 OK 상태 코드와 함께 응답을 반환
      *
      * @param pagedData 요청 성공 시 반환할 페이징 데이터
      * @return HTTP 200 OK 응답과 함께 성공 데이터가 포함된 ApiPageResponse
