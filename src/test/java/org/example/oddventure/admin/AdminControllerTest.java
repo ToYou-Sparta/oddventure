@@ -1,27 +1,37 @@
 package org.example.oddventure.admin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import org.example.oddventure.domain.admin.controller.AdminController;
 import org.example.oddventure.domain.admin.dto.request.MatchCreateRequest;
 import org.example.oddventure.domain.admin.dto.request.MatchUpdateRequest;
 import org.example.oddventure.domain.admin.dto.response.MatchAdminResponse;
+import org.example.oddventure.domain.admin.dto.response.UserAdminResponse;
 import org.example.oddventure.domain.admin.service.AdminService;
 import org.example.oddventure.domain.match.enums.MatchStatus;
+import org.example.oddventure.domain.user.enums.UserRole;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDateTime;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @WebMvcTest(AdminController.class)
 class AdminControllerTest {
@@ -36,7 +46,7 @@ class AdminControllerTest {
     private AdminService adminService;
 
     @Test
-    @DisplayName("관리자 - 매치 생성 성공")
+    @DisplayName("매치 생성 성공")
     void createMatch_Success() throws Exception {
         // given
         LocalDateTime startTime = LocalDateTime.now().plusDays(1);
@@ -54,7 +64,7 @@ class AdminControllerTest {
     }
 
     @Test
-    @DisplayName("관리자 - 매치 생성 실패 - 유효성 검사 실패")
+    @DisplayName("매치 생성 실패 - 유효성 검사 실패")
     void createMatch_Fail_InvalidInput() throws Exception {
         // given
         MatchCreateRequest request = new MatchCreateRequest("", "Gen.G", LocalDateTime.now().plusDays(1));
@@ -67,7 +77,7 @@ class AdminControllerTest {
     }
 
     @Test
-    @DisplayName("관리자 - 매치 정보 수정 성공")
+    @DisplayName("매치 정보 수정 성공")
     void updateMatch_Success() throws Exception {
         // given
         Long matchId = 1L;
@@ -91,5 +101,35 @@ class AdminControllerTest {
                 .andExpect(jsonPath("$.data.teamB").value("New Team B"))
                 .andExpect(jsonPath("$.data.startTime").value(newStartTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
                 .andExpect(jsonPath("$.data.status").value("ONGOING"));
+    }
+
+    @Test
+    @DisplayName("사용자 목록 조회 API 성공")
+    void getAllUsers_Success() throws Exception {
+        // given
+        String email = "test";
+        String username = "user";
+        Pageable pageable = PageRequest.of(0, 5);
+
+        List<UserAdminResponse> userList = List.of(
+                new UserAdminResponse(1L, "testuser1", "test1@email.com", new BigDecimal("1000"), UserRole.ROLE_USER, LocalDateTime.now()),
+                new UserAdminResponse(2L, "testuser2", "test2@email.com", new BigDecimal("1000"), UserRole.ROLE_USER, LocalDateTime.now())
+        );
+        Page<UserAdminResponse> mockResponsePage = new PageImpl<>(userList, pageable, 2);
+
+        given(adminService.getAllUsers(eq(email), eq(username), any(Pageable.class))).willReturn(mockResponsePage);
+
+        // when & then
+        mockMvc.perform(get("/api/v1/admin/users")
+                        .param("email", email)
+                        .param("username", username)
+                        .param("page", "0")
+                        .param("size", "5")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalElements").value(2))
+                .andExpect(jsonPath("$.page").value(0))
+                .andExpect(jsonPath("$.data[0].userId").value(1L))
+                .andExpect(jsonPath("$.data[0].email").value("test1@email.com"));
     }
 }
