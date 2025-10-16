@@ -39,8 +39,9 @@ public class MatchController {
     public ResponseEntity<ApiResponse<MatchResponse>> getMatch(
             @PathVariable Long matchId
     ) {
+        MatchResponse match = matchService.getMatch(matchId);
 
-        return ApiResponse.success(matchService.getMatch(matchId), "매치 상세 정보 조회에 성공했습니다.");
+        return ApiResponse.success(match, "매치 상세 정보 조회에 성공했습니다.");
     }
 
 //    @GetMapping("/search")
