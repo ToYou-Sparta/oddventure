@@ -69,9 +69,9 @@ public class MatchControllerTest {
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data[0].matchId").value(1))
-                .andExpect(jsonPath("$.data[0].teamB").value("GEN.G"))
-                .andExpect(jsonPath("$.data[0].status").value("SCHEDULED")
+                .andExpect(jsonPath("$.data.content[0].matchId").value(1))
+                .andExpect(jsonPath("$.data.content[0].teamB").value("GEN.G"))
+                .andExpect(jsonPath("$.data.content[0].status").value("SCHEDULED")
                 );
     }
 

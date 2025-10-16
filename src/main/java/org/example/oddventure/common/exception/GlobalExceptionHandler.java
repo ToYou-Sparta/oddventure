@@ -1,7 +1,8 @@
 package org.example.oddventure.common.exception;
+
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.example.oddventure.common.dto.reponse.ApiErrorResponse;
+import org.example.oddventure.common.dto.response.ApiErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -23,7 +24,9 @@ public class GlobalExceptionHandler {
                 .body(ApiErrorResponse.from(errorCode, request));
     }
 
-    private ResponseEntity<ApiErrorResponse> handleExceptionInternal(HttpStatus httpStatus, String message, HttpServletRequest request) {
+    private ResponseEntity<ApiErrorResponse> handleExceptionInternal(HttpStatus httpStatus,
+                                                                     String message,
+                                                                     HttpServletRequest request) {
         return ResponseEntity
                 .status(httpStatus)
                 .body(ApiErrorResponse.from(httpStatus, message, request));
