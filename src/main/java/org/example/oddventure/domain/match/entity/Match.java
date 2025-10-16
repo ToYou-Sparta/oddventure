@@ -1,6 +1,14 @@
 package org.example.oddventure.domain.match.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,9 +16,6 @@ import lombok.NoArgsConstructor;
 import org.example.oddventure.common.entity.BaseEntity;
 import org.example.oddventure.domain.match.enums.MatchStatus;
 import org.example.oddventure.domain.match.enums.MatchWinner;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -44,6 +49,9 @@ public class Match extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private MatchWinner winner;
 
+    @Column(nullable = false)
+    private Long viewCount = 0L;
+
     @Builder
     public Match(String teamA, String teamB, LocalDateTime startTime) {
         this.teamA = teamA;
@@ -53,6 +61,7 @@ public class Match extends BaseEntity {
         this.winner = MatchWinner.NO_MATCH;
         this.totalAmountA = BigDecimal.ZERO;
         this.totalAmountB = BigDecimal.ZERO;
+        this.viewCount = 0L;
     }
 
     public void update(String teamA, String teamB, LocalDateTime startTime, MatchStatus status) {

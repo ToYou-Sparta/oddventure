@@ -35,8 +35,9 @@ public class MatchController {
     public ResponseEntity<ApiResponse<MatchResponse>> getMatch(
             @PathVariable Long matchId
     ) {
+        MatchResponse match = matchService.getMatch(matchId);
 
-        return ApiResponse.success(matchService.getMatch(matchId));
+        return ApiResponse.success(match);
     }
 
 //    @GetMapping("/search")
