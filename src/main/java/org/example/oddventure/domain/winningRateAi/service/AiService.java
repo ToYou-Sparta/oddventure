@@ -31,8 +31,11 @@ public class AiService {
 
         // Groq 프롬프트 생성
         String prompt = this.chatClient.prompt()
-                .system("한국어로 대답하고 네가 낸 결론에 대한 정확한 분석 요인을 나열해.")
-                .system(summary)
+                .system("""
+                        아래 제공된 경기 요약(summary)을 기반으로
+                        각 팀의 승률을 계산하고, 결론에 대한 정확한 분석 요인을 설명해.
+                        모든 대답은 한국어로 작성해.""")
+                .system("경기 요약:\n"+summary)
                 .user(userInput)
                 .call()
                 .content();
@@ -55,7 +58,7 @@ public class AiService {
 
         StringBuilder sb = new StringBuilder();
 
-//        sb.append("팀별 총 경기 횟수:\n");
+//        sb.append("팀별 총 경기 횟수:\n"); 논의 필요
 //        teamGameCount.forEach((team, count) -> sb.append("- ").append(team).append(": ").append(count).append("번\n"));
 
         sb.append("\n팀별 승패 횟수:\n");
