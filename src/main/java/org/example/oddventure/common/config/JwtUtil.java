@@ -6,7 +6,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-import org.example.oddventure.domain.common.exception.InvalidServerException;
+import org.example.oddventure.domain.common.exception.InvalidAuthException;
 import org.example.oddventure.domain.common.exception.ServerErrorCode;
 import org.example.oddventure.domain.user.enums.UserRole;
 import org.springframework.beans.factory.annotation.Value;
@@ -74,13 +74,13 @@ public class JwtUtil {
      *
      * @param tokenValue 원본 토큰 문자열
      * @return Bearer 접두사가 제거된 순수 JWT 문자열
-     * @throws InvalidServerException 토큰이 null 이거나 'Bearer'로 시작 하지 않는 경우
+     * @throws InvalidAuthException 토큰이 null 이거나 'Bearer'로 시작 하지 않는 경우
      */
     public String substringToken(String tokenValue) {
         if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
             return tokenValue.substring(7);
         }
-        throw new InvalidServerException(ServerErrorCode.JWT_CANNOT_FIND_TOKEN);
+        throw new InvalidAuthException(ServerErrorCode.JWT_CANNOT_FIND_TOKEN);
     }
 
 
