@@ -61,7 +61,7 @@ public class AiService {
 //        sb.append("팀별 총 경기 횟수:\n"); 논의 필요
 //        teamGameCount.forEach((team, count) -> sb.append("- ").append(team).append(": ").append(count).append("번\n"));
 
-        sb.append("\n팀별 승패 횟수:\n");
+        sb.append("\n팀별 승리 횟수:\n");
         teamWinningCount.forEach((team, count) -> sb.append("- ").append(team).append(": ").append(count).append("번\n"));
 
         return sb.toString();
