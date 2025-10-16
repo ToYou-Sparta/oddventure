@@ -28,9 +28,9 @@ public class MatchService {
     @Transactional
     public MatchResponse getMatch(Long matchId) {
 
+        matchRepository.incrementViewCount(matchId);
         Match match = matchRepository.findById(matchId)
                 .orElseThrow(() -> new MatchException(MatchErrorCode.MATCH_NOT_FOUND));
-        match.increaseViewCount();
 
         return MatchResponse.from(match);
     }

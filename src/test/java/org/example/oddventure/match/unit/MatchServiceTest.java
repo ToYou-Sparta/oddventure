@@ -2,6 +2,7 @@ package org.example.oddventure.match.unit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
@@ -23,6 +24,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class MatchServiceTest {
@@ -78,6 +80,8 @@ class MatchServiceTest {
                 .startTime(LocalDateTime.now().plusDays(1))
                 .build();
 
+        doNothing().when(matchRepository).incrementViewCount(matchId);
+        ReflectionTestUtils.setField(match, "viewCount", 1L);
         when(matchRepository.findById(matchId)).thenReturn(Optional.of(match));
 
         // when
