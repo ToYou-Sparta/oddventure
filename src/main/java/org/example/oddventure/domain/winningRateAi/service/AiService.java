@@ -25,8 +25,6 @@ public class AiService {
 
     public String generateAbnormalBehaviorReport(String userInput) {
         List<Match> matches = matchRepository.findAllByWinner();
-        String startDate = "2025-07-07";
-        String endDate = "2025-07-14";
 
         // 데이터 요약 문자열 생성
         String summary = buildSummary(matches);
@@ -50,16 +48,15 @@ public class AiService {
     }
 
     private String buildSummary(List<Match> matches) {
-        Map<String, Long> teamGameCount = matches.stream()
-                .collect(Collectors.groupingBy(Match::getTeamA, Collectors.counting())); //논의 필요
 
         Map<String, Long> teamWinningCount = matches.stream()
-                .collect(Collectors.groupingBy(Match::getTeamB, Collectors.counting()));
+                .collect(Collectors.groupingBy(Match::getWinner, Collectors.counting()));
+
 
         StringBuilder sb = new StringBuilder();
 
-        sb.append("팀별 총 경기 횟수:\n");
-        teamGameCount.forEach((team, count) -> sb.append("- ").append(team).append(": ").append(count).append("번\n"));
+//        sb.append("팀별 총 경기 횟수:\n");
+//        teamGameCount.forEach((team, count) -> sb.append("- ").append(team).append(": ").append(count).append("번\n"));
 
         sb.append("\n팀별 승패 횟수:\n");
         teamWinningCount.forEach((team, count) -> sb.append("- ").append(team).append(": ").append(count).append("번\n"));
