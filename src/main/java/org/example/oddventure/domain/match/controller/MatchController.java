@@ -32,7 +32,7 @@ public class MatchController {
 
         Page<MatchResponse> matches = matchService.getMatches(pageable);
 
-        return ApiPageResponse.success(matches);
+        return ApiPageResponse.success(matches, "매치 목록 조회에 성공했습니다.");
     }
 
     @GetMapping("/{matchId}")
@@ -40,7 +40,7 @@ public class MatchController {
             @PathVariable Long matchId
     ) {
 
-        return ApiResponse.success(matchService.getMatch(matchId));
+        return ApiResponse.success(matchService.getMatch(matchId), "매치 상세 정보 조회에 성공했습니다.");
     }
 
 //    @GetMapping("/search")
