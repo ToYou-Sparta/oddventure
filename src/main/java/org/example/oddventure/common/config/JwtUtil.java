@@ -7,7 +7,7 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.example.oddventure.domain.common.exception.InvalidAuthException;
-import org.example.oddventure.domain.common.exception.ServerErrorCode;
+import org.example.oddventure.domain.common.exception.AuthErrorCode;
 import org.example.oddventure.domain.user.enums.UserRole;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -80,7 +80,7 @@ public class JwtUtil {
         if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
             return tokenValue.substring(7);
         }
-        throw new InvalidAuthException(ServerErrorCode.JWT_CANNOT_FIND_TOKEN);
+        throw new InvalidAuthException(AuthErrorCode.JWT_CANNOT_FIND_TOKEN);
     }
 
 
