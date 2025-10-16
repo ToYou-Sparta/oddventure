@@ -27,7 +27,7 @@ public class AdminController {
     public ResponseEntity<ApiResponse<MatchAdminResponse>> createMatch(
             @Valid @RequestBody MatchCreateRequest request) {
         MatchAdminResponse response = adminService.createMatch(request);
-        return ApiResponse.created(response);
+        return ApiResponse.created(response, "매치가 생성되었습니다.");
     }
 
     // 매치 상태 수정
@@ -36,6 +36,6 @@ public class AdminController {
             @PathVariable Long matchId,
             @Valid @RequestBody MatchUpdateRequest request) {
         MatchAdminResponse response = adminService.updateMatch(matchId, request);
-        return ApiResponse.success(response);
+        return ApiResponse.success(response, "매치 정보가 수정되었습니다.");
     }
 }
