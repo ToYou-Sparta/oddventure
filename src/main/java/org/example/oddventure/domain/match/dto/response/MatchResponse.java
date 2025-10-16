@@ -1,15 +1,15 @@
 package org.example.oddventure.domain.match.dto.response;
 
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import org.example.oddventure.domain.match.entity.Match;
 import org.example.oddventure.domain.match.enums.MatchStatus;
 import org.example.oddventure.domain.match.enums.MatchWinner;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
 public record MatchResponse(
         Long matchId,
+        String matchName,
         String teamA,
         String teamB,
         BigDecimal totalAmountA,
@@ -25,6 +25,7 @@ public record MatchResponse(
     public static MatchResponse from(Match match) {
         return new MatchResponse(
                 match.getId(),
+                match.getMatchName(),
                 match.getTeamA(),
                 match.getTeamB(),
                 match.getTotalAmountA(),

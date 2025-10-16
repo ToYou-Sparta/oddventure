@@ -7,6 +7,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
@@ -20,11 +21,15 @@ import org.example.oddventure.domain.match.enums.MatchWinner;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "`match`")
 public class Match extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
+    private String matchName;
 
     @Column(nullable = false)
     private String teamA;
@@ -44,6 +49,7 @@ public class Match extends BaseEntity {
     private LocalDateTime endTime;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private MatchStatus status;
 
     @Enumerated(EnumType.STRING)
@@ -53,7 +59,8 @@ public class Match extends BaseEntity {
     private Long viewCount = 0L;
 
     @Builder
-    public Match(String teamA, String teamB, LocalDateTime startTime) {
+    public Match(String matchName, String teamA, String teamB, LocalDateTime startTime) {
+        this.matchName = matchName;
         this.teamA = teamA;
         this.teamB = teamB;
         this.startTime = startTime;
@@ -64,7 +71,8 @@ public class Match extends BaseEntity {
         this.viewCount = 0L;
     }
 
-    public void update(String teamA, String teamB, LocalDateTime startTime, MatchStatus status) {
+    public void update(String matchName, String teamA, String teamB, LocalDateTime startTime, MatchStatus status) {
+        this.matchName = matchName;
         this.teamA = teamA;
         this.teamB = teamB;
         this.startTime = startTime;

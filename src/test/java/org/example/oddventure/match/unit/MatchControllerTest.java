@@ -41,6 +41,7 @@ public class MatchControllerTest {
     void setUp() {
         response = new MatchResponse(
                 1L,
+                "LCK",
                 "T1",
                 "GEN.G",
                 new BigDecimal("10000"),

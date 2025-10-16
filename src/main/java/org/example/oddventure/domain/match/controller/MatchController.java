@@ -10,7 +10,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,9 +45,11 @@ public class MatchController {
     }
 
 //    @GetMapping("/search")
-//    public List<Match> searchMatches(
+//    public ResponseEntity<ApiPageResponse<MatchResponse>> searchMatches(
 //            @RequestParam(required = false) String teamName,
-//            @RequestParam(required = false) MatchStatus status
+//            @RequestParam(required = false) MatchStatus status,
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "10") int size
 //    ) {
 //        return matchService.searchMatches(teamName, status);
 //    }

@@ -1,5 +1,13 @@
 package org.example.oddventure.admin;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
 import org.example.oddventure.common.exception.GlobalException;
 import org.example.oddventure.domain.admin.dto.request.MatchCreateRequest;
 import org.example.oddventure.domain.admin.dto.request.MatchUpdateRequest;
@@ -14,13 +22,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import java.time.LocalDateTime;
-import java.util.Optional;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class AdminServiceTest {
@@ -36,9 +37,9 @@ class AdminServiceTest {
     void createMatch_Success() {
         // given
         LocalDateTime startTime = LocalDateTime.now().plusDays(1);
-        MatchCreateRequest request = new MatchCreateRequest("T1", "Gen.G", startTime);
+        MatchCreateRequest request = new MatchCreateRequest("LCK", "T1", "Gen.G", startTime);
 
-        Match match = Match.builder().teamA("T1").teamB("Gen.G").startTime(startTime).build();
+        Match match = Match.builder().matchName("LCK").teamA("T1").teamB("Gen.G").startTime(startTime).build();
 
         given(matchRepository.save(any(Match.class))).willReturn(match);
 
@@ -58,10 +59,11 @@ class AdminServiceTest {
         Long matchId = 1L;
         LocalDateTime newStartTime = LocalDateTime.now().plusHours(5);
         MatchUpdateRequest request = new MatchUpdateRequest(
-                "DWG KIA", "T1", newStartTime, MatchStatus.ONGOING
+                "LCK", "DWG KIA", "T1", newStartTime, MatchStatus.ONGOING
         );
 
         Match existingMatch = Match.builder()
+                .matchName("LCK")
                 .teamA("DK")
                 .teamB("T1")
                 .startTime(LocalDateTime.now().plusHours(3))
@@ -84,7 +86,7 @@ class AdminServiceTest {
         // given
         Long matchId = 999L;
         MatchUpdateRequest request = new MatchUpdateRequest(
-                "DWG KIA", "T1", LocalDateTime.now().plusHours(5), MatchStatus.ONGOING
+                "LCK", "DWG KIA", "T1", LocalDateTime.now().plusHours(5), MatchStatus.ONGOING
         );
 
         given(matchRepository.findById(matchId)).willReturn(Optional.empty());

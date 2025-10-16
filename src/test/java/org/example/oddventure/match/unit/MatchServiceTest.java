@@ -41,12 +41,14 @@ class MatchServiceTest {
 
         // given
         Match match1 = Match.builder()
+                .matchName("LCK")
                 .teamA("T1")
                 .teamB("GEN.G")
                 .startTime(LocalDateTime.now().plusDays(1))
                 .build();
 
         Match match2 = Match.builder()
+                .matchName("LCK")
                 .teamA("KT")
                 .teamB("DRX")
                 .startTime(LocalDateTime.now().plusDays(2))
@@ -75,6 +77,7 @@ class MatchServiceTest {
         // given
         Long matchId = 1L;
         Match match = Match.builder()
+                .matchName("LCK")
                 .teamA("T1")
                 .teamB("GEN.G")
                 .startTime(LocalDateTime.now().plusDays(1))
