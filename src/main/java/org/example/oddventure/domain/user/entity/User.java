@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import java.math.BigDecimal;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,6 +27,12 @@ public class User {
 
     @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
+    private BigDecimal point = BigDecimal.ZERO;
+
+    @Column(nullable = false)
+    private boolean isDeleted = false;
 
     @Builder
     public User(String username, String email, String password) {
