@@ -2,8 +2,8 @@ package org.example.oddventure.domain.admin.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.oddventure.common.dto.reponse.ApiPageResponse;
-import org.example.oddventure.common.dto.reponse.ApiResponse;
+import org.example.oddventure.common.dto.response.ApiPageResponse;
+import org.example.oddventure.common.dto.response.ApiResponse;
 import org.example.oddventure.domain.admin.dto.request.MatchCreateRequest;
 import org.example.oddventure.domain.admin.dto.request.MatchUpdateRequest;
 import org.example.oddventure.domain.admin.dto.response.MatchAdminResponse;
@@ -53,6 +53,6 @@ public class AdminController {
             Pageable pageable)
     {
         Page<UserAdminResponse> users = adminService.getAllUsers(email, username, pageable);
-        return ApiPageResponse.success(users);
+        return ApiPageResponse.success(users, "사용자 목록 조회에 성공했습니다.");
     }
 }
