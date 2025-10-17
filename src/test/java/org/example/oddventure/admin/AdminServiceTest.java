@@ -1,9 +1,12 @@
 package org.example.oddventure.admin;
 
+import java.math.BigDecimal;
 import org.example.oddventure.common.exception.GlobalException;
 import org.example.oddventure.domain.admin.dto.request.MatchCreateRequest;
 import org.example.oddventure.domain.admin.dto.request.MatchUpdateRequest;
+import org.example.oddventure.domain.admin.dto.request.PointAdjustRequest;
 import org.example.oddventure.domain.admin.dto.response.MatchAdminResponse;
+import org.example.oddventure.domain.admin.dto.response.PointAdjustResponse;
 import org.example.oddventure.domain.admin.service.AdminService;
 import org.example.oddventure.domain.match.entity.Match;
 import org.example.oddventure.domain.match.enums.MatchStatus;
@@ -156,5 +159,47 @@ class AdminServiceTest {
         // then
         assertThat(result.getTotalElements()).isEqualTo(2);
         assertThat(result.getContent()).hasSize(2);
+    }
+
+    @Test
+    @DisplayName("사용자 포인트 지급 성공")
+    void adjustUserPoints_Success() {
+        // given
+        Long userId = 1L;
+        BigDecimal amountToAdd = new BigDecimal("5000");
+        PointAdjustRequest request = new PointAdjustRequest(amountToAdd, "베팅 승리 보상");
+
+        // User 엔티티 생성 시 Builder는 point를 1000으로 초기화(초기 지급 포인트)
+        User mockUser = User.builder()
+                .email("test@test.com")
+                .username("testuser")
+                .password("password")
+                .userRole(UserRole.ROLE_USER)
+                .build();
+
+        given(userRepository.findById(userId)).willReturn(Optional.of(mockUser));
+
+        // when
+        PointAdjustResponse response = adminService.adjustUserPoints(userId, request);
+
+        // then
+        assertThat(response.userId()).isEqualTo(mockUser.getId());
+        assertThat(response.adjustedAmount()).isEqualTo(amountToAdd);
+        assertThat(response.finalBalance()).isEqualTo(new BigDecimal("6000"));
+        assertThat(mockUser.getPoint()).isEqualTo(new BigDecimal("6000"));
+    }
+
+    @Test
+    @DisplayName("사용자 포인트 지급 실패 - 존재하지 않는 사용자")
+    void adjustUserPoints_Fail_UserNotFound() {
+        // given
+        Long userId = 999L;
+        PointAdjustRequest request = new PointAdjustRequest(new BigDecimal("5000"), "이벤트 보상");
+        given(userRepository.findById(userId)).willReturn(Optional.empty());
+
+        // when & then
+        assertThrows(GlobalException.class, () -> {
+            adminService.adjustUserPoints(userId, request);
+        });
     }
 }
