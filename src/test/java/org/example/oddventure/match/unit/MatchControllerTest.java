@@ -2,13 +2,16 @@ package org.example.oddventure.match.unit;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.example.oddventure.domain.match.controller.MatchController;
+import org.example.oddventure.domain.match.dto.request.MatchSearchCondition;
 import org.example.oddventure.domain.match.dto.response.MatchResponse;
 import org.example.oddventure.domain.match.enums.MatchStatus;
 import org.example.oddventure.domain.match.enums.MatchWinner;
@@ -88,6 +91,32 @@ public class MatchControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.matchId").value(matchId))
                 .andExpect(jsonPath("$.data.teamA").value("T1"))
-                .andExpect(jsonPath("$.data.viewCount").value(153L));
+                .andExpect(jsonPath("$.data.viewCount").value(153L)
+                );
+    }
+
+    @Test
+    @DisplayName("POST /matches/search - 경기 검색 성공")
+    void searchMatches() throws Exception {
+
+        // given
+        MatchSearchCondition condition = new MatchSearchCondition("", null, null);
+        Pageable pageable = PageRequest.of(0, 10);
+        PageImpl<MatchResponse> responsePage = new PageImpl<>(List.of(response), pageable, 1);
+        when(matchService.searchMatches(condition, pageable)).thenReturn(responsePage);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestBody = objectMapper.writeValueAsString(condition);
+
+        // when & then
+        mockMvc.perform(post("/api/v1/matches/search")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .contentType("application/json")
+                        .content(requestBody))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.content[0].matchId").value(1))
+                .andExpect(jsonPath("$.data.content[0].teamB").value("GEN.G")
+                );
     }
 }

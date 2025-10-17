@@ -8,6 +8,8 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import org.example.oddventure.domain.match.dto.projection.MatchProjection;
+import org.example.oddventure.domain.match.dto.request.MatchSearchCondition;
 import org.example.oddventure.domain.match.dto.response.MatchResponse;
 import org.example.oddventure.domain.match.entity.Match;
 import org.example.oddventure.domain.match.exception.MatchException;
@@ -110,5 +112,42 @@ class MatchServiceTest {
 
         // then
         assertThat(exception.getMessage()).isEqualTo("해당 경기 정보를 찾을 수 없습니다.");
+    }
+
+    @Test
+    @DisplayName("경기 검색 성공")
+    void searchMatches() {
+
+        // given
+        MatchSearchCondition condition = new MatchSearchCondition("T", null, null);
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Match match1 = Match.builder()
+                .matchName("LCK")
+                .teamA("T1")
+                .teamB("GEN.G")
+                .startTime(LocalDateTime.now().plusDays(1))
+                .build();
+
+        Match match2 = Match.builder()
+                .matchName("LCK")
+                .teamA("KT")
+                .teamB("DRX")
+                .startTime(LocalDateTime.now().plusDays(2))
+                .build();
+
+        MatchProjection response1 = MatchProjection.from(match1);
+        MatchProjection response2 = MatchProjection.from(match2);
+        Page<MatchProjection> matches = new PageImpl<>(List.of(response1, response2), pageable, 1);
+
+        when(matchRepository.searchByCondition(condition, pageable)).thenReturn(matches);
+
+        // when
+        Page<MatchResponse> result = matchService.searchMatches(condition, pageable);
+
+        // then
+        assertThat(result.getContent()).hasSize(2);
+        assertThat(result.getContent().get(0).teamA()).isEqualTo("T1");
+        assertThat(result.getContent().get(1).teamA()).isEqualTo("KT");
     }
 }

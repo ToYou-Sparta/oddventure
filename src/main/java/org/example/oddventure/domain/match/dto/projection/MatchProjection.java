@@ -1,14 +1,13 @@
-package org.example.oddventure.domain.match.dto.response;
+package org.example.oddventure.domain.match.dto.projection;
 
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import org.example.oddventure.domain.match.dto.projection.MatchProjection;
 import org.example.oddventure.domain.match.entity.Match;
 import org.example.oddventure.domain.match.enums.MatchStatus;
 import org.example.oddventure.domain.match.enums.MatchWinner;
 
-public record MatchResponse(
+public record MatchProjection(
         Long matchId,
         String matchName,
         String teamA,
@@ -23,8 +22,8 @@ public record MatchResponse(
         LocalDateTime createdAt
 ) {
 
-    public static MatchResponse from(Match match) {
-        return new MatchResponse(
+    public static MatchProjection from(Match match) {
+        return new MatchProjection(
                 match.getId(),
                 match.getMatchName(),
                 match.getTeamA(),
@@ -37,23 +36,6 @@ public record MatchResponse(
                 match.getWinner(),
                 match.getViewCount(),
                 match.getCreatedAt()
-        );
-    }
-
-    public static MatchResponse from(MatchProjection projection) {
-        return new MatchResponse(
-                projection.matchId(),
-                projection.matchName(),
-                projection.teamA(),
-                projection.teamB(),
-                projection.totalAmountA(),
-                projection.totalAmountB(),
-                projection.startTime(),
-                projection.endTime(),
-                projection.status(),
-                projection.winner(),
-                projection.viewCount(),
-                projection.createdAt()
         );
     }
 }
