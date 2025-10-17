@@ -15,6 +15,6 @@ public class HotKeywordsController {
 
     @GetMapping("/api/v1/hotkeyword")
     public ResponseEntity<ApiResponse<HotKeywordsResponse>> getHotKeywords() {
-        return ApiResponse.success(hotKeywordsService.getHotKeywords());
+        return ApiResponse.success(hotKeywordsService.getHotKeywords(), "인기 검색어 top5를 조회했습니다.");
     }
 }
