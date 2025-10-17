@@ -2,7 +2,6 @@ package org.example.oddventure.domain.bet.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.example.oddventure.domain.bet.dto.request.BetCreateRequest;
 import org.example.oddventure.domain.bet.dto.response.BetCreateResponse;
@@ -12,6 +11,7 @@ import org.example.oddventure.domain.bet.exception.BetErrorCode;
 import org.example.oddventure.domain.bet.exception.InvalidBetException;
 import org.example.oddventure.domain.bet.repository.BetRepository;
 import org.example.oddventure.domain.match.entity.Match;
+import org.example.oddventure.domain.match.enums.MatchStatus;
 import org.example.oddventure.domain.match.exception.MatchErrorCode;
 import org.example.oddventure.domain.match.exception.MatchException;
 import org.example.oddventure.domain.match.repository.MatchRepository;
@@ -44,7 +44,7 @@ public class BetService {
                 .orElseThrow(() -> new MatchException(MatchErrorCode.MATCH_NOT_FOUND));
 
         // 베팅 가능 여부 검증
-        validateBettable(match.getStartTime());
+        validateBettable(match.getStatus());
 
         // 유저 포인트 차감
         user.minusPoint(request.betAmount());
@@ -61,8 +61,8 @@ public class BetService {
         return BetCreateResponse.of(bet, user.getPoint());
     }
 
-    private void validateBettable(LocalDateTime matchStartTime) {
-        if (matchStartTime.isBefore(LocalDateTime.now())) {
+    private void validateBettable(MatchStatus status) {
+        if (!status.equals(MatchStatus.SCHEDULED)) {
             throw new InvalidBetException(BetErrorCode.MATCH_NOT_BETTABLE);
         }
     }
