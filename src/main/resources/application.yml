@@ -15,6 +15,13 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
+  ai:
+    openai:
+      api-key: ${API_KEY}
+      base-url: ${BASE_URL}
+      chat:
+        options:
+          model: llama-3.3-70b-versatile
 
 jwt:
   secret:

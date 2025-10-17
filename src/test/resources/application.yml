@@ -8,6 +8,9 @@ spring:
     hibernate:
       ddl-auto: create-drop
     show-sql: true
+  ai:
+    openai:
+      api-key: dummy
 
 jwt:
   secret:
