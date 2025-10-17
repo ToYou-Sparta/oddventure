@@ -40,4 +40,8 @@ public class User {
         this.email = email;
         this.password = password;
     }
+
+    public void minusPoint(BigDecimal amount) {
+        this.point = this.point.subtract(amount);
+    }
 }

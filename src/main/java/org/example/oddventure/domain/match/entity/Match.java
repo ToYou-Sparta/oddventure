@@ -70,4 +70,12 @@ public class Match extends BaseEntity {
         this.startTime = startTime;
         this.status = status;
     }
+
+    public void plusTeamA(BigDecimal amount) {
+        this.totalAmountA = this.totalAmountA.add(amount);
+    }
+
+    public void plusTeamB(BigDecimal amount) {
+        this.totalAmountB = this.totalAmountB.add(amount);
+    }
 }
