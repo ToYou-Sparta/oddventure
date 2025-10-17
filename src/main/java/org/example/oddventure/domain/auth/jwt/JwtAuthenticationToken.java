@@ -1,6 +1,6 @@
-package org.example.oddventure.common.config;
+package org.example.oddventure.domain.auth.jwt;
 
-import org.example.oddventure.domain.common.dto.AuthUser;
+import org.example.oddventure.domain.auth.dto.AuthUser;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 
 // AuthUser를 Spring Security에서 사용하기 위한 작업을 하는 클래스
@@ -10,6 +10,7 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
 
     /**
      * AuthUser를 받아 인증 토큰을 만드는 메서드
+     *
      * @param authUser 인증된 사용자 정보
      */
     public JwtAuthenticationToken(AuthUser authUser) {

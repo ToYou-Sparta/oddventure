@@ -1,12 +1,11 @@
-package org.example.oddventure.domain.common.dto;
+package org.example.oddventure.domain.auth.dto;
 
+import java.util.Collection;
+import java.util.List;
 import lombok.Getter;
 import org.example.oddventure.domain.user.enums.UserRole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-
-import java.util.Collection;
-import java.util.List;
 
 @Getter
 public class AuthUser {
@@ -26,5 +25,4 @@ public class AuthUser {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(userRole.getUserRole()));
     }
-
 }
