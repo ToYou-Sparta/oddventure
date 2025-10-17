@@ -22,7 +22,7 @@ public class TeamService {
     private final TeamRepository teamRepository;
 
     public Page<TeamResponse> findAllTeam(Pageable pageable) {
-        Page<Team> team = teamRepository.findAllTeam(pageable);
+        Page<Team> team = teamRepository.findAll(pageable);
         return team.map(TeamResponse::of);
     }
 

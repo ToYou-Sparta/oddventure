@@ -1,17 +1,20 @@
 package org.example.oddventure.domain.team.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.oddventure.domain.match.entity.Match;
 
+import java.security.Identity;
+
 @Entity
 @Getter
-@NoArgsConstructor()
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Team {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
