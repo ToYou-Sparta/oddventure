@@ -127,9 +127,11 @@ class AdminControllerTest {
                         .param("size", "5")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.totalElements").value(2))
-                .andExpect(jsonPath("$.page").value(0))
-                .andExpect(jsonPath("$.data[0].userId").value(1L))
-                .andExpect(jsonPath("$.data[0].email").value("test1@email.com"));
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("사용자 목록 조회에 성공했습니다."))
+                .andExpect(jsonPath("$.data.totalElements").value(2))
+                .andExpect(jsonPath("$.data.number").value(0))
+                .andExpect(jsonPath("$.data.content[0].userId").value(1L))
+                .andExpect(jsonPath("$.data.content[0].email").value("test1@email.com"));
     }
 }
