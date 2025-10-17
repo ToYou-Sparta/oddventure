@@ -17,6 +17,5 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
     // TODO: 검색 기능 작업 때 구현 예정
 //    List<Match> findByConditions(String teamName, MatchStatus status);
 
-    @Query("SELECT m FROM Match m")
-    List<Match> findAllByWinner();
+    List<Match> findByWinner();
 }

@@ -15,16 +15,13 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class AiService {
-    /**
-     * 경기 전적 데이터 레파지토리에서 가져와 ai한테 전달
-     **/
 
     private final MatchRepository matchRepository;
     private final ChatModel chatModel;
     private final ChatClient chatClient;
 
     public String generateAbnormalBehaviorReport(String userInput) {
-        List<Match> matches = matchRepository.findAllByWinner();
+        List<Match> matches = matchRepository.findByWinner();
 
         // 데이터 요약 문자열 생성
         String summary = buildSummary(matches);
