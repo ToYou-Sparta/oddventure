@@ -65,6 +65,15 @@ public class AdminService {
         return users.map(UserAdminResponse::fromEntity);
     }
 
+    // 사용자 상세 조회
+    @Transactional(readOnly = true)
+    public UserAdminResponse getUserDetails(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GlobalException(USER_NOT_FOUND));
+
+        return UserAdminResponse.fromEntity(user);
+    }
+
     // 포인트 지급
     public PointAdjustResponse adjustUserPoints(Long userId, PointAdjustRequest request)
     {

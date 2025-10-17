@@ -58,6 +58,16 @@ public class AdminController {
         return ApiPageResponse.success(users, "사용자 목록 조회에 성공했습니다.");
     }
 
+    // 사용자 상세 조회
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<ApiResponse<UserAdminResponse>> getUserDetails(
+            @PathVariable Long userId)
+    {
+        UserAdminResponse response = adminService.getUserDetails(userId);
+
+        return ApiResponse.success(response, "사용자 상세 정보 조회에 성공했습니다.");
+    }
+
     // 포인트 지급
     @PostMapping("/users/{userId}/points")
     public ResponseEntity<ApiResponse<PointAdjustResponse>> adjustUserPoints(
