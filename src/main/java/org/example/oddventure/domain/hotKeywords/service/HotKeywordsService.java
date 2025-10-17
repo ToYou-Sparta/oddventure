@@ -3,6 +3,8 @@ package org.example.oddventure.domain.hotKeywords.service;
 import lombok.RequiredArgsConstructor;
 import org.example.oddventure.domain.hotKeywords.dto.HotKeywordsResponse;
 import org.example.oddventure.domain.hotKeywords.repository.HotKeywordsRepository;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,9 +32,9 @@ public class HotKeywordsService {
 
         if (all != null) {
             for (ZSetOperations.TypedTuple<Object> tuple : all) {
-                String keyword = (String) tuple.getValue(); // 상품명 (member)
+                String keyword = (String) tuple.getValue(); // 경기 이름 (keyword)
                 Double score = tuple.getScore();            // 조회수 (score)
-                hotKeywordsRepository.increaseViewCountByValue(keyword, score);
+                hotKeywordsRepository.increaseSearchCountByValue(keyword, score);
             }
         }
     }

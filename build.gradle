@@ -40,8 +40,17 @@ dependencies {
     testImplementation 'com.h2database:h2'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-    //spring AI
+    // [spring AI]
     implementation 'org.springframework.ai:spring-ai-starter-model-openai'
+
+    // [redis]
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+    implementation 'org.springframework.data:spring-data-redis'
+    implementation 'org.apache.commons:commons-pool2'
+
+    //[jackson]
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 }
 
 dependencyManagement {
