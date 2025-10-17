@@ -1,6 +1,5 @@
 package org.example.oddventure.match.unit;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -14,6 +13,7 @@ import org.example.oddventure.domain.match.dto.response.MatchResponse;
 import org.example.oddventure.domain.match.enums.MatchStatus;
 import org.example.oddventure.domain.match.enums.MatchWinner;
 import org.example.oddventure.domain.match.service.MatchService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,12 +35,11 @@ public class MatchControllerTest {
     @MockitoBean
     private MatchService matchService;
 
-    @Test
-    @DisplayName("GET /matches - 경기 목록 조회 성공")
-    void getMatches() throws Exception {
+    private MatchResponse response;
 
-        // given
-        MatchResponse response = new MatchResponse(
+    @BeforeEach
+    void setUp() {
+        response = new MatchResponse(
                 1L,
                 "T1",
                 "GEN.G",
@@ -50,21 +49,44 @@ public class MatchControllerTest {
                 LocalDateTime.of(2025, 10, 16, 20, 0),
                 MatchStatus.SCHEDULED,
                 MatchWinner.NO_MATCH,
+                153L,
                 LocalDateTime.of(2025, 10, 10, 20, 0)
         );
+    }
 
+    @Test
+    @DisplayName("GET /matches - 경기 목록 조회 성공")
+    void getMatches() throws Exception {
+
+        // given
         Pageable pageable = PageRequest.of(0, 10, Sort.by("startTime").ascending());
         Page<MatchResponse> responsePage = new PageImpl<>(List.of(response), pageable, 1);
-        when(matchService.getMatches(any())).thenReturn(responsePage);
+        when(matchService.getMatches(pageable)).thenReturn(responsePage);
 
         // when & then
         mockMvc.perform(get("/api/v1/matches")
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data[0].matchId").value(1))
-                .andExpect(jsonPath("$.data[0].teamB").value("GEN.G"))
-                .andExpect(jsonPath("$.data[0].status").value("SCHEDULED")
+                .andExpect(jsonPath("$.data.content[0].matchId").value(1))
+                .andExpect(jsonPath("$.data.content[0].teamB").value("GEN.G"))
+                .andExpect(jsonPath("$.data.content[0].status").value("SCHEDULED")
                 );
+    }
+
+    @Test
+    @DisplayName("GET /matches/{matchId} - 경기 상세 조회 성공")
+    void getMatch() throws Exception {
+
+        // given
+        Long matchId = 1L;
+        when(matchService.getMatch(matchId)).thenReturn(response);
+
+        // when & then
+        mockMvc.perform(get("/api/v1/matches/{matchId}", matchId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.matchId").value(matchId))
+                .andExpect(jsonPath("$.data.teamA").value("T1"))
+                .andExpect(jsonPath("$.data.viewCount").value(153L));
     }
 }
