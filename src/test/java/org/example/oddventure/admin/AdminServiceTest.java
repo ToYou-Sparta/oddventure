@@ -1,5 +1,6 @@
 package org.example.oddventure.admin;
 
+import java.math.BigDecimal;
 import org.example.oddventure.common.exception.GlobalException;
 import org.example.oddventure.domain.admin.dto.request.MatchCreateRequest;
 import org.example.oddventure.domain.admin.dto.request.MatchUpdateRequest;
@@ -156,5 +157,42 @@ class AdminServiceTest {
         // then
         assertThat(result.getTotalElements()).isEqualTo(2);
         assertThat(result.getContent()).hasSize(2);
+    }
+
+    @Test
+    @DisplayName("사용자 상세 조회 성공")
+    void getUserDetails_Success() {
+        // given
+        Long userId = 1L;
+        User mockUser = User.builder()
+                .username("testuser")
+                .email("test@test.com")
+                .password("password")
+                .userRole(UserRole.ROLE_USER)
+                .build();
+
+        given(userRepository.findById(userId)).willReturn(Optional.of(mockUser));
+
+        // when
+        UserAdminResponse response = adminService.getUserDetails(userId);
+
+        // then
+        assertThat(response).isNotNull();
+        assertThat(response.email()).isEqualTo("test@test.com");
+        assertThat(response.username()).isEqualTo("testuser");
+        assertThat(response.point()).isEqualTo(new BigDecimal("1000"));
+    }
+
+    @Test
+    @DisplayName("사용자 상세 조회 실패 - 존재하지 않는 사용자")
+    void getUserDetails_Fail_UserNotFound() {
+        // given
+        Long userId = 999L;
+        given(userRepository.findById(userId)).willReturn(Optional.empty());
+
+        // when & then
+        assertThrows(GlobalException.class, () -> {
+            adminService.getUserDetails(userId);
+        });
     }
 }

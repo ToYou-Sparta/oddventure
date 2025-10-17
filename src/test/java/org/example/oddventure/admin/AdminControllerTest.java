@@ -4,11 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import org.example.oddventure.common.exception.GlobalException;
 import org.example.oddventure.domain.admin.controller.AdminController;
 import org.example.oddventure.domain.admin.dto.request.MatchCreateRequest;
 import org.example.oddventure.domain.admin.dto.request.MatchUpdateRequest;
 import org.example.oddventure.domain.admin.dto.response.MatchAdminResponse;
 import org.example.oddventure.domain.admin.dto.response.UserAdminResponse;
+import org.example.oddventure.domain.admin.exception.AdminErrorCode;
 import org.example.oddventure.domain.admin.service.AdminService;
 import org.example.oddventure.domain.match.enums.MatchStatus;
 import org.example.oddventure.domain.user.enums.UserRole;
@@ -133,5 +135,41 @@ class AdminControllerTest {
                 .andExpect(jsonPath("$.data.number").value(0))
                 .andExpect(jsonPath("$.data.content[0].userId").value(1L))
                 .andExpect(jsonPath("$.data.content[0].email").value("test1@email.com"));
+    }
+
+    @Test
+    @DisplayName("사용자 상세 조회 API 성공")
+    void getUserDetails_Success() throws Exception {
+        // given
+        Long userId = 1L;
+        UserAdminResponse responseDto = new UserAdminResponse(
+                userId, "testuser", "test@test.com", new BigDecimal("1000"), UserRole.ROLE_USER, LocalDateTime.now()
+        );
+
+        given(adminService.getUserDetails(userId)).willReturn(responseDto);
+
+        // when & then
+        mockMvc.perform(get("/api/v1/admin/users/{userId}", userId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("사용자 상세 정보 조회에 성공했습니다."))
+                .andExpect(jsonPath("$.data.userId").value(userId))
+                .andExpect(jsonPath("$.data.email").value("test@test.com"));
+    }
+
+    @Test
+    @DisplayName("사용자 상세 조회 API 실패 - 사용자를 찾을 수 없음")
+    void getUserDetails_Fail_UserNotFound() throws Exception {
+        // given
+        Long userId = 999L;
+        given(adminService.getUserDetails(userId)).willThrow(new GlobalException(AdminErrorCode.USER_NOT_FOUND));
+
+        // when & then
+        mockMvc.perform(get("/api/v1/admin/users/{userId}", userId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound()) // 404 Not Found
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("해당 사용자를 찾을 수 없습니다."));
     }
 }

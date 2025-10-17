@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.example.oddventure.domain.admin.exception.AdminErrorCode.MATCH_NOT_FOUND;
+import static org.example.oddventure.domain.admin.exception.AdminErrorCode.USER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -58,5 +59,15 @@ public class AdminService {
     public Page<UserAdminResponse> getAllUsers(String email, String username, Pageable pageable) {
         Page<User> users = userRepository.findBySearchConditions(email, username, pageable);
         return users.map(UserAdminResponse::fromEntity);
+    }
+
+    // 사용자 상세 조회
+    @Transactional(readOnly = true)
+    public UserAdminResponse getUserDetails(Long userId)
+    {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GlobalException(USER_NOT_FOUND));
+
+        return UserAdminResponse.fromEntity(user);
     }
 }
