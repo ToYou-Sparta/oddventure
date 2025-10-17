@@ -44,19 +44,15 @@ public class JwtUtil {
      * JWT 액세스 토큰 생성 메서드
      *
      * @param userId   로그인한 사용자의 고유 ID
-     * @param username 사용자 이름
-     * @param email    이메일
      * @param userRole 사용자 권한
      * @return Bearer 접두사가 붙은 JWT 토큰 문자열
      */
-    public String createAccessToken(Long userId, String username, String email, UserRole userRole) {
+    public String createAccessToken(Long userId, UserRole userRole) {
         Date date = new Date();
 
         return BEARER_PREFIX +
                 Jwts.builder()
                         .setSubject(String.valueOf(userId))
-                        .claim("email", email)
-                        .claim("username", username)
                         .claim("userRole", userRole)
                         .setExpiration(new Date(date.getTime() + ACCESS_TOKEN))
                         .setIssuedAt(date) // 발급일
