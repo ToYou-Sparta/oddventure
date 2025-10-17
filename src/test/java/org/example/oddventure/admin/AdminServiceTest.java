@@ -8,6 +8,7 @@ import org.example.oddventure.domain.admin.service.AdminService;
 import org.example.oddventure.domain.match.entity.Match;
 import org.example.oddventure.domain.match.enums.MatchStatus;
 import org.example.oddventure.domain.match.repository.MatchRepository;
+import org.example.oddventure.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,6 +22,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
+import org.example.oddventure.domain.admin.dto.response.UserAdminResponse;
+import org.example.oddventure.domain.user.entity.User;
+import org.example.oddventure.domain.user.enums.UserRole;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 class AdminServiceTest {
@@ -30,6 +40,9 @@ class AdminServiceTest {
 
     @Mock
     private MatchRepository matchRepository;
+
+    @Mock
+    private UserRepository userRepository;
 
     @Test
     @DisplayName("매치 생성 성공")
@@ -93,5 +106,55 @@ class AdminServiceTest {
         assertThrows(GlobalException.class, () -> {
             adminService.updateMatch(matchId, request);
         });
+    }
+
+    @Test
+    @DisplayName("검색 조건 포함 사용자 목록 조회 성공")
+    void getAllUsers_WithFilters_Success() {
+        // given
+        String email = "test";
+        String username = "user";
+        Pageable pageable = PageRequest.of(0, 10);
+
+        User user1 = User.builder()
+                .email("test1@test.com")
+                .username("testuser1")
+                .password("password")
+                .userRole(UserRole.ROLE_USER)
+                .build();
+
+        Page<User> mockUserPage = new PageImpl<>(List.of(user1), pageable, 1);
+
+        given(userRepository.findBySearchConditions(email, username, pageable)).willReturn(mockUserPage);
+
+        // when
+        Page<UserAdminResponse> result = adminService.getAllUsers(email, username, pageable);
+
+        // then
+        assertThat(result.getTotalElements()).isEqualTo(1);
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().get(0).email()).isEqualTo("test1@test.com");
+        assertThat(result.getContent().get(0).point().intValue()).isEqualTo(1000); // 기본 1000 포인트 확인
+    }
+
+    @Test
+    @DisplayName("검색 조건 없이 사용자 목록 조회 성공")
+    void getAllUsers_NoFilters_Success() {
+        // given
+        Pageable pageable = PageRequest.of(0, 10);
+        User user1 = User.builder().email("test1@test.com").username("user1").password("p").userRole(UserRole.ROLE_USER).build();
+        User user2 = User.builder().email("test2@test.com").username("user2").password("p").userRole(UserRole.ROLE_USER).build();
+
+        Page<User> mockUserPage = new PageImpl<>(List.of(user1, user2), pageable, 2);
+
+        // 검색 조건이 null로 넘어오는 경우를 테스트
+        given(userRepository.findBySearchConditions(null, null, pageable)).willReturn(mockUserPage);
+
+        // when
+        Page<UserAdminResponse> result = adminService.getAllUsers(null, null, pageable);
+
+        // then
+        assertThat(result.getTotalElements()).isEqualTo(2);
+        assertThat(result.getContent()).hasSize(2);
     }
 }
