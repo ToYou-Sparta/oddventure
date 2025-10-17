@@ -63,8 +63,7 @@ public class AdminService {
 
     // 사용자 상세 조회
     @Transactional(readOnly = true)
-    public UserAdminResponse getUserDetails(Long userId)
-    {
+    public UserAdminResponse getUserDetails(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GlobalException(USER_NOT_FOUND));
 
