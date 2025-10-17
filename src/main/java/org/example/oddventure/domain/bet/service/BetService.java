@@ -56,6 +56,7 @@ public class BetService {
         BigDecimal odds = calculateOdds(match, request);
 
         Bet bet = request.toEntity(user, match, odds);
+        betRepository.save(bet);
 
         return BetCreateResponse.of(bet, user.getPoint());
     }
