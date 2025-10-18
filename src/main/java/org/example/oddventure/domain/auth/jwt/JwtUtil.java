@@ -1,5 +1,9 @@
 package org.example.oddventure.domain.auth.jwt;
 
+import static org.example.oddventure.domain.auth.jwt.JwtConstants.ACCESS_TOKEN_EXPIRATION;
+import static org.example.oddventure.domain.auth.jwt.JwtConstants.BEARER_PREFIX;
+import static org.example.oddventure.domain.auth.jwt.JwtConstants.REFRESH_TOKEN_EXPIRATION;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -19,10 +23,6 @@ import org.springframework.util.StringUtils;
 @Slf4j(topic = "JwtUtil")
 @Component
 public class JwtUtil {
-
-    private static final String BEARER_PREFIX = "Bearer ";
-    private static final long ACCESS_TOKEN = 60 * 60 * 1000L; // 60분
-    private static final long REFRESH_TOKEN = 7 * 24 * 60 * 60 * 1000L; // 7일
 
     //암호화 알고림즘 HS256
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
@@ -50,14 +50,13 @@ public class JwtUtil {
     public String createAccessToken(Long userId, UserRole userRole) {
         Date date = new Date();
 
-        return BEARER_PREFIX +
-                Jwts.builder()
-                        .setSubject(String.valueOf(userId))
-                        .claim("userRole", userRole)
-                        .setExpiration(new Date(date.getTime() + ACCESS_TOKEN))
-                        .setIssuedAt(date) // 발급일
-                        .signWith(key, signatureAlgorithm) // 암호화 알고리즘
-                        .compact();
+        return Jwts.builder()
+                .setSubject(String.valueOf(userId))
+                .claim("userRole", userRole)
+                .setExpiration(new Date(date.getTime() + ACCESS_TOKEN_EXPIRATION))
+                .setIssuedAt(date)
+                .signWith(key, signatureAlgorithm)
+                .compact();
     }
 
     /**
@@ -70,7 +69,7 @@ public class JwtUtil {
         Date date = new Date();
         return Jwts.builder()
                 .setSubject(String.valueOf(userId))
-                .setExpiration(new Date(date.getTime() + REFRESH_TOKEN))
+                .setExpiration(new Date(date.getTime() + REFRESH_TOKEN_EXPIRATION))
                 .setIssuedAt(date)
                 .signWith(key, signatureAlgorithm)
                 .compact();

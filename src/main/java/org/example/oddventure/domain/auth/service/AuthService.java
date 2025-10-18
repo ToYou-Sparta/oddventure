@@ -1,5 +1,8 @@
 package org.example.oddventure.domain.auth.service;
 
+import static org.example.oddventure.domain.auth.jwt.JwtConstants.REFRESH_TOKEN_PREFIX;
+
+import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import org.example.oddventure.domain.auth.dto.request.LoginRequest;
 import org.example.oddventure.domain.auth.dto.request.SignupRequest;
@@ -8,9 +11,11 @@ import org.example.oddventure.domain.auth.dto.response.LoginResponse;
 import org.example.oddventure.domain.auth.dto.response.SignupResponse;
 import org.example.oddventure.domain.auth.exception.AuthErrorCode;
 import org.example.oddventure.domain.auth.exception.AuthException;
+import org.example.oddventure.domain.auth.jwt.JwtUtil;
 import org.example.oddventure.domain.user.entity.User;
 import org.example.oddventure.domain.user.enums.UserRole;
 import org.example.oddventure.domain.user.repository.UserRepository;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +26,8 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
+    private final RedisTemplate<String, String> redisTemplate;
 
     /**
      * 회원가입
@@ -53,17 +60,32 @@ public class AuthService {
      * @param request 로그인 요청 정보
      * @return 로그인 응답 정보
      */
+    @Transactional(readOnly = true)
     public LoginResponse login(LoginRequest request) {
-        return null;
+
+        User user = userRepository.findByEmail(request.email())
+                .orElseThrow(() -> new AuthException(AuthErrorCode.INVALID_CREDENTIALS));
+
+        if (!passwordEncoder.matches(request.password(), user.getPassword())) {
+            throw new AuthException(AuthErrorCode.INVALID_CREDENTIALS);
+        }
+
+        String accessToken = jwtUtil.createAccessToken(user.getId(), user.getUserRole());
+        String refreshToken = jwtUtil.createRefreshToken(user.getId());
+
+        redisTemplate.opsForValue().set(REFRESH_TOKEN_PREFIX + user.getId(), refreshToken, Duration.ofDays(7));
+
+        return LoginResponse.of(accessToken, refreshToken);
     }
 
     /**
      * 로그아웃
      *
-     * @param token Access Token
+     * @param userId 로그인한 사용자의 고유 ID
      */
-    public void logout(String token) {
-
+    @Transactional(readOnly = true)
+    public void logout(Long userId) {
+        redisTemplate.delete(REFRESH_TOKEN_PREFIX + userId);
     }
 
     /**

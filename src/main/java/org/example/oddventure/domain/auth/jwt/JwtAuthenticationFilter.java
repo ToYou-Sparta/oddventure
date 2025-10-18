@@ -46,8 +46,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             // Bearer 접두사 제거
             String jwt = jwtUtil.substringToken(authorizationHeader);
-            try {
 
+            try {
                 // JWT 토큰 파싱 및 검증
                 Claims claims = jwtUtil.extractClaims(jwt);
 
@@ -83,11 +83,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      */
     private void setAuthentication(Claims claims) {
         Long userId = Long.valueOf(claims.getSubject());
-        String email = claims.get("email", String.class);
-        String username = claims.get("username", String.class);
         UserRole userRole = UserRole.of(claims.get("userRole", String.class));
 
-        AuthUser authUser = new AuthUser(userId, username, email, userRole);
+        AuthUser authUser = new AuthUser(userId, userRole);
         JwtAuthenticationToken authenticationToken = new JwtAuthenticationToken(authUser);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }

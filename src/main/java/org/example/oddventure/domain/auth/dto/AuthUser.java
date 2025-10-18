@@ -8,10 +8,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 public record AuthUser(
         Long id,
-        String username,
-        String email,
-        UserRole userRole) {
-
+        UserRole userRole
+) {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(userRole.getUserRole()));
     }
