@@ -57,7 +57,7 @@ class AdminControllerTest {
         given(adminService.createMatch(any(MatchCreateRequest.class))).willReturn(response);
 
         // when & then
-        mockMvc.perform(post("/api/vv1/admin/matches")
+        mockMvc.perform(post("/api/v1/admin/matches")
                         .with(user("admin").roles("ADMIN"))
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
