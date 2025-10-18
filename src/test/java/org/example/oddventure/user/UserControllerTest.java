@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import org.example.oddventure.domain.user.controller.UserController;
+import org.example.oddventure.domain.user.dto.request.PasswordUpdateRequest;
 import org.example.oddventure.domain.user.dto.request.ProfileUpdateRequest;
 import org.example.oddventure.domain.user.dto.response.UserProfileResponse;
 import org.example.oddventure.domain.user.enums.UserRole;
@@ -99,6 +100,42 @@ class UserControllerTest {
 
         // when & then
         mockMvc.perform(put("/api/v1/users/me")
+                        .with(user(String.valueOf(userId)))
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDto)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("비밀번호 변경 API 성공")
+    void updatePassword_Success() throws Exception
+    {
+        // given
+        Long userId = 1L;
+        PasswordUpdateRequest requestDto = new PasswordUpdateRequest("currentPassword123!", "newPassword123!");
+
+        // when & then
+        mockMvc.perform(put("/api/v1/users/password")
+                        .with(user(String.valueOf(userId)))
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("비밀번호 변경에 성공했습니다."));
+    }
+
+    @Test
+    @DisplayName("비밀번호 변경 API 실패 - 유효성 검사 실패 (새 비밀번호 형식 오류)")
+    void updatePassword_Fail_InvalidPassword() throws Exception
+    {
+        // given
+        Long userId = 1L;
+        PasswordUpdateRequest requestDto = new PasswordUpdateRequest("currentPassword123!", "weak");
+
+        // when & then
+        mockMvc.perform(put("/api/v1/users/password")
                         .with(user(String.valueOf(userId)))
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)

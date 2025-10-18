@@ -2,11 +2,13 @@ package org.example.oddventure.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.oddventure.common.exception.GlobalException;
+import org.example.oddventure.domain.user.dto.request.PasswordUpdateRequest;
 import org.example.oddventure.domain.user.dto.request.ProfileUpdateRequest;
 import org.example.oddventure.domain.user.dto.response.UserProfileResponse;
 import org.example.oddventure.domain.user.entity.User;
 import org.example.oddventure.domain.user.exception.UserErrorCode;
 import org.example.oddventure.domain.user.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
     public UserProfileResponse getUserProfile(Long userId)
@@ -35,6 +38,18 @@ public class UserService {
 
         user.updateProfile(request.username(), request.email());
         return UserProfileResponse.from(user);
+    }
+
+    public void updatePassword(Long userId, PasswordUpdateRequest request)
+    {
+        User user = findUserById(userId);
+
+        if (!passwordEncoder.matches(request.currentPassword(), user.getPassword())) {
+            throw new GlobalException(UserErrorCode.USR_PASSWORD_INCORRECT);
+        }
+
+        String newEncodedPassword = passwordEncoder.encode(request.newPassword());
+        user.updatePassword(newEncodedPassword);
     }
 
     private User findUserById(Long userId)

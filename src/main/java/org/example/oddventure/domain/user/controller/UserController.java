@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import org.example.oddventure.common.dto.response.ApiResponse;
+import org.example.oddventure.domain.user.dto.request.PasswordUpdateRequest;
 import org.example.oddventure.domain.user.dto.request.ProfileUpdateRequest;
 import org.example.oddventure.domain.user.dto.response.UserProfileResponse;
 import org.example.oddventure.domain.user.service.UserService;
@@ -36,5 +37,16 @@ public class UserController {
         UserProfileResponse response = userService.updateUserProfile(userId, request);
 
         return ApiResponse.success(response, "프로필 수정에 성공했습니다.");
+    }
+
+    @PutMapping("/password")
+    public ResponseEntity<ApiResponse<Void>> updatePassword(
+            Principal principal,
+            @Valid @RequestBody PasswordUpdateRequest request)
+    {
+        Long userId = Long.parseLong(principal.getName());
+        userService.updatePassword(userId, request);
+
+        return ApiResponse.success(null, "비밀번호 변경에 성공했습니다.");
     }
 }

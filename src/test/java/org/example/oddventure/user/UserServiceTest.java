@@ -1,6 +1,7 @@
 package org.example.oddventure.user;
 
 import org.example.oddventure.common.exception.GlobalException;
+import org.example.oddventure.domain.user.dto.request.PasswordUpdateRequest;
 import org.example.oddventure.domain.user.dto.request.ProfileUpdateRequest;
 import org.example.oddventure.domain.user.dto.response.UserProfileResponse;
 import org.example.oddventure.domain.user.entity.User;
@@ -15,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,6 +32,9 @@ class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @Test
     @DisplayName("사용자 프로필 조회 성공")
@@ -117,5 +122,42 @@ class UserServiceTest {
         // then
         verify(userRepository, never()).existsByEmail(any());
         assertThat(mockUser.getUsername()).isEqualTo("updatedUser");
+    }
+
+    @Test
+    @DisplayName("비밀번호 변경 성공")
+    void updatePassword_Success()
+    {
+        // given
+        Long userId = 1L;
+        PasswordUpdateRequest request = new PasswordUpdateRequest("currentPassword123!", "newPassword123!");
+        User mockUser = User.builder().password("encodedCurrentPassword").build();
+
+        given(userRepository.findById(userId)).willReturn(Optional.of(mockUser));
+        given(passwordEncoder.matches("currentPassword123!", "encodedCurrentPassword")).willReturn(true);
+
+        // when
+        userService.updatePassword(userId, request);
+
+        // then
+        verify(passwordEncoder).encode("newPassword123!");
+    }
+
+    @Test
+    @DisplayName("비밀번호 변경 실패 - 현재 비밀번호 불일치")
+    void updatePassword_Fail_PasswordIncorrect()
+    {
+        // given
+        Long userId = 1L;
+        PasswordUpdateRequest request = new PasswordUpdateRequest("wrongPassword!", "newPassword123!");
+        User mockUser = User.builder().password("encodedCurrentPassword").build();
+
+        given(userRepository.findById(userId)).willReturn(Optional.of(mockUser));
+        given(passwordEncoder.matches("wrongPassword!", "encodedCurrentPassword")).willReturn(false);
+
+        // when & then
+        assertThrows(GlobalException.class, () -> {
+            userService.updatePassword(userId, request);
+        });
     }
 }
