@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.example.oddventure.domain.auth.config.SecurityConfig;
 import org.example.oddventure.domain.match.controller.MatchController;
 import org.example.oddventure.domain.match.dto.response.MatchResponse;
 import org.example.oddventure.domain.match.enums.MatchStatus;
@@ -25,8 +26,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.context.annotation.Import;
 
 @WebMvcTest(MatchController.class)
+@Import(SecurityConfig.class)
 public class MatchControllerTest {
 
     @Autowired
