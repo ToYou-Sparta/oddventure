@@ -72,7 +72,7 @@ public class BetService {
 
     @Transactional
     public BetDeleteResponse deleteBet(Long userId, Long betId) {
-        Bet bet = betRepository.findById(betId)
+        Bet bet = betRepository.findByIdForDelete(betId)
                 .orElseThrow(() -> new InvalidBetException(BetErrorCode.BET_NOT_FOUND));
 
         // 본인 베팅 확인
