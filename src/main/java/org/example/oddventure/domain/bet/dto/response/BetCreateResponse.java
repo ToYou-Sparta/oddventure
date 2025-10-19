@@ -18,7 +18,7 @@ public record BetCreateResponse(
     public static BetCreateResponse of(Bet bet, BigDecimal userPointAfter) {
         return BetCreateResponse.builder()
                 .betId(bet.getId())
-                .userId(bet.getId())
+                .userId(bet.getUser().getId())
                 .selectedTeam(bet.getSelectedTeam())
                 .selectedTeamName(bet.getSelectedTeam().name())
                 .betAmount(bet.getBetAmount())
