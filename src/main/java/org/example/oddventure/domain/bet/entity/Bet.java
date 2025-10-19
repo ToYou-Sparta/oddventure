@@ -50,7 +50,7 @@ public class Bet extends BaseEntity {
     @Column(name = "is_win", nullable = false)
     private boolean isWin;
 
-    @Column(nullable = false)
+    @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = false;
 
     @Builder

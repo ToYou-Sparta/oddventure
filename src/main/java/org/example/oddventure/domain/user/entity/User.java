@@ -39,7 +39,7 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private BigDecimal point;
 
-    @Column(nullable = false)
+    @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = false;
 
     @Builder
