@@ -122,9 +122,9 @@ public class BetService {
 
     private void refundTotalAmount(Match match, BigDecimal amount, SelectedTeam selectedTeam) {
         if (selectedTeam.equals(SelectedTeam.Team_A)) {
-            match.plusTeamA(amount);
+            match.minusTeamA(amount);
         } else if (selectedTeam.equals(SelectedTeam.Team_B)) {
-            match.plusTeamB(amount);
+            match.minusTeamB(amount);
         }
     }
 
