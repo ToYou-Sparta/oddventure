@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import lombok.RequiredArgsConstructor;
 import org.example.oddventure.domain.bet.dto.request.BetCreateRequest;
 import org.example.oddventure.domain.bet.dto.response.BetCreateResponse;
+import org.example.oddventure.domain.bet.dto.response.BetDeleteResponse;
 import org.example.oddventure.domain.bet.dto.response.BetResponse;
 import org.example.oddventure.domain.bet.entity.Bet;
 import org.example.oddventure.domain.bet.enums.SelectedTeam;
@@ -69,6 +70,31 @@ public class BetService {
         return bets.map(BetResponse::from);
     }
 
+    @Transactional
+    public BetDeleteResponse deleteBet(Long userId, Long betId) {
+        Bet bet = betRepository.findById(betId)
+                .orElseThrow(() -> new InvalidBetException(BetErrorCode.BET_NOT_FOUND));
+
+        // 본인 베팅 확인
+        if (!bet.getUser().getId().equals(userId)) {
+            throw new InvalidBetException(BetErrorCode.PERMISSION_DENIED);
+        }
+
+        // 취소 가능 여부 확인
+        validateCancelable(bet.getMatch().getStatus());
+
+        bet.setDeleted(true);
+
+        // 환불
+        User user = bet.getUser();
+        user.plusPoint(bet.getBetAmount());
+
+        // 총 베팅 금액 되돌리기
+        refundTotalAmount(bet.getMatch(), bet.getBetAmount(), bet.getSelectedTeam());
+
+        return BetDeleteResponse.of(bet, user);
+    }
+
     private User findUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new InvalidUserException(UserErrorCode.USR_INVALID_USER_ID));
@@ -80,11 +106,25 @@ public class BetService {
         }
     }
 
+    private void validateCancelable(MatchStatus status) {
+        if (!status.equals(MatchStatus.SCHEDULED)) {
+            throw new InvalidBetException(BetErrorCode.MATCH_NOT_CANCELABLE);
+        }
+    }
+
     private void updateTotalAmount(Match match, BetCreateRequest request) {
         if (request.selectedTeam() == SelectedTeam.Team_A) {
             match.plusTeamA(request.betAmount());
         } else if (request.selectedTeam() == SelectedTeam.Team_B) {
             match.plusTeamB(request.betAmount());
+        }
+    }
+
+    private void refundTotalAmount(Match match, BigDecimal amount, SelectedTeam selectedTeam) {
+        if (selectedTeam.equals(SelectedTeam.Team_A)) {
+            match.plusTeamA(amount);
+        } else if (selectedTeam.equals(SelectedTeam.Team_B)) {
+            match.plusTeamB(amount);
         }
     }
 

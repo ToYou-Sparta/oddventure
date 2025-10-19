@@ -50,6 +50,9 @@ public class Bet extends BaseEntity {
     @Column(name = "is_win", nullable = false)
     private boolean isWin;
 
+    @Column(nullable = false)
+    private boolean isDeleted = false;
+
     @Builder
     public Bet(User user, Match match, SelectedTeam selectedTeam, BigDecimal betAmount, BigDecimal oddsAtBetting,
                boolean isWin) {
@@ -72,4 +75,7 @@ public class Bet extends BaseEntity {
                 .build();
     }
 
+    public void setDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
 }

@@ -78,4 +78,12 @@ public class Match extends BaseEntity {
     public void plusTeamB(BigDecimal amount) {
         this.totalAmountB = this.totalAmountB.add(amount);
     }
+
+    public void minusTeamA(BigDecimal amount) {
+        this.totalAmountA = this.totalAmountA.subtract(amount);
+    }
+
+    public void minusTeamB(BigDecimal amount) {
+        this.totalAmountB = this.totalAmountB.subtract(amount);
+    }
 }

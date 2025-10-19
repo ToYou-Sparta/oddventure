@@ -54,4 +54,8 @@ public class User extends BaseEntity {
     public void minusPoint(BigDecimal amount) {
         this.point = this.point.subtract(amount);
     }
+
+    public void plusPoint(BigDecimal amount) {
+        this.point = this.point.add(amount);
+    }
 }
