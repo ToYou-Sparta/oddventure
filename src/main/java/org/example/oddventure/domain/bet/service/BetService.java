@@ -43,7 +43,7 @@ public class BetService {
             throw new InvalidBetException(BetErrorCode.NOT_ENOUGH_POINTS);
         }
 
-        Match match = matchRepository.findById(request.matchId())
+        Match match = matchRepository.findByIdForUpdate(request.matchId())
                 .orElseThrow(() -> new MatchException(MatchErrorCode.MATCH_NOT_FOUND));
 
         // 베팅 가능 여부 검증
@@ -81,7 +81,9 @@ public class BetService {
         }
 
         // 취소 가능 여부 확인
-        validateCancelable(bet.getMatch().getStatus());
+        Match match = matchRepository.findByIdForUpdate(bet.getMatch().getId())
+                .orElseThrow(() -> new MatchException(MatchErrorCode.MATCH_NOT_FOUND));
+        validateCancelable(match.getStatus());
 
         bet.setDeleted(true);
 
@@ -90,7 +92,7 @@ public class BetService {
         user.plusPoint(bet.getBetAmount());
 
         // 총 베팅 금액 되돌리기
-        refundTotalAmount(bet.getMatch(), bet.getBetAmount(), bet.getSelectedTeam());
+        refundTotalAmount(match, bet.getBetAmount(), bet.getSelectedTeam());
 
         return BetDeleteResponse.of(bet, user);
     }
