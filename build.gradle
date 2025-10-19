@@ -48,9 +48,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-cache'
     implementation 'org.springframework.data:spring-data-redis'
     implementation 'org.apache.commons:commons-pool2'
-
-    //[jackson]
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    testImplementation  'org.testcontainers:testcontainers:1.19.0'
+    testImplementation "org.testcontainers:junit-jupiter:1.19.0"
 }
 
 dependencyManagement {
