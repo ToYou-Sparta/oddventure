@@ -1,0 +1,90 @@
+package org.example.oddventure.domain.bet.service;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.Optional;
+import org.example.oddventure.domain.bet.dto.request.BetCreateRequest;
+import org.example.oddventure.domain.bet.dto.response.BetCreateResponse;
+import org.example.oddventure.domain.bet.entity.Bet;
+import org.example.oddventure.domain.bet.enums.SelectedTeam;
+import org.example.oddventure.domain.bet.repository.BetRepository;
+import org.example.oddventure.domain.match.entity.Match;
+import org.example.oddventure.domain.match.repository.MatchRepository;
+import org.example.oddventure.domain.user.entity.User;
+import org.example.oddventure.domain.user.enums.UserRole;
+import org.example.oddventure.domain.user.repository.UserRepository;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
+
+@ExtendWith(MockitoExtension.class)
+public class BetServiceTest {
+
+    @InjectMocks
+    private BetService betService;
+
+    @Mock
+    private BetRepository betRepository;
+
+    @Mock
+    private MatchRepository matchRepository;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @Test
+    @DisplayName("베팅을 생성 성공하면 유저 포인트가 차감되고 베팅 금액이 저장된다.")
+    void createBet_success() {
+        //given
+        Long userId = 1L;
+        User user = User.builder()
+                .username("test")
+                .email("test1234@test.com")
+                .password("test1234!")
+                .userRole(UserRole.ROLE_USER)
+                .build();
+        ReflectionTestUtils.setField(user, "id", userId);
+
+        Long matchId = 1L;
+        Match match = Match.builder()
+                .teamA("T1")
+                .teamB("GEN.G")
+                .startTime(LocalDateTime.now().plusDays(1))
+                .build();
+        ReflectionTestUtils.setField(match, "id", matchId);
+
+        match.plusTeamA(new BigDecimal("6000"));
+        match.plusTeamB(new BigDecimal("4000"));
+
+        BetCreateRequest request = new BetCreateRequest(1L, SelectedTeam.Team_A, new BigDecimal("1000"));
+
+        Long betId = 1L;
+        Bet bet = Bet.create(user, match, new BigDecimal("2"), SelectedTeam.Team_A, new BigDecimal("1000"));
+        ReflectionTestUtils.setField(bet, "id", betId);
+
+        given(betRepository.save(any(Bet.class))).willReturn(bet);
+        given(userRepository.findById(anyLong())).willReturn(Optional.of(user));
+        given(matchRepository.findByIdForUpdate(anyLong())).willReturn(Optional.of(match));
+
+        //when
+        BetCreateResponse response = betService.createBet(user.getId(), request);
+
+        //then
+        assertThat(response.selectedTeam()).isEqualTo(SelectedTeam.Team_A);
+        assertThat(response.selectedTeamName()).isEqualTo("T1");
+        assertThat(response.betAmount()).isEqualTo(new BigDecimal("1000"));
+        assertThat(response.oddsAtBetting()).isEqualTo(new BigDecimal("1.50"));
+        assertThat(response.userPointAfter()).isEqualTo(new BigDecimal("0"));
+        verify(betRepository).save(any(Bet.class));
+    }
+}
