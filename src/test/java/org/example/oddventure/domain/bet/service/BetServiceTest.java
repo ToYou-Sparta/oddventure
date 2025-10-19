@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import org.example.oddventure.domain.bet.dto.request.BetCreateRequest;
 import org.example.oddventure.domain.bet.dto.response.BetCreateResponse;
+import org.example.oddventure.domain.bet.dto.response.BetDeleteResponse;
 import org.example.oddventure.domain.bet.entity.Bet;
 import org.example.oddventure.domain.bet.enums.SelectedTeam;
 import org.example.oddventure.domain.bet.repository.BetRepository;
@@ -69,7 +70,13 @@ public class BetServiceTest {
         BetCreateRequest request = new BetCreateRequest(1L, SelectedTeam.Team_A, new BigDecimal("1000"));
 
         Long betId = 1L;
-        Bet bet = Bet.create(user, match, new BigDecimal("2"), SelectedTeam.Team_A, new BigDecimal("1000"));
+        Bet bet = Bet.builder()
+                .user(user)
+                .match(match)
+                .selectedTeam(SelectedTeam.Team_A)
+                .betAmount(new BigDecimal("1000"))
+                .oddsAtBetting(new BigDecimal("2"))
+                .build();
         ReflectionTestUtils.setField(bet, "id", betId);
 
         given(betRepository.save(any(Bet.class))).willReturn(bet);
@@ -86,5 +93,54 @@ public class BetServiceTest {
         assertThat(response.oddsAtBetting()).isEqualTo(new BigDecimal("1.50"));
         assertThat(response.userPointAfter()).isEqualTo(new BigDecimal("0"));
         verify(betRepository).save(any(Bet.class));
+    }
+
+    @Test
+    @DisplayName("베팅 삭제에 성공하면 포인트가 환불되고 베팅 금액이 감소된다.")
+    void deleteBet_success() {
+        //given
+        Long userId = 1L;
+        User user = User.builder()
+                .username("test")
+                .email("test1234@test.com")
+                .password("test1234!")
+                .userRole(UserRole.ROLE_USER)
+                .build();
+        ReflectionTestUtils.setField(user, "id", userId);
+
+        Long matchId = 1L;
+        Match match = Match.builder()
+                .teamA("T1")
+                .teamB("GEN.G")
+                .startTime(LocalDateTime.now().plusDays(1))
+                .build();
+        ReflectionTestUtils.setField(match, "id", matchId);
+
+        match.plusTeamA(new BigDecimal("6000"));
+        match.plusTeamB(new BigDecimal("4000"));
+
+        Long betId = 1L;
+        Bet bet = Bet.builder()
+                .user(user)
+                .match(match)
+                .selectedTeam(SelectedTeam.Team_A)
+                .betAmount(new BigDecimal("1000"))
+                .oddsAtBetting(new BigDecimal("2"))
+                .build();
+        ReflectionTestUtils.setField(bet, "id", betId);
+
+        match.plusTeamA(bet.getBetAmount());
+
+        given(betRepository.findByIdForDelete(anyLong())).willReturn(Optional.of(bet));
+        given(matchRepository.findByIdForUpdate(anyLong())).willReturn(Optional.of(match));
+
+        //when
+        BetDeleteResponse response = betService.deleteBet(user.getId(), betId);
+
+        //then
+        assertThat(bet.isDeleted()).isTrue();
+        assertThat(response.refundAmount()).isEqualTo(new BigDecimal("1000"));
+        assertThat(response.userPointAfter()).isEqualTo(new BigDecimal("2000"));
+        assertThat(match.getTotalAmountA()).isEqualTo(new BigDecimal("6000"));
     }
 }
