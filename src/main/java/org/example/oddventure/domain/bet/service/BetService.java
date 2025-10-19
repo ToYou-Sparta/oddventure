@@ -52,16 +52,18 @@ public class BetService {
         // 유저 포인트 차감
         user.minusPoint(request.betAmount());
 
-        // 베팅 금액 저장
-        updateTotalAmount(match, request);
-
         // 배당률 계산
         BigDecimal odds = calculateOdds(match, request);
+
+        // 베팅 금액 저장
+        updateTotalAmount(match, request);
 
         Bet bet = request.toEntity(user, match, odds);
         betRepository.save(bet);
 
-        return BetCreateResponse.of(bet, user.getPoint());
+        String selectedTeamName = selectedTeamName(match, request.selectedTeam());
+
+        return BetCreateResponse.of(bet, selectedTeamName, user.getPoint());
     }
 
     @Transactional(readOnly = true)
@@ -140,6 +142,7 @@ public class BetService {
      */
     private BigDecimal calculateOdds(Match match, BetCreateRequest request) {
         BigDecimal total = match.getTotalAmountA().add(match.getTotalAmountB());
+        System.out.println("total: " + total);
         BigDecimal probability;
 
         if (request.selectedTeam().equals(SelectedTeam.Team_A)) {
@@ -148,6 +151,15 @@ public class BetService {
             probability = match.getTotalAmountB().divide(total, 2, RoundingMode.HALF_UP);
         }
 
+        System.out.println("probability: " + probability);
         return new BigDecimal("0.9").divide(probability, 2, RoundingMode.HALF_UP);
+    }
+
+    private String selectedTeamName(Match match, SelectedTeam selectedTeam) {
+        if (selectedTeam.equals(SelectedTeam.Team_A)) {
+            return match.getTeamA();
+        } else {
+            return match.getTeamB();
+        }
     }
 }

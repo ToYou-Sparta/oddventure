@@ -15,12 +15,12 @@ public record BetCreateResponse(
         BigDecimal oddsAtBetting,
         BigDecimal userPointAfter
 ) {
-    public static BetCreateResponse of(Bet bet, BigDecimal userPointAfter) {
+    public static BetCreateResponse of(Bet bet, String selectedTeamName, BigDecimal userPointAfter) {
         return BetCreateResponse.builder()
                 .betId(bet.getId())
                 .userId(bet.getUser().getId())
                 .selectedTeam(bet.getSelectedTeam())
-                .selectedTeamName(bet.getSelectedTeam().name())
+                .selectedTeamName(selectedTeamName)
                 .betAmount(bet.getBetAmount())
                 .oddsAtBetting(bet.getOddsAtBetting())
                 .userPointAfter(userPointAfter)
