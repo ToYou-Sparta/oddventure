@@ -40,7 +40,7 @@ public class BetController {
                                                                @RequestParam(defaultValue = "0") int number,
                                                                @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(number, size);
-        Page<BetResponse> betResponsePage = betService.getBet(userId, pageable);
+        Page<BetResponse> betResponsePage = betService.getBets(userId, pageable);
         return ApiPageResponse.success(betResponsePage, "베팅 내역이 조회되었습니다.");
     }
 

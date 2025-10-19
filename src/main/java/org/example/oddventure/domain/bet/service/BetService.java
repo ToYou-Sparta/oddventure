@@ -67,7 +67,7 @@ public class BetService {
     }
 
     @Transactional(readOnly = true)
-    public Page<BetResponse> getBet(Long userId, Pageable pageable) {
+    public Page<BetResponse> getBets(Long userId, Pageable pageable) {
         Page<Bet> bets = betRepository.findByUserId(userId, pageable);
         return bets.map(BetResponse::from);
     }
