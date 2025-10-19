@@ -14,6 +14,8 @@ import org.example.oddventure.domain.auth.exception.AuthException;
 import org.example.oddventure.domain.auth.jwt.JwtUtil;
 import org.example.oddventure.domain.user.entity.User;
 import org.example.oddventure.domain.user.enums.UserRole;
+import org.example.oddventure.domain.user.exception.InvalidUserException;
+import org.example.oddventure.domain.user.exception.UserErrorCode;
 import org.example.oddventure.domain.user.repository.UserRepository;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,7 +41,7 @@ public class AuthService {
     public SignupResponse signup(SignupRequest request) {
 
         if (userRepository.existsByEmail((request.email()))) {
-            throw new AuthException(AuthErrorCode.ALREADY_EXIST_EMAIL);
+            throw new InvalidUserException(UserErrorCode.ALREADY_EXIST_EMAIL);
         }
 
         String encodedPassword = passwordEncoder.encode(request.password());
