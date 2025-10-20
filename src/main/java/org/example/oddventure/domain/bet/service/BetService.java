@@ -89,7 +89,7 @@ public class BetService {
                 .orElseThrow(() -> new MatchException(MatchErrorCode.MATCH_NOT_FOUND));
         validateCancelable(match.getStatus());
 
-        bet.setDeleted(true);
+        bet.delete(true);
 
         // 환불
         User user = bet.getUser();

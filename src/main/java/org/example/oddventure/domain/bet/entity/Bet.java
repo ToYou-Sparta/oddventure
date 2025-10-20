@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -53,6 +54,9 @@ public class Bet extends BaseEntity {
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = false;
 
+    @Column(name = "deleted_at", nullable = false)
+    private LocalDateTime deletedAt;
+
     @Builder
     public Bet(User user, Match match, SelectedTeam selectedTeam, BigDecimal betAmount, BigDecimal oddsAtBetting,
                boolean isWin) {
@@ -64,7 +68,8 @@ public class Bet extends BaseEntity {
         this.isWin = isWin;
     }
 
-    public void setDeleted(boolean isDeleted) {
+    public void delete(boolean isDeleted) {
         this.isDeleted = isDeleted;
+        this.deletedAt = LocalDateTime.now();
     }
 }
