@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.when;
@@ -65,6 +66,7 @@ public class TeamServiceTest {
     void Team을_id로_조회할_수_있다() {
         // given
         Long id = 1L;
+        when(teamRepository.findById(id)).thenReturn(Optional.ofNullable(team1));
 
         // when
         TeamResponse result = teamService.findTeamById(id);
