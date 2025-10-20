@@ -1,6 +1,6 @@
 package org.example.oddventure.domain.bet.dto.request;
 
-import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import org.example.oddventure.domain.bet.entity.Bet;
@@ -16,10 +16,17 @@ public record BetCreateRequest(
         SelectedTeam selectedTeam,
 
         @NotNull
-        @DecimalMin(value = "0.0", inclusive = false, message = "베팅 금액은 0보다 커야 합니다.")
-        BigDecimal betAmount
+        @Min(value = 1, message = "베팅 금액은 0보다 커야 합니다.")
+        int betAmount
 ) {
     public Bet toEntity(User user, Match match, BigDecimal odds) {
-        return Bet.create(user, match, odds, selectedTeam, betAmount);
+        return Bet.builder()
+                .user(user)
+                .match(match)
+                .selectedTeam(selectedTeam)
+                .betAmount(BigDecimal.valueOf(betAmount))
+                .oddsAtBetting(odds)
+                .isWin(false)
+                .build();
     }
 }

@@ -64,17 +64,6 @@ public class Bet extends BaseEntity {
         this.isWin = isWin;
     }
 
-    public static Bet create(User user, Match match, BigDecimal odds, SelectedTeam selectedTeam, BigDecimal betAmount) {
-        return Bet.builder()
-                .user(user)
-                .match(match)
-                .oddsAtBetting(odds)
-                .selectedTeam(selectedTeam)
-                .betAmount(betAmount)
-                .isWin(false)
-                .build();
-    }
-
     public void setDeleted(boolean isDeleted) {
         this.isDeleted = isDeleted;
     }
