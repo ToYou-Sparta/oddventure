@@ -7,6 +7,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
@@ -20,6 +21,7 @@ import org.example.oddventure.domain.match.enums.MatchWinner;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "`match`")
 public class Match extends BaseEntity {
 
     @Id

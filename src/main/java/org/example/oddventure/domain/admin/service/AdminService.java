@@ -1,10 +1,13 @@
 package org.example.oddventure.domain.admin.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.oddventure.common.exception.GlobalException;
 import org.example.oddventure.domain.admin.dto.request.MatchCreateRequest;
 import org.example.oddventure.domain.admin.dto.request.MatchUpdateRequest;
+import org.example.oddventure.domain.admin.dto.request.PointAdjustRequest;
 import org.example.oddventure.domain.admin.dto.response.MatchAdminResponse;
+import org.example.oddventure.domain.admin.dto.response.PointAdjustResponse;
 import org.example.oddventure.domain.admin.dto.response.UserAdminResponse;
 import org.example.oddventure.domain.match.entity.Match;
 import org.example.oddventure.domain.match.repository.MatchRepository;
@@ -18,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.example.oddventure.domain.admin.exception.AdminErrorCode.MATCH_NOT_FOUND;
 import static org.example.oddventure.domain.admin.exception.AdminErrorCode.USER_NOT_FOUND;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AdminService {
@@ -68,5 +72,24 @@ public class AdminService {
                 .orElseThrow(() -> new GlobalException(USER_NOT_FOUND));
 
         return UserAdminResponse.fromEntity(user);
+    }
+
+    // 포인트 지급
+    public PointAdjustResponse adjustUserPoints(Long userId, PointAdjustRequest request)
+    {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GlobalException(USER_NOT_FOUND));
+
+        user.adjustPoint(request.amount());
+
+        log.info("[ADMIN_POINT_ADJUSTMENT] userId={}, amount={}, reason='{}', finalBalance={}",
+                userId, request.amount(), request.reason(), user.getPoint());
+
+        return new PointAdjustResponse(
+                user.getId(),
+                user.getUsername(),
+                request.amount(),
+                user.getPoint()
+        );
     }
 }
