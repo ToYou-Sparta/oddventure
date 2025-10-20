@@ -13,7 +13,9 @@ import java.util.Optional;
 import org.example.oddventure.common.exception.GlobalException;
 import org.example.oddventure.domain.admin.dto.request.MatchCreateRequest;
 import org.example.oddventure.domain.admin.dto.request.MatchUpdateRequest;
+import org.example.oddventure.domain.admin.dto.request.PointAdjustRequest;
 import org.example.oddventure.domain.admin.dto.response.MatchAdminResponse;
+import org.example.oddventure.domain.admin.dto.response.PointAdjustResponse;
 import org.example.oddventure.domain.admin.dto.response.UserAdminResponse;
 import org.example.oddventure.domain.admin.service.AdminService;
 import org.example.oddventure.domain.match.entity.Match;
@@ -143,10 +145,8 @@ class AdminServiceTest {
     void getAllUsers_NoFilters_Success() {
         // given
         Pageable pageable = PageRequest.of(0, 10);
-        User user1 = User.builder().email("test1@test.com").username("user1").password("p").userRole(UserRole.ROLE_USER)
-                .build();
-        User user2 = User.builder().email("test2@test.com").username("user2").password("p").userRole(UserRole.ROLE_USER)
-                .build();
+        User user1 = User.builder().email("test1@test.com").username("user1").password("p").userRole(UserRole.ROLE_USER).build();
+        User user2 = User.builder().email("test2@test.com").username("user2").password("p").userRole(UserRole.ROLE_USER).build();
 
         Page<User> mockUserPage = new PageImpl<>(List.of(user1, user2), pageable, 2);
 
@@ -195,6 +195,48 @@ class AdminServiceTest {
         // when & then
         assertThrows(GlobalException.class, () -> {
             adminService.getUserDetails(userId);
+        });
+    }
+
+    @Test
+    @DisplayName("사용자 포인트 지급 성공")
+    void adjustUserPoints_Success() {
+        // given
+        Long userId = 1L;
+        BigDecimal amountToAdd = new BigDecimal("5000");
+        PointAdjustRequest request = new PointAdjustRequest(amountToAdd, "베팅 승리 보상");
+
+        // User 엔티티 생성 시 Builder는 point를 1000으로 초기화(초기 지급 포인트)
+        User mockUser = User.builder()
+                .email("test@test.com")
+                .username("testuser")
+                .password("password")
+                .userRole(UserRole.ROLE_USER)
+                .build();
+
+        given(userRepository.findById(userId)).willReturn(Optional.of(mockUser));
+
+        // when
+        PointAdjustResponse response = adminService.adjustUserPoints(userId, request);
+
+        // then
+        assertThat(response.userId()).isEqualTo(mockUser.getId());
+        assertThat(response.adjustedAmount()).isEqualTo(amountToAdd);
+        assertThat(response.finalBalance()).isEqualTo(new BigDecimal("6000"));
+        assertThat(mockUser.getPoint()).isEqualTo(new BigDecimal("6000"));
+    }
+
+    @Test
+    @DisplayName("사용자 포인트 지급 실패 - 존재하지 않는 사용자")
+    void adjustUserPoints_Fail_UserNotFound() {
+        // given
+        Long userId = 999L;
+        PointAdjustRequest request = new PointAdjustRequest(new BigDecimal("5000"), "이벤트 보상");
+        given(userRepository.findById(userId)).willReturn(Optional.empty());
+
+        // when & then
+        assertThrows(GlobalException.class, () -> {
+            adminService.adjustUserPoints(userId, request);
         });
     }
 }

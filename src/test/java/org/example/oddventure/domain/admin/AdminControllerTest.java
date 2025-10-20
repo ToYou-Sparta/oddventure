@@ -18,7 +18,9 @@ import org.example.oddventure.common.exception.GlobalException;
 import org.example.oddventure.domain.admin.controller.AdminController;
 import org.example.oddventure.domain.admin.dto.request.MatchCreateRequest;
 import org.example.oddventure.domain.admin.dto.request.MatchUpdateRequest;
+import org.example.oddventure.domain.admin.dto.request.PointAdjustRequest;
 import org.example.oddventure.domain.admin.dto.response.MatchAdminResponse;
+import org.example.oddventure.domain.admin.dto.response.PointAdjustResponse;
 import org.example.oddventure.domain.admin.dto.response.UserAdminResponse;
 import org.example.oddventure.domain.admin.exception.AdminErrorCode;
 import org.example.oddventure.domain.admin.service.AdminService;
@@ -181,5 +183,42 @@ class AdminControllerTest {
                 .andExpect(status().isNotFound()) // 404 Not Found
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.message").value("해당 사용자를 찾을 수 없습니다."));
+    }
+
+    @Test
+    @DisplayName("사용자 포인트 지급 API 성공")
+    void adjustUserPoints_Success() throws Exception {
+        // given
+        Long userId = 1L;
+        BigDecimal amount = new BigDecimal("5000");
+        PointAdjustRequest request = new PointAdjustRequest(amount, "베팅 승리 보상");
+        PointAdjustResponse response = new PointAdjustResponse(userId, "testuser", amount, new BigDecimal("6000"));
+
+        given(adminService.adjustUserPoints(eq(userId), any(PointAdjustRequest.class))).willReturn(response);
+
+        // when & then
+        mockMvc.perform(post("/api/v1/admin/users/{userId}/points", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("포인트 지급에 성공했습니다."))
+                .andExpect(jsonPath("$.data.userId").value(userId))
+                .andExpect(jsonPath("$.data.finalBalance").value(6000));
+    }
+
+    @Test
+    @DisplayName("사용자 포인트 지급 API 실패")
+    void adjustUserPoints_Fail_NoReason() throws Exception {
+        // given
+        Long userId = 1L;
+        // reason이 비어있는 잘못된 요청
+        PointAdjustRequest request = new PointAdjustRequest(new BigDecimal("5000"), "");
+
+        // when & then
+        mockMvc.perform(post("/api/v1/admin/users/{userId}/points", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
     }
 }
