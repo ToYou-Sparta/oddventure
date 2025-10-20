@@ -1,4 +1,4 @@
-package org.example.oddventure.winningRateAi.controller;
+package org.example.oddventure.domain.winningRateAi.controller;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.web.bind.annotation.GetMapping;

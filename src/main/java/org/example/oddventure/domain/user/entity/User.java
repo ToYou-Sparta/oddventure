@@ -1,12 +1,7 @@
 package org.example.oddventure.domain.user.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
 import java.math.BigDecimal;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -17,6 +12,7 @@ import org.example.oddventure.domain.user.enums.UserRole;
 
 @Entity
 @Getter
+@Table(name="users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseEntity {
     @Id
