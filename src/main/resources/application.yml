@@ -15,6 +15,12 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  cache:
+    type: redis
   ai:
     openai:
       api-key: ${API_KEY}
@@ -22,11 +28,6 @@ spring:
       chat:
         options:
           model: llama-3.3-70b-versatile
-  data:
-    redis:
-      host: localhost
-      port: 6379
-      timeout: 6000
 
 jwt:
   secret:
