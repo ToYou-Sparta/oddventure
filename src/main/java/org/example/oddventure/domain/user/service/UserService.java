@@ -26,6 +26,7 @@ public class UserService {
         return UserProfileResponse.from(user);
     }
 
+    @Transactional
     public UserProfileResponse updateUserProfile(Long userId, ProfileUpdateRequest request)
     {
         User user = findUserById(userId);
@@ -40,6 +41,7 @@ public class UserService {
         return UserProfileResponse.from(user);
     }
 
+    @Transactional
     public void updatePassword(Long userId, PasswordUpdateRequest request)
     {
         User user = findUserById(userId);
