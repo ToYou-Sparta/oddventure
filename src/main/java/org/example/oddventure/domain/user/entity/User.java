@@ -41,9 +41,6 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private BigDecimal point;
 
-    @Column(name = "is_deleted", nullable = false)
-    private boolean isDeleted = false;
-
     @Builder
     public User(String username, String email, String password, UserRole userRole) {
         this.username = username;
