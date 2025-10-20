@@ -47,4 +47,8 @@ public class User extends BaseEntity {
         this.userRole = userRole;
         this.point = new BigDecimal("1000"); // 회원가입 시 기본 포인트 1000
     }
+
+    public void adjustPoint(BigDecimal amount) {
+        this.point = this.point.add(amount);
+    }
 }
