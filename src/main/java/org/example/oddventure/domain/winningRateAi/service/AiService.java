@@ -1,4 +1,4 @@
-package org.example.oddventure.winningRateAi.service;
+package org.example.oddventure.domain.winningRateAi.service;
 
 import org.springframework.stereotype.Service;
 
