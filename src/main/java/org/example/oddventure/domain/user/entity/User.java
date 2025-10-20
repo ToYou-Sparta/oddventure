@@ -18,7 +18,7 @@ import org.example.oddventure.domain.user.enums.UserRole;
 
 @Entity
 @Getter
-@Table(name="users")
+@Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseEntity {
     @Id
