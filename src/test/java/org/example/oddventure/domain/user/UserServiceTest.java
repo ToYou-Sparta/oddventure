@@ -1,4 +1,4 @@
-package org.example.oddventure.user;
+package org.example.oddventure.domain.user;
 
 import org.example.oddventure.common.exception.GlobalException;
 import org.example.oddventure.domain.user.dto.request.PasswordUpdateRequest;
