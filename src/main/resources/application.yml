@@ -28,6 +28,7 @@ spring:
       chat:
         options:
           model: llama-3.3-70b-versatile
+
 jwt:
   secret:
     key: "${SECRET_KEY}"

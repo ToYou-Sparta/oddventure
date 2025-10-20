@@ -41,6 +41,9 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private BigDecimal point;
 
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted = false;
+
     @Builder
     public User(String username, String email, String password, UserRole userRole) {
         this.username = username;
@@ -59,7 +62,12 @@ public class User extends BaseEntity {
         this.password = newPassword;
     }
 
-    public void adjustPoint(BigDecimal amount) {
+
+    public void minusPoint(BigDecimal amount) {
+        this.point = this.point.subtract(amount);
+    }
+
+    public void plusPoint(BigDecimal amount) {
         this.point = this.point.add(amount);
     }
 }
