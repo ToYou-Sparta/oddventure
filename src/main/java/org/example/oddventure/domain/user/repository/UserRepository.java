@@ -1,5 +1,6 @@
 package org.example.oddventure.domain.user.repository;
 
+import java.util.Optional;
 import org.example.oddventure.domain.user.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,4 +20,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByEmail(String email);
 
+    Optional<User> findByEmail(String email);
 }

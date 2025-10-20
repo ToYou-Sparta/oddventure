@@ -58,4 +58,8 @@ public class User extends BaseEntity {
     public void updatePassword(String newPassword) {
         this.password = newPassword;
     }
+
+    public void adjustPoint(BigDecimal amount) {
+        this.point = this.point.add(amount);
+    }
 }
