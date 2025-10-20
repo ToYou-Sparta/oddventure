@@ -38,8 +38,10 @@ public class BetService {
     public BetCreateResponse createBet(Long userId, BetCreateRequest request) {
         User user = findUserById(userId);
 
+        BigDecimal betAmount = BigDecimal.valueOf(request.betAmount());
+
         // 잔액 부족
-        if (user.getPoint().compareTo(request.betAmount()) < 0) {
+        if (user.getPoint().compareTo(betAmount) < 0) {
             throw new InvalidBetException(BetErrorCode.NOT_ENOUGH_POINTS);
         }
 
@@ -50,13 +52,13 @@ public class BetService {
         validateBettable(match.getStatus());
 
         // 유저 포인트 차감
-        user.minusPoint(request.betAmount());
+        user.minusPoint(betAmount);
 
         // 배당률 계산
-        BigDecimal odds = calculateOdds(match, request);
+        BigDecimal odds = calculateOdds(match, request.selectedTeam());
 
         // 베팅 금액 저장
-        updateTotalAmount(match, request);
+        updateTotalAmount(match, betAmount, request.selectedTeam());
 
         Bet bet = request.toEntity(user, match, odds);
         betRepository.save(bet);
@@ -116,11 +118,11 @@ public class BetService {
         }
     }
 
-    private void updateTotalAmount(Match match, BetCreateRequest request) {
-        if (request.selectedTeam() == SelectedTeam.Team_A) {
-            match.plusTeamA(request.betAmount());
-        } else if (request.selectedTeam() == SelectedTeam.Team_B) {
-            match.plusTeamB(request.betAmount());
+    private void updateTotalAmount(Match match, BigDecimal amount, SelectedTeam selectedTeam) {
+        if (selectedTeam.equals(SelectedTeam.Team_A)) {
+            match.plusTeamA(amount);
+        } else if (selectedTeam.equals(SelectedTeam.Team_B)) {
+            match.plusTeamB(amount);
         }
     }
 
@@ -140,12 +142,12 @@ public class BetService {
      * 이후 배당률 조정 로직이 필요하다. (이는 베팅 생성시 호출된다.)
      * 배당률 조정 로직 구현 시, 유저 비율도 고려하는 가중 조합형 배당률로 구현하는 것이 필요해 보인다.
      */
-    private BigDecimal calculateOdds(Match match, BetCreateRequest request) {
+    private BigDecimal calculateOdds(Match match, SelectedTeam selectedTeam) {
         BigDecimal total = match.getTotalAmountA().add(match.getTotalAmountB());
         System.out.println("total: " + total);
         BigDecimal probability;
 
-        if (request.selectedTeam().equals(SelectedTeam.Team_A)) {
+        if (selectedTeam.equals(SelectedTeam.Team_A)) {
             probability = match.getTotalAmountA().divide(total, 2, RoundingMode.HALF_UP);
         } else {
             probability = match.getTotalAmountB().divide(total, 2, RoundingMode.HALF_UP);
