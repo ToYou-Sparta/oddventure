@@ -1,8 +1,8 @@
 package org.example.oddventure.domain.team.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.example.oddventure.common.dto.reponse.ApiPageResponse;
-import org.example.oddventure.common.dto.reponse.ApiResponse;
+import org.example.oddventure.common.dto.response.ApiPageResponse;
+import org.example.oddventure.common.dto.response.ApiResponse;
 import org.example.oddventure.domain.team.dto.TeamResponse;
 import org.example.oddventure.domain.team.service.TeamService;
 import org.springframework.data.domain.PageRequest;
@@ -21,11 +21,11 @@ public class TeamController {
     public ResponseEntity<ApiPageResponse<TeamResponse>> findAllTeam(@RequestParam(defaultValue = "0") int page,
                                                                      @RequestParam(defaultValue = "10")int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return ApiPageResponse.success(teamService.findAllTeam(pageable));
+        return ApiPageResponse.success(teamService.findAllTeam(pageable), "팀 목록을 조회했습니다.");
     }
 
     @GetMapping("/{teamId}")
     public ResponseEntity<ApiResponse<TeamResponse>> findTeamById(@PathVariable Long teamId) {
-        return ApiResponse.success(teamService.findTeamById(teamId));
+        return ApiResponse.success(teamService.findTeamById(teamId), "해당 id의 팀을 조회했습니다.");
     }
 }
