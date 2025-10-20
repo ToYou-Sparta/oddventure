@@ -53,6 +53,7 @@ public class MatchRepositoryImpl implements MatchRepositoryCustom {
                                 match.endTime,
                                 match.status,
                                 match.winner,
+                                match.loser,
                                 match.viewCount,
                                 match.createdAt))
                 .from(match)

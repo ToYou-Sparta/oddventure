@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import org.example.oddventure.domain.match.entity.Match;
 import org.example.oddventure.domain.match.enums.MatchStatus;
-import org.example.oddventure.domain.match.enums.MatchWinner;
 
 public record MatchProjection(
         Long matchId,
@@ -17,7 +16,8 @@ public record MatchProjection(
         LocalDateTime startTime,
         LocalDateTime endTime,
         MatchStatus status,
-        MatchWinner winner,
+        String winner,
+        String loser,
         Long viewCount,
         LocalDateTime createdAt
 ) {
@@ -34,6 +34,7 @@ public record MatchProjection(
                 match.getEndTime(),
                 match.getStatus(),
                 match.getWinner(),
+                match.getLoser(),
                 match.getViewCount(),
                 match.getCreatedAt()
         );

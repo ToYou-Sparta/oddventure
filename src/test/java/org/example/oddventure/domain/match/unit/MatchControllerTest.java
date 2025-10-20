@@ -16,7 +16,6 @@ import org.example.oddventure.domain.match.controller.MatchController;
 import org.example.oddventure.domain.match.dto.request.MatchSearchCondition;
 import org.example.oddventure.domain.match.dto.response.MatchResponse;
 import org.example.oddventure.domain.match.enums.MatchStatus;
-import org.example.oddventure.domain.match.enums.MatchWinner;
 import org.example.oddventure.domain.match.service.MatchService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -58,7 +57,8 @@ public class MatchControllerTest {
                 LocalDateTime.of(2025, 10, 16, 18, 0),
                 LocalDateTime.of(2025, 10, 16, 20, 0),
                 MatchStatus.SCHEDULED,
-                MatchWinner.NO_MATCH,
+                null,
+                null,
                 153L,
                 LocalDateTime.of(2025, 10, 10, 20, 0)
         );

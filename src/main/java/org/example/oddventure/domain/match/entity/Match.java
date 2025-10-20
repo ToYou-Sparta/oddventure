@@ -16,7 +16,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.oddventure.common.entity.BaseEntity;
 import org.example.oddventure.domain.match.enums.MatchStatus;
-import org.example.oddventure.domain.match.enums.MatchWinner;
 
 @Entity
 @Getter
@@ -52,8 +51,9 @@ public class Match extends BaseEntity {
     @Column(nullable = false)
     private MatchStatus status;
 
-    @Enumerated(EnumType.STRING)
-    private MatchWinner winner;
+    private String winner;
+
+    private String loser;
 
     @Column(nullable = false)
     private Long viewCount = 0L;
@@ -65,7 +65,8 @@ public class Match extends BaseEntity {
         this.teamB = teamB;
         this.startTime = startTime;
         this.status = MatchStatus.SCHEDULED;
-        this.winner = MatchWinner.NO_MATCH;
+        this.winner = null;
+        this.loser = null;
         this.totalAmountA = BigDecimal.ZERO;
         this.totalAmountB = BigDecimal.ZERO;
         this.viewCount = 0L;
