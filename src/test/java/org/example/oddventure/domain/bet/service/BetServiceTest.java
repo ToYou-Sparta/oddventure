@@ -74,7 +74,7 @@ public class BetServiceTest {
         match.plusTeamA(new BigDecimal("6000"));
         match.plusTeamB(new BigDecimal("4000"));
 
-        BetCreateRequest request = new BetCreateRequest(1L, SelectedTeam.Team_A, new BigDecimal("1000"));
+        BetCreateRequest request = new BetCreateRequest(1L, SelectedTeam.Team_A, 1000L);
 
         Long betId = 1L;
         Bet bet = Bet.builder()
