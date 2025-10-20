@@ -1,25 +1,26 @@
-package org.example.oddventure.domain.auth.dto.response;
+package org.example.oddventure.domain.admin.dto.response;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import org.example.oddventure.domain.user.entity.User;
 import org.example.oddventure.domain.user.enums.UserRole;
 
-public record SignupResponse(
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+public record UserAdminResponse(
         Long userId,
         String username,
         String email,
-        UserRole role,
         BigDecimal point,
+        UserRole role,
         LocalDateTime createdAt
 ) {
-    public static SignupResponse from(User user) {
-        return new SignupResponse(
+    public static UserAdminResponse fromEntity(User user) {
+        return new UserAdminResponse(
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
-                user.getUserRole(),
                 user.getPoint(),
+                user.getUserRole(),
                 user.getCreatedAt()
         );
     }
