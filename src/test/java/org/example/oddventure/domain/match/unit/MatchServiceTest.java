@@ -37,7 +37,7 @@ class MatchServiceTest {
 
     @Test
     @DisplayName("경기 목록 조회 성공")
-    void getMatches() {
+    void getMatches_success() {
 
         // given
         Match match1 = Match.builder()
@@ -70,7 +70,7 @@ class MatchServiceTest {
 
     @Test
     @DisplayName("경기 상세 조회 성공")
-    void getMatch() {
+    void getMatch_success() {
 
         // given
         Long matchId = 1L;

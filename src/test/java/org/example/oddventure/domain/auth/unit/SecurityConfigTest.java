@@ -1,4 +1,4 @@
-package org.example.oddventure.domain.auth.config;
+package org.example.oddventure.domain.auth.unit;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
