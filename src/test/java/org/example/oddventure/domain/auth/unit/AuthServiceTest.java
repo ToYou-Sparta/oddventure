@@ -110,6 +110,7 @@ public class AuthServiceTest {
         when(jwtUtil.createRefreshToken(user.getId())).thenReturn("refreshToken");
 
         // redis Mocking
+        @SuppressWarnings("unchecked")
         ValueOperations<String, String> operations = mock(ValueOperations.class);
         when(redisTemplate.opsForValue()).thenReturn(operations);
 
