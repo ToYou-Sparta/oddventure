@@ -6,6 +6,7 @@ import org.example.oddventure.domain.user.dto.request.PasswordUpdateRequest;
 import org.example.oddventure.domain.user.dto.request.ProfileUpdateRequest;
 import org.example.oddventure.domain.user.dto.response.UserProfileResponse;
 import org.example.oddventure.domain.user.entity.User;
+import org.example.oddventure.domain.user.exception.InvalidUserException;
 import org.example.oddventure.domain.user.exception.UserErrorCode;
 import org.example.oddventure.domain.user.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,7 +34,7 @@ public class UserService {
 
         if (!user.getEmail().equals(request.email())) {
             if (userRepository.existsByEmail(request.email())) {
-                throw new GlobalException(UserErrorCode.ALREADY_EXIST_EMAIL);
+                throw new InvalidUserException(UserErrorCode.ALREADY_EXIST_EMAIL);
             }
         }
 
@@ -47,7 +48,7 @@ public class UserService {
         User user = findUserById(userId);
 
         if (!passwordEncoder.matches(request.currentPassword(), user.getPassword())) {
-            throw new GlobalException(UserErrorCode.USR_PASSWORD_INCORRECT);
+            throw new InvalidUserException(UserErrorCode.USR_PASSWORD_INCORRECT);
         }
 
         String newEncodedPassword = passwordEncoder.encode(request.newPassword());
@@ -57,6 +58,6 @@ public class UserService {
     private User findUserById(Long userId)
     {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new GlobalException(UserErrorCode.USR_INVALID_USER_ID));
+                .orElseThrow(() -> new InvalidUserException(UserErrorCode.USR_INVALID_USER_ID));
     }
 }
