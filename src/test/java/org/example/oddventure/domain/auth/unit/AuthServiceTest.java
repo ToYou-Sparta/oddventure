@@ -1,0 +1,168 @@
+package org.example.oddventure.domain.auth.unit;
+
+import static org.example.oddventure.domain.auth.jwt.JwtConstants.REFRESH_TOKEN_PREFIX;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Optional;
+import org.example.oddventure.domain.auth.dto.request.LoginRequest;
+import org.example.oddventure.domain.auth.dto.request.SignupRequest;
+import org.example.oddventure.domain.auth.dto.response.LoginResponse;
+import org.example.oddventure.domain.auth.dto.response.SignupResponse;
+import org.example.oddventure.domain.auth.exception.AuthException;
+import org.example.oddventure.domain.auth.jwt.JwtUtil;
+import org.example.oddventure.domain.auth.service.AuthService;
+import org.example.oddventure.domain.user.entity.User;
+import org.example.oddventure.domain.user.enums.UserRole;
+import org.example.oddventure.domain.user.exception.InvalidUserException;
+import org.example.oddventure.domain.user.repository.UserRepository;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+@ExtendWith(MockitoExtension.class)
+public class AuthServiceTest {
+
+    @InjectMocks
+    private AuthService authService;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private JwtUtil jwtUtil;
+
+    @Mock
+    private RedisTemplate<String, String> redisTemplate;
+
+    @Mock
+    private ValueOperations<String, String> valueOperations;
+
+    @Test
+    @DisplayName("회원가입 성공")
+    void signup_success() {
+
+        // given
+        SignupRequest request = new SignupRequest("hello", "hello@naver.com", "hello123!@#");
+        String encodedPassword = "$2a$10$eB9vYJzqZK8Zb3Q9gFZJ9uK0xE9gUuZzT1eYwKJvZzFzYxOqL9rP3O";
+        User savedUser = User.builder()
+                .username("hello")
+                .email("hello@naver.com")
+                .password("encodedPassword")
+                .userRole(UserRole.ROLE_USER)
+                .build();
+
+        when(userRepository.existsByEmail(request.email())).thenReturn(false);
+        when(passwordEncoder.encode(request.password())).thenReturn(encodedPassword);
+        when(userRepository.save(any(User.class))).thenReturn(savedUser);
+
+        // when
+        SignupResponse response = authService.signup(request);
+
+        // then
+        assertNotNull(response);
+        assertEquals("hello", response.username());
+        assertEquals("hello@naver.com", response.email());
+    }
+
+    @Test
+    @DisplayName("회원가입 실패 - 이미 존재하는 이메일")
+    void signup_fail_already_exists() {
+
+        // given
+        SignupRequest request = new SignupRequest("hello", "hello@naver.com", "hello123!@#");
+        when(userRepository.existsByEmail(request.email())).thenReturn(true);
+
+        // when & then
+        assertThrows(InvalidUserException.class, () -> authService.signup(request));
+    }
+
+    @Test
+    @DisplayName("로그인 성공")
+    void login_success() {
+
+        // given
+        LoginRequest request = new LoginRequest("hello@naver.com", "hello123!@#");
+        User user = User.builder()
+                .username("hello")
+                .email("hello@naver.com")
+                .password("$2a$10$eB9vYJzqZK8Zb3Q9gFZJ9uK0xE9gUuZzT1eYwKJvZzFzYxOqL9rP3O")
+                .userRole(UserRole.ROLE_USER)
+                .build();
+
+        when(userRepository.findByEmail(request.email())).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches(request.password(), user.getPassword())).thenReturn(true);
+        when(jwtUtil.createAccessToken(user.getId(), user.getUserRole())).thenReturn("accessToken");
+        when(jwtUtil.createRefreshToken(user.getId())).thenReturn("refreshToken");
+
+        // redis Mocking
+        ValueOperations<String, String> operations = mock(ValueOperations.class);
+        when(redisTemplate.opsForValue()).thenReturn(operations);
+
+        // when
+        LoginResponse response = authService.login(request);
+
+        // then
+        assertNotNull(response);
+        assertEquals("accessToken", response.accessToken());
+        assertEquals("refreshToken", response.refreshToken());
+    }
+
+    @Test
+    @DisplayName("로그인 실패 - 존재하지 않는 이메일")
+    void login_fail_unknown_email() {
+
+        // given
+        LoginRequest request = new LoginRequest("unknown@naver.com", "unknown123!@#");
+        when(userRepository.findByEmail(request.email())).thenReturn(Optional.empty());
+
+        // when & then
+        assertThrows(AuthException.class, () -> authService.login(request));
+    }
+
+    @Test
+    @DisplayName("로그인 실패 - 비밀번호 불일치")
+    void login_fail_invalid_password() {
+
+        // given
+        LoginRequest request = new LoginRequest("hello@naver.com", "wrongPassword");
+        User user = User.builder()
+                .email("hello@naver.com")
+                .password("$2a$10$eB9vYJzqZK8Zb3Q9gFZJ9uK0xE9gUuZzT1eYwKJvZzFzYxOqL9rP3O")
+                .userRole(UserRole.ROLE_USER)
+                .build();
+        when(userRepository.findByEmail(request.email())).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches(request.password(), user.getPassword())).thenReturn(false);
+
+        // when & then
+        assertThrows(AuthException.class, () -> authService.login(request));
+    }
+
+    @Test
+    @DisplayName("로그아웃 성공")
+    void logout_success() {
+
+        // given
+        Long userId = 1L;
+
+        // when
+        authService.logout(userId);
+
+        // then
+        verify(redisTemplate).delete(REFRESH_TOKEN_PREFIX + userId);
+    }
+}

@@ -1,7 +1,10 @@
 package org.example.oddventure.domain.auth.dto.response;
 
 public record LoginResponse(
-        String access_token,
-        String refresh_token
+        String accessToken,
+        String refreshToken
 ) {
+    public static LoginResponse of(String accessToken, String refreshToken) {
+        return new LoginResponse(accessToken, refreshToken);
+    }
 }
