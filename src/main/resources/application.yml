@@ -28,11 +28,6 @@ spring:
       chat:
         options:
           model: llama-3.3-70b-versatile
-  data:
-    redis:
-      host: localhost
-      port: 6379
-      timeout: 6000
 
 jwt:
   secret:

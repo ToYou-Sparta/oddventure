@@ -1,5 +1,8 @@
 package org.example.oddventure.domain.admin.service;
 
+import static org.example.oddventure.domain.admin.exception.AdminErrorCode.MATCH_NOT_FOUND;
+import static org.example.oddventure.domain.admin.exception.AdminErrorCode.USER_NOT_FOUND;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.oddventure.common.exception.GlobalException;
@@ -17,9 +20,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static org.example.oddventure.domain.admin.exception.AdminErrorCode.MATCH_NOT_FOUND;
-import static org.example.oddventure.domain.admin.exception.AdminErrorCode.USER_NOT_FOUND;
 
 @Slf4j
 @Service
@@ -75,12 +75,11 @@ public class AdminService {
     }
 
     // 포인트 지급
-    public PointAdjustResponse adjustUserPoints(Long userId, PointAdjustRequest request)
-    {
+    public PointAdjustResponse adjustUserPoints(Long userId, PointAdjustRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GlobalException(USER_NOT_FOUND));
 
-        user.adjustPoint(request.amount());
+        user.plusPoint(request.amount());
 
         log.info("[ADMIN_POINT_ADJUSTMENT] userId={}, amount={}, reason='{}', finalBalance={}",
                 userId, request.amount(), request.reason(), user.getPoint());
