@@ -5,9 +5,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.oddventure.domain.match.entity.Match;
-
-import java.security.Identity;
 
 @Entity
 @Getter
