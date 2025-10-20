@@ -17,7 +17,7 @@ public record BetCreateRequest(
 
         @NotNull
         @Min(value = 1, message = "베팅 금액은 0보다 커야 합니다.")
-        int betAmount
+        Long betAmount
 ) {
     public Bet toEntity(User user, Match match, BigDecimal odds) {
         return Bet.builder()
