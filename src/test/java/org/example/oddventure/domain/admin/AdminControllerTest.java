@@ -16,6 +16,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import org.example.oddventure.common.exception.GlobalException;
 import org.example.oddventure.domain.admin.controller.AdminController;
+import org.example.oddventure.domain.admin.dto.request.InitialOddsSetRequest;
 import org.example.oddventure.domain.admin.dto.request.MatchCreateRequest;
 import org.example.oddventure.domain.admin.dto.request.MatchUpdateRequest;
 import org.example.oddventure.domain.admin.dto.request.PointAdjustRequest;
@@ -218,6 +219,39 @@ class AdminControllerTest {
 
         // when & then
         mockMvc.perform(post("/api/v1/admin/users/{userId}/points", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("관리자 - 초기 배당률 설정 API 성공")
+    void setInitialOdds_Success() throws Exception {
+        // given
+        Long matchId = 1L;
+        InitialOddsSetRequest request = new InitialOddsSetRequest(new BigDecimal("1.85"), new BigDecimal("2.15"));
+        MatchAdminResponse response = new MatchAdminResponse(matchId, "LCK", "T1", "Gen.G", LocalDateTime.now(), MatchStatus.SCHEDULED);
+
+        given(adminService.setInitialOdds(eq(matchId), any(InitialOddsSetRequest.class))).willReturn(response);
+
+        // when & then
+        mockMvc.perform(post("/api/v1/admin/matches/{matchId}/odds", matchId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("초기 배당률 설정에 성공했습니다."));
+    }
+
+    @Test
+    @DisplayName("관리자 - 초기 배당률 설정 API 실패 - 유효성 검사 실패")
+    void setInitialOdds_Fail_InvalidInput() throws Exception {
+        // given
+        Long matchId = 1L;
+        InitialOddsSetRequest request = new InitialOddsSetRequest(new BigDecimal("-1.85"), new BigDecimal("2.15"));
+
+        // when & then
+        mockMvc.perform(post("/api/v1/admin/matches/{matchId}/odds", matchId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());

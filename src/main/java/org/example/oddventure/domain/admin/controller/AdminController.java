@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.oddventure.common.dto.response.ApiPageResponse;
 import org.example.oddventure.common.dto.response.ApiResponse;
+import org.example.oddventure.domain.admin.dto.request.InitialOddsSetRequest;
 import org.example.oddventure.domain.admin.dto.request.MatchCreateRequest;
 import org.example.oddventure.domain.admin.dto.request.MatchUpdateRequest;
 import org.example.oddventure.domain.admin.dto.request.PointAdjustRequest;
@@ -77,5 +78,16 @@ public class AdminController {
         PointAdjustResponse response = adminService.adjustUserPoints(userId, request);
 
         return ApiResponse.success(response, "포인트 지급에 성공했습니다.");
+    }
+
+    // 초기 배당률 설정
+    @PostMapping("/matches/{matchId}/odds")
+    public ResponseEntity<ApiResponse<MatchAdminResponse>> setInitialOdds(
+            @PathVariable Long matchId,
+            @Valid @RequestBody InitialOddsSetRequest request)
+    {
+        MatchAdminResponse response = adminService.setInitialOdds(matchId, request);
+
+        return ApiResponse.success(response, "초기 배당률 설정에 성공했습니다.");
     }
 }

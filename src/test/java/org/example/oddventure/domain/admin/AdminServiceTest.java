@@ -11,12 +11,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.example.oddventure.common.exception.GlobalException;
+import org.example.oddventure.domain.admin.dto.request.InitialOddsSetRequest;
 import org.example.oddventure.domain.admin.dto.request.MatchCreateRequest;
 import org.example.oddventure.domain.admin.dto.request.MatchUpdateRequest;
 import org.example.oddventure.domain.admin.dto.request.PointAdjustRequest;
 import org.example.oddventure.domain.admin.dto.response.MatchAdminResponse;
 import org.example.oddventure.domain.admin.dto.response.PointAdjustResponse;
 import org.example.oddventure.domain.admin.dto.response.UserAdminResponse;
+import org.example.oddventure.domain.admin.exception.AdminErrorCode;
 import org.example.oddventure.domain.admin.service.AdminService;
 import org.example.oddventure.domain.match.entity.Match;
 import org.example.oddventure.domain.match.enums.MatchStatus;
@@ -34,6 +36,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import static org.mockito.Mockito.spy;
 
 @ExtendWith(MockitoExtension.class)
 class AdminServiceTest {
@@ -240,5 +243,47 @@ class AdminServiceTest {
         assertThrows(GlobalException.class, () -> {
             adminService.adjustUserPoints(userId, request);
         });
+    }
+
+    @Test
+    @DisplayName("초기 배당률 설정 성공")
+    void setInitialOdds_Success() {
+        // given
+        Long matchId = 1L;
+        InitialOddsSetRequest request = new InitialOddsSetRequest(new BigDecimal("1.85"), new BigDecimal("2.15"));
+
+        Match realMatch = Match.builder()
+                .teamA("T1").teamB("Gen.G").startTime(LocalDateTime.now().plusDays(1)).build();
+
+        Match spyMatch = spy(realMatch);
+
+        given(matchRepository.findById(matchId)).willReturn(Optional.of(spyMatch));
+
+        // when
+        adminService.setInitialOdds(matchId, request);
+
+        // then
+        verify(spyMatch).updateInitialOdds(request.oddsA(), request.oddsB());
+        assertThat(spyMatch.getInitialOddsA()).isEqualTo(new BigDecimal("1.85"));
+    }
+
+    @Test
+    @DisplayName("초기 배당률 설정 실패 - 이미 베팅이 시작된 경기")
+    void setInitialOdds_Fail_AlreadyHasBets() {
+        // given
+        Long matchId = 1L;
+        InitialOddsSetRequest request = new InitialOddsSetRequest(new BigDecimal("1.85"), new BigDecimal("2.15"));
+
+        Match mockMatch = Match.builder().teamA("T1").teamB("Gen.G").build();
+        mockMatch.plusTeamA(new BigDecimal("1000"));
+
+        given(matchRepository.findById(matchId)).willReturn(Optional.of(mockMatch));
+
+        // when & then
+        GlobalException exception = assertThrows(GlobalException.class, () -> {
+            adminService.setInitialOdds(matchId, request);
+        });
+
+        assertThat(exception.getErrorCode()).isEqualTo(AdminErrorCode.CANNOT_SET_INITIAL_ODDS);
     }
 }

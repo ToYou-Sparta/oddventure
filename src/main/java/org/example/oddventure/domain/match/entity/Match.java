@@ -58,6 +58,10 @@ public class Match extends BaseEntity {
     @Column(nullable = false)
     private Long viewCount = 0L;
 
+    private BigDecimal initialOddsA;
+
+    private BigDecimal initialOddsB;
+
     @Builder
     public Match(String matchName, String teamA, String teamB, LocalDateTime startTime) {
         this.matchName = matchName;
@@ -70,6 +74,8 @@ public class Match extends BaseEntity {
         this.totalAmountA = BigDecimal.ZERO;
         this.totalAmountB = BigDecimal.ZERO;
         this.viewCount = 0L;
+        this.initialOddsA = null;
+        this.initialOddsB = null;
     }
 
     public void update(String matchName, String teamA, String teamB, LocalDateTime startTime, MatchStatus status) {
@@ -94,5 +100,10 @@ public class Match extends BaseEntity {
 
     public void minusTeamB(BigDecimal amount) {
         this.totalAmountB = this.totalAmountB.subtract(amount);
+    }
+
+    public void updateInitialOdds(BigDecimal oddsA, BigDecimal oddsB) {
+        this.initialOddsA = oddsA;
+        this.initialOddsB = oddsB;
     }
 }
