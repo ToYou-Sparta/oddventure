@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface MatchRepository extends JpaRepository<Match, Long> {
+public interface MatchRepository extends JpaRepository<Match, Long>, MatchRepositoryCustom {
 
     @Modifying
     @Query("UPDATE Match m SET m.viewCount = m.viewCount + 1 WHERE m.id = :id")
@@ -18,7 +18,4 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select m from Match m where m.id = :id")
     Optional<Match> findByIdForUpdate(@Param("id") Long id);
-
-    // TODO: 검색 기능 작업 때 구현 예정
-//    List<Match> findByConditions(String teamName, MatchStatus status);
 }

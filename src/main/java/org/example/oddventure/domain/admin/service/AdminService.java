@@ -47,6 +47,7 @@ public class AdminService {
                 .orElseThrow(() -> new InvalidAdminException(AdminErrorCode.MATCH_NOT_FOUND));
 
         match.update(
+                request.matchName(),
                 request.teamA(),
                 request.teamB(),
                 request.startTime(),

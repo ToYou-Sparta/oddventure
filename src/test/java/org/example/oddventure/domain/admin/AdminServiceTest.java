@@ -52,7 +52,7 @@ class AdminServiceTest {
     void createMatch_Success() {
         // given
         LocalDateTime startTime = LocalDateTime.now().plusDays(1);
-        MatchCreateRequest request = new MatchCreateRequest("T1", "Gen.G", startTime);
+        MatchCreateRequest request = new MatchCreateRequest("LCK", "T1", "Gen.G", startTime);
 
         Match match = Match.builder().teamA("T1").teamB("Gen.G").startTime(startTime).build();
 
@@ -74,7 +74,7 @@ class AdminServiceTest {
         Long matchId = 1L;
         LocalDateTime newStartTime = LocalDateTime.now().plusHours(5);
         MatchUpdateRequest request = new MatchUpdateRequest(
-                "DWG KIA", "T1", newStartTime, MatchStatus.ONGOING
+                "LCK", "DWG KIA", "T1", newStartTime, MatchStatus.ONGOING
         );
 
         Match existingMatch = Match.builder()
@@ -100,7 +100,7 @@ class AdminServiceTest {
         // given
         Long matchId = 999L;
         MatchUpdateRequest request = new MatchUpdateRequest(
-                "DWG KIA", "T1", LocalDateTime.now().plusHours(5), MatchStatus.ONGOING
+                "LCK", "DWG KIA", "T1", LocalDateTime.now().plusHours(5), MatchStatus.ONGOING
         );
 
         given(matchRepository.findById(matchId)).willReturn(Optional.empty());
@@ -145,8 +145,10 @@ class AdminServiceTest {
     void getAllUsers_NoFilters_Success() {
         // given
         Pageable pageable = PageRequest.of(0, 10);
-        User user1 = User.builder().email("test1@test.com").username("user1").password("p").userRole(UserRole.ROLE_USER).build();
-        User user2 = User.builder().email("test2@test.com").username("user2").password("p").userRole(UserRole.ROLE_USER).build();
+        User user1 = User.builder().email("test1@test.com").username("user1").password("p").userRole(UserRole.ROLE_USER)
+                .build();
+        User user2 = User.builder().email("test2@test.com").username("user2").password("p").userRole(UserRole.ROLE_USER)
+                .build();
 
         Page<User> mockUserPage = new PageImpl<>(List.of(user1, user2), pageable, 2);
 
