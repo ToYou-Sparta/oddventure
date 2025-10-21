@@ -26,21 +26,17 @@ public class AiService {
     private final ChatClient chatClient;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public AiResponse generateAbnormalBehaviorReport(String userInput) {
-        List<Match> winMatches = matchRepository.findByWinner();
-        List<Match> loseMatches = matchRepository.findByLoser();
+    public AiResponse generateAbnormalBehaviorReport(AiRequest request) {
+        List<Match> winMatches = matchRepository.findByWinnerIsNotNull();
+        List<Match> loseMatches = matchRepository.findByLoserIsNotNull();
 
         // 데이터 요약 문자열 생성
         String summary = buildSummary(winMatches, loseMatches);
+        String prompt = generatePrompt(request);
 
         // Groq 프롬프트 생성
-        ChatResponse chatResponse = this.chatClient.prompt()
-                .system("""
-                        아래 제공된 경기 요약(summary)을 기반으로
-                        각 팀의 승률을 계산하고, 결론에 대한 정확한 분석 요인을 설명해.
-                        모든 대답은 한국어로 작성해.""")
+        ChatResponse chatResponse = this.chatClient.prompt(prompt)
                 .system("경기 요약:\n"+summary)
-                .user(userInput)
                 .call()
                 .chatResponse();
 
@@ -83,14 +79,15 @@ public class AiService {
 
     private String generatePrompt(AiRequest request) {
         return String.format("""
-                Task: Extract team name from the text and return a JSON response.
+                Task: Extract teamName from the text and return a JSON response.
                
-                - Identify team name and find the team at summary.
-                - Remove the identified team name from the text. The remaining text becomes `content`.
-                - If no team name is found, return:
+                - Identify teamName and find the team at summary and extract winningCount,losingCount.
+                - Based on the game summary provided below, calculate each team's winning percentage 
+                  and explain the exact analytical factors for the conclusion.
+                - Remove the identified teamName from the text. The remaining text becomes `content`.
+                - If no teamName is found, return:
                   {"result": true, "hasTeamName": false}
-                - If team name time exists, return:
-                  {"result": false }
+                - In korean.
                
                 Respond in JSON format only, with the following fields:
                 - result
@@ -105,10 +102,9 @@ public class AiService {
                
                 input:
                 {
-                    "teamName": "%s",
                     "content": "%s"
                 }
-               """, request.teamName(), request.content());
+               """, request.content());
     }
 
     private AiResponse parseResult(String text) {
@@ -116,7 +112,7 @@ public class AiService {
                 .filter(line -> !line.startsWith("```"))
                 .reduce("", (a, b) -> a + b);
         try {
-            return objectMapper.readValue(jsonText, AiResponse.class);
+            return objectMapper.readValue(jsonText, AiResponse.class); //역직렬화
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
