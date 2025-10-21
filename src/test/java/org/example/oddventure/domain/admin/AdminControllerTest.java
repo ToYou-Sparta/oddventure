@@ -61,8 +61,9 @@ class AdminControllerTest {
     void createMatch_Success() throws Exception {
         // given
         LocalDateTime startTime = LocalDateTime.now().plusDays(1);
-        MatchCreateRequest request = new MatchCreateRequest("T1", "Gen.G", startTime);
-        MatchAdminResponse response = new MatchAdminResponse(1L, "T1", "Gen.G", startTime, MatchStatus.SCHEDULED);
+        MatchCreateRequest request = new MatchCreateRequest("LCK", "T1", "Gen.G", startTime);
+        MatchAdminResponse response = new MatchAdminResponse(1L, "LCK", "T1", "Gen.G", startTime,
+                MatchStatus.SCHEDULED);
         given(adminService.createMatch(any(MatchCreateRequest.class))).willReturn(response);
 
         // when & then
@@ -78,7 +79,7 @@ class AdminControllerTest {
     @DisplayName("매치 생성 실패 - 유효성 검사 실패")
     void createMatch_Fail_InvalidInput() throws Exception {
         // given
-        MatchCreateRequest request = new MatchCreateRequest("", "Gen.G", LocalDateTime.now().plusDays(1));
+        MatchCreateRequest request = new MatchCreateRequest("LCK", "", "Gen.G", LocalDateTime.now().plusDays(1));
 
         // when & then
         mockMvc.perform(post("/api/v1/admin/matches")
@@ -94,10 +95,10 @@ class AdminControllerTest {
         Long matchId = 1L;
         LocalDateTime newStartTime = LocalDateTime.now().plusDays(2).withNano(0);
         MatchUpdateRequest request = new MatchUpdateRequest(
-                "New Team A", "New Team B", newStartTime, MatchStatus.ONGOING
+                "LCK", "New Team A", "New Team B", newStartTime, MatchStatus.ONGOING
         );
         MatchAdminResponse response = new MatchAdminResponse(
-                matchId, "New Team A", "New Team B", newStartTime, MatchStatus.ONGOING
+                matchId, "LCK", "New Team A", "New Team B", newStartTime, MatchStatus.ONGOING
         );
 
         given(adminService.updateMatch(any(Long.class), any(MatchUpdateRequest.class))).willReturn(response);
