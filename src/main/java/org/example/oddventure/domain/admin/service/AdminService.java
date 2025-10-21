@@ -77,21 +77,24 @@ public class AdminService {
     }
 
     // 포인트 지급
+    @Transactional
     public PointAdjustResponse adjustUserPoints(Long userId, PointAdjustRequest request) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new InvalidAdminException(AdminErrorCode.USER_NOT_FOUND));
+        {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new InvalidAdminException(AdminErrorCode.USER_NOT_FOUND));
 
-        user.plusPoint(request.amount());
+            user.plusPoint(request.amount());
 
-        log.info("[ADMIN_POINT_ADJUSTMENT] userId={}, amount={}, reason='{}', finalBalance={}",
-                userId, request.amount(), request.reason(), user.getPoint());
+            log.info("[ADMIN_POINT_ADJUSTMENT] userId={}, amount={}, reason='{}', finalBalance={}",
+                    userId, request.amount(), request.reason(), user.getPoint());
 
-        return new PointAdjustResponse(
-                user.getId(),
-                user.getUsername(),
-                request.amount(),
-                user.getPoint()
-        );
+            return new PointAdjustResponse(
+                    user.getId(),
+                    user.getUsername(),
+                    request.amount(),
+                    user.getPoint()
+            );
+        }
     }
 
     // 초기 배당률 설정
