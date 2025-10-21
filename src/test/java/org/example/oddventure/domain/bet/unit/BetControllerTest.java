@@ -76,13 +76,6 @@ public class BetControllerTest {
     public void createBet_success() throws Exception {
         //given
         Long userId = 1L;
-//        User user = User.builder()
-//                .username("test")
-//                .email("test1234@test.com")
-//                .password("test1234!")
-//                .userRole(UserRole.ROLE_USER)
-//                .build();
-//        ReflectionTestUtils.setField(user, "id", userId);
 
         Long betId = 1L;
         Long matchId = 1L;
@@ -101,7 +94,6 @@ public class BetControllerTest {
 
         //when & then
         mockMvc.perform(post("/api/v1/bets")
-//                        .param("userId", "1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())

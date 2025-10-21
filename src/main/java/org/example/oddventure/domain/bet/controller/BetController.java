@@ -38,17 +38,18 @@ public class BetController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<ApiPageResponse<BetResponse>> getBet(Long userId,
+    public ResponseEntity<ApiPageResponse<BetResponse>> getBet(@AuthenticationPrincipal AuthUser user,
                                                                @RequestParam(defaultValue = "0") int number,
                                                                @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(number, size);
-        Page<BetResponse> betResponsePage = betService.getBets(userId, pageable);
+        Page<BetResponse> betResponsePage = betService.getBets(user.id(), pageable);
         return ApiPageResponse.success(betResponsePage, "베팅 내역이 조회되었습니다.");
     }
 
     @DeleteMapping("/bets/{betId}")
-    public ResponseEntity<ApiResponse<BetDeleteResponse>> deleteBet(Long userId, @PathVariable Long betId) {
-        BetDeleteResponse betDeleteResponse = betService.deleteBet(userId, betId);
+    public ResponseEntity<ApiResponse<BetDeleteResponse>> deleteBet(@AuthenticationPrincipal AuthUser user,
+                                                                    @PathVariable Long betId) {
+        BetDeleteResponse betDeleteResponse = betService.deleteBet(user.id(), betId);
         return ApiResponse.success(betDeleteResponse, "베팅이 취소 되었습니다.");
     }
 }
