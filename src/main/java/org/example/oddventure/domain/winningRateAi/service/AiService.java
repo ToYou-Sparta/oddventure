@@ -82,9 +82,8 @@ public class AiService {
                 Task: Extract teamName from the text and return a JSON response.
                
                 - Identify teamName and find the team at summary and extract winningCount,losingCount.
-                - Based on the game summary provided below, calculate each team's winning percentage 
-                  and explain the exact analytical factors for the conclusion.
-                - Remove the identified teamName from the text. The remaining text becomes `content`.
+                - Based on the game summary provided below, calculate each team's winning percentage
+                  and explain the exact analytical factors for the conclusion becomes `content`.
                 - If no teamName is found, return:
                   {"result": true, "hasTeamName": false}
                 - In korean.
@@ -92,10 +91,10 @@ public class AiService {
                 Respond in JSON format only, with the following fields:
                 - result
                 - hasTeamName
-                - teamName
-                - winningCount
-                - losingCount
-                - winningRate
+                - teamName (array of strings)
+                - winningCount (array of longs)
+                - losingCount (array of longs)
+                - winningRate (array of longs)
                 - content
                
                 ===
