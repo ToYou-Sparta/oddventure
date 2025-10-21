@@ -4,6 +4,7 @@ import static org.example.oddventure.domain.auth.jwt.JwtConstants.REFRESH_TOKEN_
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -12,6 +13,8 @@ import static org.mockito.Mockito.when;
 import java.util.Optional;
 import org.example.oddventure.domain.auth.dto.request.LoginRequest;
 import org.example.oddventure.domain.auth.dto.request.SignupRequest;
+import org.example.oddventure.domain.auth.dto.request.WithdrawRequest;
+import org.example.oddventure.domain.auth.dto.response.AccessTokenResponse;
 import org.example.oddventure.domain.auth.dto.response.LoginResponse;
 import org.example.oddventure.domain.auth.dto.response.SignupResponse;
 import org.example.oddventure.domain.auth.exception.AuthException;
@@ -165,5 +168,126 @@ public class AuthServiceTest {
 
         // then
         verify(redisTemplate).delete(REFRESH_TOKEN_PREFIX + userId);
+    }
+
+    @Test
+    @DisplayName("회원 탈퇴 성공")
+    void withdraw_success() {
+
+        // given
+        Long userId = 1L;
+        WithdrawRequest request = new WithdrawRequest("correctPassword");
+        User user = User.builder()
+                .username("hello")
+                .email("hello@naver.com")
+                .password("$2a$10$eB9vYJzqZK8Zb3Q9gFZJ9uK0xE9gUuZzT1eYwKJvZzFzYxOqL9rP3O")
+                .userRole(UserRole.ROLE_USER)
+                .build();
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches(request.password(), user.getPassword())).thenReturn(true);
+
+        // when
+        authService.withdraw(userId, request);
+
+        // then
+        assertTrue(user.isDeleted());
+        verify(redisTemplate).delete(REFRESH_TOKEN_PREFIX + userId);
+    }
+
+    @Test
+    @DisplayName("회원 탈퇴 실패 - 비밀번호 불일치")
+    void withdraw_fail_incorrect_password() {
+
+        // given
+        Long userId = 1L;
+        WithdrawRequest request = new WithdrawRequest("wrongPassword");
+        User user = User.builder()
+                .username("hello")
+                .email("hello@naver.com")
+                .password("$2a$10$eB9vYJzqZK8Zb3Q9gFZJ9uK0xE9gUuZzT1eYwKJvZzFzYxOqL9rP3O")
+                .userRole(UserRole.ROLE_USER)
+                .build();
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches(request.password(), user.getPassword())).thenReturn(false);
+
+        // when & then
+        assertThrows(InvalidUserException.class, () -> authService.withdraw(userId, request));
+    }
+
+    @Test
+    @DisplayName("회원 탈퇴 실패 - 이미 탈퇴된 사용자")
+    void withdraw_fail_already_deleted() {
+
+        // given
+        Long userId = 1L;
+        WithdrawRequest request = new WithdrawRequest("correctPassword");
+        User user = User.builder()
+                .username("hello")
+                .email("hello@naver.com")
+                .password("$2a$10$eB9vYJzqZK8Zb3Q9gFZJ9uK0xE9gUuZzT1eYwKJvZzFzYxOqL9rP3O")
+                .userRole(UserRole.ROLE_USER)
+                .build();
+        user.delete();
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches(request.password(), user.getPassword())).thenReturn(true);
+
+        // when & then
+        assertThrows(InvalidUserException.class, () -> authService.withdraw(userId, request));
+    }
+
+    @Test
+    @DisplayName("토큰 재발급 성공")
+    void refresh_success() {
+
+        // given
+        String refreshToken = "validRefreshToken";
+        Long userId = 1L;
+        String newAccessToken = "newAccessToken";
+
+        when(jwtUtil.validateToken(refreshToken)).thenReturn(true);
+        when(jwtUtil.extractUserId(refreshToken)).thenReturn(userId);
+        when(jwtUtil.extractUserRole(refreshToken)).thenReturn(UserRole.ROLE_USER);
+        when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+        when(valueOperations.get(REFRESH_TOKEN_PREFIX + userId)).thenReturn(refreshToken);
+        when(jwtUtil.createAccessToken(userId, UserRole.ROLE_USER)).thenReturn(newAccessToken);
+
+        // when
+        AccessTokenResponse response = authService.refresh(refreshToken);
+
+        // then
+        assertNotNull(response);
+        assertEquals(newAccessToken, response.accessToken());
+    }
+
+    @Test
+    @DisplayName("토큰 재발급 실패 - 유효하지 않은 토큰")
+    void refresh_fail_invalid_token() {
+
+        // given
+        String refreshToken = "invalidToken";
+        when(jwtUtil.validateToken(refreshToken)).thenReturn(false);
+
+        // when & then
+        assertThrows(AuthException.class, () -> authService.refresh(refreshToken));
+    }
+
+    @Test
+    @DisplayName("토큰 재발급 실패 - 저장된 토큰과 불일치")
+    void refresh_fail_token_mismatch() {
+
+        // given
+        String refreshToken = "validRefreshToken";
+        Long userId = 1L;
+
+        when(jwtUtil.validateToken(refreshToken)).thenReturn(true);
+        when(jwtUtil.extractUserId(refreshToken)).thenReturn(userId);
+        when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+        when(valueOperations.get(REFRESH_TOKEN_PREFIX + userId)).thenReturn("differentToken");
+
+        // when & then
+        assertThrows(AuthException.class, () -> authService.refresh(refreshToken));
     }
 }

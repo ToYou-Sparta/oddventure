@@ -30,4 +30,9 @@ public class PasswordValidatorTest {
     void missingSpecialCharacter() {
         assertFalse(passwordValidator.isValid("hello123", null));
     }
+
+    @Test
+    void nullPassword() {
+        assertFalse(passwordValidator.isValid(null, null));
+    }
 }
