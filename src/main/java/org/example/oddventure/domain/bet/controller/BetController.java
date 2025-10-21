@@ -3,6 +3,7 @@ package org.example.oddventure.domain.bet.controller;
 import lombok.RequiredArgsConstructor;
 import org.example.oddventure.common.dto.response.ApiPageResponse;
 import org.example.oddventure.common.dto.response.ApiResponse;
+import org.example.oddventure.domain.auth.dto.AuthUser;
 import org.example.oddventure.domain.bet.dto.request.BetCreateRequest;
 import org.example.oddventure.domain.bet.dto.response.BetCreateResponse;
 import org.example.oddventure.domain.bet.dto.response.BetDeleteResponse;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,9 +31,9 @@ public class BetController {
     private final BetService betService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<BetCreateResponse>> createBet(Long userId,
+    public ResponseEntity<ApiResponse<BetCreateResponse>> createBet(@AuthenticationPrincipal AuthUser user,
                                                                     @RequestBody BetCreateRequest betCreateRequest) {
-        BetCreateResponse betCreateResponse = betService.createBet(userId, betCreateRequest);
+        BetCreateResponse betCreateResponse = betService.createBet(user.id(), betCreateRequest);
         return ApiResponse.created(betCreateResponse, "베팅이 완료 되었습니다.");
     }
 
