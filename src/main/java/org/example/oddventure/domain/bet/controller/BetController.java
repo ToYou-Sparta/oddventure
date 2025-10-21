@@ -46,7 +46,7 @@ public class BetController {
         return ApiPageResponse.success(betResponsePage, "베팅 내역이 조회되었습니다.");
     }
 
-    @DeleteMapping("/bets/{betId}")
+    @DeleteMapping("/{betId}")
     public ResponseEntity<ApiResponse<BetDeleteResponse>> deleteBet(@AuthenticationPrincipal AuthUser user,
                                                                     @PathVariable Long betId) {
         BetDeleteResponse betDeleteResponse = betService.deleteBet(user.id(), betId);

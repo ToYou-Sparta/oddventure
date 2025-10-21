@@ -22,4 +22,14 @@ include::{snippets}/bet-controller-test/create-bet_success/response-fields.adoc[
 
 ---
 
+=== 2️⃣ 베팅 취소 (DELETE /api/v1/bets/{betId})
+
+==== 요청 예시
+include::{snippets}/bet-controller-test/delete-bet_success/http-request.adoc[]
+
+==== 응답 예시
+include::{snippets}/bet-controller-test/delete-bet_success/http-response.adoc[]
+
+---
+
 :icons: font

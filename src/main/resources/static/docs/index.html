@@ -449,6 +449,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_베팅_api_bet_api">1. 베팅 API (Bet API)</a>
 <ul class="sectlevel2">
 <li><a href="#_1️⃣_베팅_생성_post_apiv1bets">1.1. 1️⃣ 베팅 생성 (POST /api/v1/bets)</a></li>
+<li><a href="#_2️⃣_베팅_취소_delete_apiv1betsbetid">1.2. 2️⃣ 베팅 취소 (DELETE /api/v1/bets/{betId})</a></li>
 </ul>
 </li>
 </ul>
@@ -505,7 +506,7 @@ Content-Length: 356
     "oddsAtBetting" : 1.5,
     "userPointAfter" : 0
   },
-  "timestamp" : "2025-10-21T19:06:27.729741"
+  "timestamp" : "2025-10-21T19:39:00.800633"
 }</code></pre>
 </div>
 </div>
@@ -630,13 +631,55 @@ Content-Length: 356
 <hr>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_2️⃣_베팅_취소_delete_apiv1betsbetid">1.2. 2️⃣ 베팅 취소 (DELETE /api/v1/bets/{betId})</h3>
+<div class="sect3">
+<h4 id="_요청_예시_2">1.2.1. 요청 예시</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">DELETE /api/v1/bets/1 HTTP/1.1
+Host: localhost:8080</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_2">1.2.2. 응답 예시</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+Content-Length: 247
+
+{
+  "httpStatus" : "OK",
+  "code" : "200",
+  "success" : true,
+  "message" : "베팅이 취소 되었습니다.",
+  "data" : {
+    "betId" : 1,
+    "refundAmount" : 1000,
+    "userPointAfter" : 0
+  },
+  "timestamp" : "2025-10-21T19:39:00.727769"
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2025-10-21 19:05:57 +0900
+Last updated 2025-10-21 19:34:15 +0900
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>

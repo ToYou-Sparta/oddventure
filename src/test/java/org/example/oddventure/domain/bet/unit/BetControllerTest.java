@@ -7,6 +7,9 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -19,6 +22,7 @@ import org.example.oddventure.domain.auth.jwt.JwtUtil;
 import org.example.oddventure.domain.bet.controller.BetController;
 import org.example.oddventure.domain.bet.dto.request.BetCreateRequest;
 import org.example.oddventure.domain.bet.dto.response.BetCreateResponse;
+import org.example.oddventure.domain.bet.dto.response.BetDeleteResponse;
 import org.example.oddventure.domain.bet.enums.SelectedTeam;
 import org.example.oddventure.domain.bet.service.BetService;
 import org.example.oddventure.domain.user.enums.UserRole;
@@ -98,9 +102,6 @@ public class BetControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andDo(restDocs.document(
-//                        pathParameters(
-//                                parameterWithName("userId").description("사용자 ID")
-//                        ),
                         requestFields(
                                 fieldWithPath("matchId").description("경기 ID"),
                                 fieldWithPath("selectedTeam").description("선택한 팀"),
@@ -121,6 +122,41 @@ public class BetControllerTest {
                                 fieldWithPath("data.userPointAfter").description("사용자 포인트 잔액"),
                                 fieldWithPath("timestamp").description("응답 시간")
                         )
+                ));
+    }
+
+    @Test
+    @DisplayName("DELETE /bets/{betId} - 베팅 취소 성공")
+    public void deleteBet_success() throws Exception {
+        //given
+        Long userId = 1L;
+        Long betId = 1L;
+
+        BetDeleteResponse response = BetDeleteResponse.builder()
+                .betId(betId)
+                .refundAmount(BigDecimal.valueOf(1000))
+                .userPointAfter(BigDecimal.ZERO)
+                .build();
+
+        when(betService.deleteBet(userId, betId)).thenReturn(response);
+
+        //when & then
+        mockMvc.perform(delete("/api/v1/bets/{betId}", betId))
+                .andExpect(status().isOk())
+                .andDo(restDocs.document(
+                        pathParameters(
+                                parameterWithName("betId").description("베팅 ID")
+                        ),
+                        responseFields(
+                                fieldWithPath("httpStatus").description("HTTP 상태 코드"),
+                                fieldWithPath("code").description("응답 코드"),
+                                fieldWithPath("success").description("성공 여부"),
+                                fieldWithPath("message").description("응답 메시지"),
+                                fieldWithPath("data").description("응답 데이터"),
+                                fieldWithPath("data.betId").description("베팅 ID"),
+                                fieldWithPath("data.refundAmount").description("환불 금액"),
+                                fieldWithPath("data.userPointAfter").description("사용자 포인트 잔액"),
+                                fieldWithPath("timestamp").description("응답 시간"))
                 ));
     }
 }
