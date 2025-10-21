@@ -21,6 +21,8 @@ public interface MatchRepository extends JpaRepository<Match, Long>, MatchReposi
     @Query("select m from Match m where m.id = :id")
     Optional<Match> findByIdForUpdate(@Param("id") Long id);
 
-    List<Match> findByWinner();
-    List<Match> findByLoser();
+    @Query("select m.winner from Match m where m.winner is not null")
+    List<Match> findByWinnerIsNotNull();
+    @Query("select m.winner from Match m where m.loser is not null")
+    List<Match> findByLoserIsNotNull();
 }
