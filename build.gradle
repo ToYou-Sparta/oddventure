@@ -32,16 +32,37 @@ ext {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'com.h2database:h2'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-    //spring AI
+    // spring AI
     implementation 'org.springframework.ai:spring-ai-starter-model-openai'
+
+    // redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.data:spring-data-redis'
+    implementation 'org.springframework.data:spring-data-redis'
+    implementation 'org.apache.commons:commons-pool2'
+    testImplementation  'org.testcontainers:testcontainers:1.19.0'
+    testImplementation "org.testcontainers:junit-jupiter:1.19.0"
+
+    // jwt
+    compileOnly group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
+
+    // QueryDSL
+    implementation 'com.querydsl:querydsl-jpa:5.1.0:jakarta'
+    annotationProcessor 'com.querydsl:querydsl-apt:5.1.0:jakarta'
+    annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
+    annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
 }
 
 dependencyManagement {
@@ -50,11 +71,8 @@ dependencyManagement {
     }
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
-}
-
 tasks.test {
+    useJUnitPlatform()
     finalizedBy tasks.jacocoTestReport
 }
 
@@ -67,6 +85,21 @@ jacocoTestReport {
     reports {
         xml.required = true
         html.required = true
+    }
+    doLast {
+        def reportFile = layout.buildDirectory.file("reports/jacoco/test/html/index.html").get().asFile
+        println "JacocoReport 경로: ${reportFile.toURI()}"
+    }
+
+    // QueryDSL Q클래스 커버리지 제외 설정
+    afterEvaluate {
+        classDirectories.setFrom(
+                files(classDirectories.files.collect {
+                    fileTree(dir: it, exclude: [
+                            '**/Q*'
+                    ])
+                })
+        )
     }
 }
 

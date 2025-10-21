@@ -1,15 +1,15 @@
 package org.example.oddventure.domain.match.dto.response;
 
 
-import org.example.oddventure.domain.match.entity.Match;
-import org.example.oddventure.domain.match.enums.MatchStatus;
-import org.example.oddventure.domain.match.enums.MatchWinner;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import org.example.oddventure.domain.match.dto.projection.MatchProjection;
+import org.example.oddventure.domain.match.entity.Match;
+import org.example.oddventure.domain.match.enums.MatchStatus;
 
 public record MatchResponse(
         Long matchId,
+        String matchName,
         String teamA,
         String teamB,
         BigDecimal totalAmountA,
@@ -17,7 +17,8 @@ public record MatchResponse(
         LocalDateTime startTime,
         LocalDateTime endTime,
         MatchStatus status,
-        MatchWinner winner,
+        String winner,
+        String loser,
         Long viewCount,
         LocalDateTime createdAt
 ) {
@@ -25,6 +26,7 @@ public record MatchResponse(
     public static MatchResponse from(Match match) {
         return new MatchResponse(
                 match.getId(),
+                match.getMatchName(),
                 match.getTeamA(),
                 match.getTeamB(),
                 match.getTotalAmountA(),
@@ -33,8 +35,27 @@ public record MatchResponse(
                 match.getEndTime(),
                 match.getStatus(),
                 match.getWinner(),
+                match.getLoser(),
                 match.getViewCount(),
                 match.getCreatedAt()
+        );
+    }
+
+    public static MatchResponse from(MatchProjection projection) {
+        return new MatchResponse(
+                projection.matchId(),
+                projection.matchName(),
+                projection.teamA(),
+                projection.teamB(),
+                projection.totalAmountA(),
+                projection.totalAmountB(),
+                projection.startTime(),
+                projection.endTime(),
+                projection.status(),
+                projection.winner(),
+                projection.loser(),
+                projection.viewCount(),
+                projection.createdAt()
         );
     }
 }

@@ -28,7 +28,7 @@ public class AiService {
 
     public AiResponse generateAbnormalBehaviorReport(String userInput) {
         List<Match> winMatches = matchRepository.findByWinner();
-        List<Match> loseMatches = matchRepository.findByloser();
+        List<Match> loseMatches = matchRepository.findByLoser();
 
         // 데이터 요약 문자열 생성
         String summary = buildSummary(winMatches, loseMatches);

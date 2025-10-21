@@ -7,8 +7,10 @@ import java.time.LocalDateTime;
 import org.example.oddventure.domain.match.enums.MatchStatus;
 
 public record MatchUpdateRequest(
+        @NotBlank String matchName,
         @NotBlank String teamA,
         @NotBlank String teamB,
         @NotNull @Future LocalDateTime startTime,
         @NotNull MatchStatus status
-) {}
+) {
+}
