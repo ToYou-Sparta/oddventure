@@ -19,9 +19,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @ActiveProfiles("test")
 class WinningRateAiTest {
 
-    @MockitoBean
-    private MatchRepository matchRepository;
-
     @Autowired
     private ChatClient chatClient;
 
