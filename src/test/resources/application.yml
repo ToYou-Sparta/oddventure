@@ -10,7 +10,12 @@ spring:
     show-sql: true
   ai:
     openai:
-      api-key: dummy
+      api-key: ${API_KEY}
+      base-url: ${BASE_URL}
+      chat:
+        options:
+          model: llama-3.3-70b-versatile
+          temperature: 0.0
   data:
     redis:
       host: localhost
