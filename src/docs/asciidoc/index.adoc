@@ -170,3 +170,5 @@ include::{snippets}/hotkeyword-controller-test/get-top5-hot-keywords_success/htt
 
 ==== 응답 필드 설명
 include::{snippets}/hotkeyword-controller-test/get-top5-hot-keywords_success/response-fields.adoc[]
+
+:icons: font
