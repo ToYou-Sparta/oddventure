@@ -47,18 +47,12 @@ public class HotkeywordControllerTest extends RestDocsTestSupport{
         when(hotKeywordsService.getHotKeywords()).thenReturn(response);
 
         // when & then
-        ResultActions result = mockMvc.perform(get("/api/v1/hotkeyword")
-                        .contentType(MediaType.APPLICATION_JSON));
+        ResultActions result = mockMvc.perform(get("/api/v1/hotkeyword"));
 
 
         result.andExpect(status().isOk())
                 .andDo(restDocs.document(
                         RestDocsUtils.successWithDataFields(
-                                fieldWithPath("httpStatus").description("HTTP 상태 코드"),
-                                fieldWithPath("code").description("응답 코드"),
-                                fieldWithPath("success").description("성공 여부"),
-                                fieldWithPath("message").description("응답 메시지"),
-                                fieldWithPath("data").description("응답 데이터"),
                                 fieldWithPath("data.hotKeywords").description("인기검색어 top5"),
                                 fieldWithPath("timestamp").description("응답 시간"))
                 ));
