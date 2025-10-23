@@ -1,10 +1,12 @@
 package org.example.oddventure.domain.hotkeyword;
 
+import org.example.oddventure.base.WithMockAuthUser;
 import org.example.oddventure.domain.auth.config.SecurityConfig;
 import org.example.oddventure.domain.auth.jwt.JwtUtil;
 import org.example.oddventure.domain.hotKeywords.controller.HotKeywordsController;
 import org.example.oddventure.domain.hotKeywords.dto.HotKeywordsResponse;
 import org.example.oddventure.domain.hotKeywords.service.HotKeywordsService;
+import org.example.oddventure.domain.user.enums.UserRole;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -22,6 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(HotKeywordsController.class)
 @Import({SecurityConfig.class, JwtUtil.class})
+@WithMockAuthUser(userId = 1, role = UserRole.ROLE_USER)
 public class HotkeywordControllerTest extends RestDocsTestSupport{
 
     @MockitoBean
@@ -48,8 +51,7 @@ public class HotkeywordControllerTest extends RestDocsTestSupport{
                         .contentType(MediaType.APPLICATION_JSON));
 
 
-        result.andExpect(status().isCreated())
-                .andExpect(status().isOk())
+        result.andExpect(status().isOk())
                 .andDo(restDocs.document(
                         RestDocsUtils.successWithDataFields(
                                 fieldWithPath("httpStatus").description("HTTP 상태 코드"),
