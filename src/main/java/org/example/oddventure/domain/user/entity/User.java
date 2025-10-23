@@ -21,6 +21,7 @@ import org.example.oddventure.domain.user.enums.UserRole;
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -42,17 +43,21 @@ public class User extends BaseEntity {
     private BigDecimal point;
 
     @Builder
-    public User(String username, String email, String password, UserRole userRole) {
+    public User(String username, String email, String password) {
         this.username = username;
         this.email = email;
         this.password = password;
-        this.userRole = userRole;
+        this.userRole = UserRole.ROLE_USER;
         this.point = new BigDecimal("1000"); // 회원가입 시 기본 포인트 1000
     }
 
     public void updateProfile(String username, String email) {
-        this.username = username;
-        this.email = email;
+        if (username != null) {
+            this.username = username;
+        }
+        if (email != null) {
+            this.email = email;
+        }
     }
 
     public void updatePassword(String newPassword) {

@@ -32,7 +32,6 @@ public class MatchRepositoryTest {
     @Test
     @DisplayName("조회수 증가 성공")
     void incrementViewCount() {
-
         // given
         Match match = Match.builder()
                 .matchName("LCK")
@@ -55,7 +54,6 @@ public class MatchRepositoryTest {
     @Test
     @DisplayName("조건 검색 성공")
     void searchByCondition() {
-
         // given
         Match match1 = Match.builder()
                 .matchName("LCK")
@@ -88,7 +86,6 @@ public class MatchRepositoryTest {
     @Test
     @DisplayName("정렬 순서 검증 - 경기 시작 시간 가까운순, 경기 이름 가나다순")
     void searchByCondition_orderBy() {
-
         // given
         Match match1 = Match.builder()
                 .matchName("CCC")

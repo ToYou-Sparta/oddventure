@@ -22,7 +22,6 @@ import org.example.oddventure.domain.bet.service.BetService;
 import org.example.oddventure.domain.match.entity.Match;
 import org.example.oddventure.domain.match.repository.MatchRepository;
 import org.example.oddventure.domain.user.entity.User;
-import org.example.oddventure.domain.user.enums.UserRole;
 import org.example.oddventure.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -60,7 +59,6 @@ public class BetServiceTest {
                 .username("test")
                 .email("test1234@test.com")
                 .password("test1234!")
-                .userRole(UserRole.ROLE_USER)
                 .build();
         ReflectionTestUtils.setField(user, "id", userId);
 
@@ -112,7 +110,6 @@ public class BetServiceTest {
                 .username("test")
                 .email("test1234@test.com")
                 .password("test1234!")
-                .userRole(UserRole.ROLE_USER)
                 .build();
         ReflectionTestUtils.setField(user, "id", userId);
 
@@ -161,7 +158,6 @@ public class BetServiceTest {
                 .username("test")
                 .email("test1234@test.com")
                 .password("test1234!")
-                .userRole(UserRole.ROLE_USER)
                 .build();
         ReflectionTestUtils.setField(user, "id", userId);
 

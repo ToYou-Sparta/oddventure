@@ -16,7 +16,6 @@ public class SecurityConfigTest {
 
     @Test
     public void testPasswordEncoding() {
-
         // given
         String rawPassword = "hello123!@#";
 
