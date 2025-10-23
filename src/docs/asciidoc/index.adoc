@@ -156,3 +156,16 @@ include::{snippets}/bet-controller-test/get-bet_success/http-response.adoc[]
 ==== 응답 필드 설명
 include::{snippets}/bet-controller-test/get-bet_success/response-fields.adoc[]
 
+---
+
+=== 1️⃣ AI 승률 조회 (POST /api/v1/ai/winningrate)
+
+==== 요청 예시
+include::{snippets}/winning-rate-ai-controller-test/provide-winning-rate_success/http-request.adoc[]
+
+==== 응답 예시
+include::{snippets}/winning-rate-ai-controller-test/provide-winning-rate_success/http-response.adoc[]
+
+==== 응답 필드 설명
+include::{snippets}/winning-rate-ai-controller-test/provide-winning-rate_success/response-fields.adoc[]
+
