@@ -22,7 +22,7 @@ public interface MatchRepository extends JpaRepository<Match, Long>, MatchReposi
     Optional<Match> findByIdForUpdate(@Param("id") Long id);
 
     @Query("select m.winner from Match m where m.winner is not null")
-    List<Match> findByWinnerIsNotNull();
-    @Query("select m.winner from Match m where m.loser is not null")
-    List<Match> findByLoserIsNotNull();
+    List<String> findByWinnerIsNotNull();
+    @Query("select m.loser from Match m where m.loser is not null")
+    List<String> findByLoserIsNotNull();
 }
