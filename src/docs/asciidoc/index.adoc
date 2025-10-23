@@ -3,6 +3,116 @@
 :toclevels: 2
 :sectnums:
 :source-highlighter: highlightjs
+:icons: font
+
+== 인증 API (Auth API)
+
+=== 1️⃣ 회원가입 (POST /api/v1/auth/signup)
+
+새로운 사용자를 회원으로 등록합니다.
+요청 시 이름, 이메일, 비밀번호를 입력해야 하며, 중복된 이메일은 사용할 수 없습니다.
+
+==== 요청 예시
+include::{snippets}/auth-controller-test/signup_success/http-request.adoc[]
+
+==== 응답 예시
+include::{snippets}/auth-controller-test/signup_success/http-response.adoc[]
+
+==== 요청 필드 설명
+include::{snippets}/auth-controller-test/signup_success/request-fields.adoc[]
+
+==== 응답 필드 설명
+include::{snippets}/auth-controller-test/signup_success/response-fields.adoc[]
+
+---
+
+=== 2️⃣ 회원가입 실패 (이메일 중복 시)
+
+이미 등록된 이메일로 회원가입을 시도할 경우 실패합니다.
+
+==== 요청 예시
+include::{snippets}/auth-controller-test/signup_fail_exists_email/http-request.adoc[]
+
+==== 응답 예시
+include::{snippets}/auth-controller-test/signup_fail_exists_email/http-response.adoc[]
+
+==== 요청 필드 설명
+include::{snippets}/auth-controller-test/signup_fail_exists_email/request-fields.adoc[]
+
+==== 응답 필드 설명
+include::{snippets}/auth-controller-test/signup_fail_exists_email/response-fields.adoc[]
+
+---
+
+=== 3️⃣ 로그인 (POST /api/v1/auth/login)
+
+등록된 이메일과 비밀번호로 로그인합니다.
+로그인이 성공하면 AccessToken과 RefreshToken이 발급됩니다.
+
+==== 요청 예시
+include::{snippets}/auth-controller-test/login/http-request.adoc[]
+
+==== 응답 예시
+include::{snippets}/auth-controller-test/login/http-response.adoc[]
+
+==== 요청 필드 설명
+include::{snippets}/auth-controller-test/login/request-fields.adoc[]
+
+==== 응답 필드 설명
+include::{snippets}/auth-controller-test/login/response-fields.adoc[]
+
+---
+
+=== 4️⃣ 로그아웃 (POST /api/v1/auth/logout)
+
+현재 로그인된 사용자의 세션(토큰)을 무효화하여 로그아웃합니다.
+`Authorization` 헤더 또는 인증된 사용자 정보가 필요합니다.
+
+==== 요청 예시
+include::{snippets}/auth-controller-test/logout/http-request.adoc[]
+
+==== 응답 예시
+include::{snippets}/auth-controller-test/logout/http-response.adoc[]
+
+==== 응답 필드 설명
+include::{snippets}/auth-controller-test/logout/response-fields.adoc[]
+
+---
+
+=== 5️⃣ 회원 탈퇴 (DELETE /api/v1/auth/withdraw)
+
+현재 로그인된 사용자를 탈퇴 처리합니다.
+비밀번호를 재입력해야 하며, 탈퇴 시 모든 사용자 데이터가 삭제됩니다.
+
+==== 요청 예시
+include::{snippets}/auth-controller-test/withdraw_success/http-request.adoc[]
+
+==== 응답 예시
+include::{snippets}/auth-controller-test/withdraw_success/http-response.adoc[]
+
+==== 요청 필드 설명
+include::{snippets}/auth-controller-test/withdraw_success/request-fields.adoc[]
+
+==== 응답 필드 설명
+include::{snippets}/auth-controller-test/withdraw_success/response-fields.adoc[]
+
+---
+
+=== 6️⃣ 토큰 재발급 (POST /api/v1/auth/refresh)
+
+만료된 AccessToken을 갱신하기 위해 RefreshToken을 사용합니다.
+RefreshToken은 쿠키에 포함되어야 합니다.
+
+==== 요청 예시
+include::{snippets}/auth-controller-test/refresh_success/http-request.adoc[]
+
+==== 응답 예시
+include::{snippets}/auth-controller-test/refresh_success/http-response.adoc[]
+
+==== 응답 필드 설명
+include::{snippets}/auth-controller-test/refresh_success/response-fields.adoc[]
+
+---
 
 == 베팅 API (Bet API)
 
@@ -46,4 +156,3 @@ include::{snippets}/bet-controller-test/get-bet_success/http-response.adoc[]
 ==== 응답 필드 설명
 include::{snippets}/bet-controller-test/get-bet_success/response-fields.adoc[]
 
-:icons: font
