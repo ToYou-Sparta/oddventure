@@ -26,12 +26,8 @@ import org.springframework.util.StringUtils;
 @Component
 public class JwtUtil {
 
-    //암호화 알고림즘 HS256
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
-    /**
-     * applictation.yml 에서 jwt.seceret.key 값을 가져옴
-     */
     @Value("${jwt.secret.key}")
     private String secretKey;
     private Key key;
@@ -47,7 +43,7 @@ public class JwtUtil {
      *
      * @param userId   로그인한 사용자의 고유 ID
      * @param userRole 사용자 권한
-     * @return Bearer 접두사가 붙은 JWT 토큰 문자열
+     * @return JWT 토큰 문자열
      */
     public String createAccessToken(Long userId, UserRole userRole) {
         Date date = new Date();
@@ -65,7 +61,7 @@ public class JwtUtil {
      * JWT 리프레시 토큰 생성 메서드
      *
      * @param userId 로그인한 사용자의 고유 ID
-     * @return 순수 JWT 토큰 문자열
+     * @return JWT 토큰 문자열
      */
     public String createRefreshToken(Long userId) {
         Date date = new Date();

@@ -22,7 +22,6 @@ public record MatchResponse(
         Long viewCount,
         LocalDateTime createdAt
 ) {
-
     public static MatchResponse from(Match match) {
         return new MatchResponse(
                 match.getId(),
@@ -41,7 +40,7 @@ public record MatchResponse(
         );
     }
 
-    public static MatchResponse from(MatchProjection projection) {
+    public static MatchResponse of(MatchProjection projection) {
         return new MatchResponse(
                 projection.matchId(),
                 projection.matchName(),

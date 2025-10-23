@@ -10,7 +10,7 @@ import org.example.oddventure.domain.bet.dto.response.BetResponse;
 import org.example.oddventure.domain.bet.entity.Bet;
 import org.example.oddventure.domain.bet.enums.SelectedTeam;
 import org.example.oddventure.domain.bet.exception.BetErrorCode;
-import org.example.oddventure.domain.bet.exception.InvalidBetException;
+import org.example.oddventure.domain.bet.exception.BetException;
 import org.example.oddventure.domain.bet.repository.BetRepository;
 import org.example.oddventure.domain.match.entity.Match;
 import org.example.oddventure.domain.match.enums.MatchStatus;
@@ -18,8 +18,8 @@ import org.example.oddventure.domain.match.exception.MatchErrorCode;
 import org.example.oddventure.domain.match.exception.MatchException;
 import org.example.oddventure.domain.match.repository.MatchRepository;
 import org.example.oddventure.domain.user.entity.User;
-import org.example.oddventure.domain.user.exception.InvalidUserException;
 import org.example.oddventure.domain.user.exception.UserErrorCode;
+import org.example.oddventure.domain.user.exception.UserException;
 import org.example.oddventure.domain.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,7 +42,7 @@ public class BetService {
 
         // 잔액 부족
         if (user.getPoint().compareTo(betAmount) < 0) {
-            throw new InvalidBetException(BetErrorCode.NOT_ENOUGH_POINTS);
+            throw new BetException(BetErrorCode.NOT_ENOUGH_POINTS);
         }
 
         Match match = matchRepository.findByIdForUpdate(request.matchId())
@@ -77,11 +77,11 @@ public class BetService {
     @Transactional
     public BetDeleteResponse deleteBet(Long userId, Long betId) {
         Bet bet = betRepository.findByIdForDelete(betId)
-                .orElseThrow(() -> new InvalidBetException(BetErrorCode.BET_NOT_FOUND));
+                .orElseThrow(() -> new BetException(BetErrorCode.BET_NOT_FOUND));
 
         // 본인 베팅 확인
         if (!bet.getUser().getId().equals(userId)) {
-            throw new InvalidBetException(BetErrorCode.PERMISSION_DENIED);
+            throw new BetException(BetErrorCode.PERMISSION_DENIED);
         }
 
         // 취소 가능 여부 확인
@@ -103,18 +103,18 @@ public class BetService {
 
     private User findUserById(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new InvalidUserException(UserErrorCode.USR_INVALID_USER_ID));
+                .orElseThrow(() -> new UserException(UserErrorCode.INVALID_USER_ID));
     }
 
     private void validateBettable(MatchStatus status) {
         if (!status.equals(MatchStatus.SCHEDULED)) {
-            throw new InvalidBetException(BetErrorCode.MATCH_NOT_BETTABLE);
+            throw new BetException(BetErrorCode.MATCH_NOT_BETTABLE);
         }
     }
 
     private void validateCancelable(MatchStatus status) {
         if (!status.equals(MatchStatus.SCHEDULED)) {
-            throw new InvalidBetException(BetErrorCode.MATCH_NOT_CANCELABLE);
+            throw new BetException(BetErrorCode.MATCH_NOT_CANCELABLE);
         }
     }
 

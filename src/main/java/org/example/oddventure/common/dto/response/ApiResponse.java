@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 public class ApiResponse<T> {
 
     private final String httpStatus;
-    private final String code;
+    private final int code;
     private final boolean success;
     private final String message;
     private final T data;
@@ -19,7 +19,7 @@ public class ApiResponse<T> {
 
     private ApiResponse(T data, HttpStatus status, String message) {
         this.httpStatus = status.name();
-        this.code = String.valueOf(status.value());
+        this.code = status.value();
         this.success = true;
         this.message = message;
         this.data = data;

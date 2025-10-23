@@ -30,7 +30,7 @@ public class Bet extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -51,13 +51,12 @@ public class Bet extends BaseEntity {
     private boolean isWin;
 
     @Builder
-    public Bet(User user, Match match, SelectedTeam selectedTeam, BigDecimal betAmount, BigDecimal oddsAtBetting,
-               boolean isWin) {
+    public Bet(User user, Match match, SelectedTeam selectedTeam, BigDecimal betAmount, BigDecimal oddsAtBetting) {
         this.user = user;
         this.match = match;
         this.selectedTeam = selectedTeam;
         this.betAmount = betAmount;
         this.oddsAtBetting = oddsAtBetting;
-        this.isWin = isWin;
+        this.isWin = false;
     }
 }

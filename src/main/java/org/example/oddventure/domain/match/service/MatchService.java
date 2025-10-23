@@ -21,16 +21,17 @@ public class MatchService {
 
     @Transactional(readOnly = true)
     public Page<MatchResponse> getMatches(Pageable pageable) {
-
         Page<Match> matches = matchRepository.findAll(pageable);
-
         return matches.map(MatchResponse::from);
     }
 
     @Transactional
     public MatchResponse getMatch(Long matchId) {
+        int updated = matchRepository.incrementViewCount(matchId);
+        if (updated == 0) {
+            throw new MatchException(MatchErrorCode.MATCH_NOT_FOUND);
+        }
 
-        matchRepository.incrementViewCount(matchId);
         Match match = matchRepository.findById(matchId)
                 .orElseThrow(() -> new MatchException(MatchErrorCode.MATCH_NOT_FOUND));
 
@@ -39,9 +40,7 @@ public class MatchService {
 
     @Transactional(readOnly = true)
     public Page<MatchResponse> searchMatches(MatchSearchCondition condition, Pageable pageable) {
-
         Page<MatchProjection> projections = matchRepository.searchByCondition(condition, pageable);
-
-        return projections.map(MatchResponse::from);
+        return projections.map(MatchResponse::of);
     }
 }

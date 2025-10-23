@@ -1,5 +1,6 @@
 package org.example.oddventure.domain.hotKeywords.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,11 +15,15 @@ import org.example.oddventure.common.entity.BaseEntity;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class HotKeywords extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String keyword;
+
+    @Column(nullable = false)
     private int searchCount;
 
     @Builder

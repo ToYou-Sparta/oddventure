@@ -21,7 +21,6 @@ public record MatchProjection(
         Long viewCount,
         LocalDateTime createdAt
 ) {
-
     public static MatchProjection from(Match match) {
         return new MatchProjection(
                 match.getId(),

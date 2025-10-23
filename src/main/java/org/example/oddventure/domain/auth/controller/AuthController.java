@@ -46,41 +46,26 @@ public class AuthController {
     ) {
         LoginResponse response = authService.login(request);
 
-        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", response.refreshToken())
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .maxAge(Duration.ofDays(7))
-                .sameSite("Strict")
-                .build();
-
-        httpResponse.addHeader("Set-Cookie", refreshCookie.toString());
+        refreshTokenCookie(httpResponse, response.refreshToken(), 7);
 
         return ApiResponse.success(response, "로그인 되었습니다.");
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<ApiResponse<String>> logout(
+    public ResponseEntity<ApiResponse<Void>> logout(
             @AuthenticationPrincipal AuthUser user,
             HttpServletResponse httpResponse
     ) {
         authService.logout(user.id());
 
-        ResponseCookie deleteCookie = ResponseCookie.from("refreshToken", "")
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .maxAge(0)
-                .build();
-
-        httpResponse.addHeader("Set-Cookie", deleteCookie.toString());
+        refreshTokenCookie(httpResponse, "", 0);
 
         return ApiResponse.success(null, "로그아웃 되었습니다.");
     }
 
     @ValidUser
     @DeleteMapping("/withdraw")
-    public ResponseEntity<ApiResponse<String>> withdraw(
+    public ResponseEntity<ApiResponse<Void>> withdraw(
             @AuthenticationPrincipal AuthUser user,
             @Valid @RequestBody WithdrawRequest request
     ) {
@@ -94,5 +79,16 @@ public class AuthController {
     ) {
         AccessTokenResponse newAccessToken = authService.refresh(refreshToken);
         return ApiResponse.success(newAccessToken, "토큰이 재발급되었습니다.");
+    }
+
+    private void refreshTokenCookie(HttpServletResponse response, String refreshToken, long days) {
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(Duration.ofDays(days))
+                .sameSite("Strict")
+                .build();
+        response.addHeader("Set-Cookie", cookie.toString());
     }
 }

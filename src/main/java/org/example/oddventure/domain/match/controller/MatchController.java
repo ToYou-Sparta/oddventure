@@ -32,10 +32,8 @@ public class MatchController {
             @RequestParam(defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("startTime").ascending());
-
         Page<MatchResponse> matches = matchService.getMatches(pageable);
-
-        return ApiPageResponse.success(matches, "경기 목록 조회에 성공했습니다.");
+        return ApiPageResponse.success(matches, "매치 목록 조회에 성공했습니다.");
     }
 
     @GetMapping("/{matchId}")
@@ -43,8 +41,7 @@ public class MatchController {
             @PathVariable Long matchId
     ) {
         MatchResponse match = matchService.getMatch(matchId);
-
-        return ApiResponse.success(match, "경기 상세 조회에 성공했습니다.");
+        return ApiResponse.success(match, "매치 상세 조회에 성공했습니다.");
     }
 
     @PostMapping("/search")
@@ -54,9 +51,7 @@ public class MatchController {
             @RequestParam(defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
-
         Page<MatchResponse> matches = matchService.searchMatches(condition, pageable);
-
-        return ApiPageResponse.success(matches, "경기 검색에 성공했습니다.");
+        return ApiPageResponse.success(matches, "검색 조건에 맞는 매치 목록을 조회했습니다.");
     }
 }
