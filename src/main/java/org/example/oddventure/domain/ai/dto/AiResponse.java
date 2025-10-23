@@ -1,4 +1,4 @@
-package org.example.oddventure.domain.winningRateAi.dto;
+package org.example.oddventure.domain.ai.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

@@ -1,13 +1,12 @@
-package org.example.oddventure.domain.winningRateAi.service;
+package org.example.oddventure.domain.ai.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.example.oddventure.domain.match.entity.Match;
 import org.example.oddventure.domain.match.repository.MatchRepository;
-import org.example.oddventure.domain.winningRateAi.dto.AiRequest;
-import org.example.oddventure.domain.winningRateAi.dto.AiResponse;
+import org.example.oddventure.domain.ai.dto.AiRequest;
+import org.example.oddventure.domain.ai.dto.AiResponse;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.model.ChatResponse;
@@ -26,16 +25,16 @@ public class AiService {
     private final ChatClient chatClient;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public AiResponse generateAbnormalBehaviorReport(AiRequest request) {
-        List<Match> winMatches = matchRepository.findByWinnerIsNotNull();
-        List<Match> loseMatches = matchRepository.findByLoserIsNotNull();
+    public AiResponse calculateWinningRateWithAi(AiRequest request) {
+        List<String> winMatches = matchRepository.findByWinnerIsNotNull();
+        List<String> loseMatches = matchRepository.findByLoserIsNotNull();
 
         // 데이터 요약 문자열 생성
         String summary = buildSummary(winMatches, loseMatches);
         String prompt = generatePrompt(request);
 
         // Groq 프롬프트 생성
-        ChatResponse chatResponse = this.chatClient.prompt(prompt)
+        ChatResponse chatResponse = chatClient.prompt(prompt)
                 .system("경기 요약:\n"+summary)
                 .call()
                 .chatResponse();
@@ -58,13 +57,12 @@ public class AiService {
         }
     }
 
-    private String buildSummary(List<Match> winMatches, List<Match> loseMatches) {
-
+    public String buildSummary(List<String> winMatches, List<String> loseMatches) {
         Map<String, Long> teamWinningCount = winMatches.stream()
-                .collect(Collectors.groupingBy(Match::getWinner, Collectors.counting()));
+                .collect(Collectors.groupingBy((String winner) -> winner, Collectors.counting()));
 
-        Map<String, Long> teamlosingCount = loseMatches.stream()
-                .collect(Collectors.groupingBy(Match::getLoser, Collectors.counting()));
+        Map<String, Long> teamLosingCount = loseMatches.stream()
+                .collect(Collectors.groupingBy((String loser) -> loser, Collectors.counting()));
 
 
         StringBuilder sb = new StringBuilder();
@@ -73,11 +71,11 @@ public class AiService {
         teamWinningCount.forEach((team, count) -> sb.append("- ").append(team).append(": ").append(count).append("번\n"));
 
         sb.append("\n팀별 패배 횟수:\n");
-        teamlosingCount.forEach((team, count) -> sb.append("- ").append(team).append(": ").append(count).append("번\n"));
+        teamLosingCount.forEach((team, count) -> sb.append("- ").append(team).append(": ").append(count).append("번\n"));
         return sb.toString();
     }
 
-    private String generatePrompt(AiRequest request) {
+    public String generatePrompt(AiRequest request) {
         return String.format("""
                 Task: Extract teamName from the text and return a JSON response.
                
@@ -106,7 +104,7 @@ public class AiService {
                """, request.content());
     }
 
-    private AiResponse parseResult(String text) {
+    public AiResponse parseResult(String text) {
         String jsonText = text.lines()
                 .filter(line -> !line.startsWith("```"))
                 .reduce("", (a, b) -> a + b);
