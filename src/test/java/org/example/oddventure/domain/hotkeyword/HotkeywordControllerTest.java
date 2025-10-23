@@ -80,7 +80,6 @@ public class HotkeywordControllerTest extends RedisTestContainerConfig {
         HotKeywordsResponse response = HotKeywordsResponse.of(top5);
         when(hotKeywordsService.getHotKeywords()).thenReturn(response);
 
-
         // when & then
         mockMvc.perform(get("/api/v1/hotkeyword")
                         .contentType(MediaType.APPLICATION_JSON))
