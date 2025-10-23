@@ -1,15 +1,12 @@
 package org.example.oddventure.domain.ai.integration;
 
-import org.example.oddventure.domain.match.repository.MatchRepository;
 import org.example.oddventure.domain.ai.dto.AiRequest;
 import org.example.oddventure.domain.ai.dto.AiResponse;
 import org.example.oddventure.domain.ai.service.AiService;
 import org.junit.jupiter.api.Test;
-import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.List;
 
@@ -18,9 +15,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @SpringBootTest
 @ActiveProfiles("test")
 class WinningRateAiTest {
-
-    @Autowired
-    private ChatClient chatClient;
 
     @Autowired
     private AiService aiService;
