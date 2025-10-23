@@ -1,11 +1,13 @@
 package org.example.oddventure.common.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.time.LocalDateTime;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 @Getter
+@JsonPropertyOrder({"httpStatus", "code", "success", "message", "data", "timestamp"})
 public class ApiResponse<T> {
 
     private final String httpStatus;
@@ -16,11 +18,11 @@ public class ApiResponse<T> {
     private final LocalDateTime timestamp;
 
     private ApiResponse(T data, HttpStatus status, String message) {
-        this.data = data;
         this.httpStatus = status.name();
         this.code = String.valueOf(status.value());
         this.success = true;
         this.message = message;
+        this.data = data;
         this.timestamp = LocalDateTime.now();
     }
 

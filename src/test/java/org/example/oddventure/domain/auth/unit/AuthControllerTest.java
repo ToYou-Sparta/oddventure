@@ -3,11 +3,13 @@ package org.example.oddventure.domain.auth.unit;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.Cookie;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import org.example.oddventure.domain.auth.config.SecurityConfig;
@@ -15,6 +17,8 @@ import org.example.oddventure.domain.auth.controller.AuthController;
 import org.example.oddventure.domain.auth.dto.AuthUser;
 import org.example.oddventure.domain.auth.dto.request.LoginRequest;
 import org.example.oddventure.domain.auth.dto.request.SignupRequest;
+import org.example.oddventure.domain.auth.dto.request.WithdrawRequest;
+import org.example.oddventure.domain.auth.dto.response.AccessTokenResponse;
 import org.example.oddventure.domain.auth.dto.response.LoginResponse;
 import org.example.oddventure.domain.auth.dto.response.SignupResponse;
 import org.example.oddventure.domain.auth.jwt.JwtUtil;
@@ -113,7 +117,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = {"USER"})
+    @WithMockUser(roles = "USER")
     @DisplayName("POST /logout - 로그아웃 성공")
     void logout() throws Exception {
 
@@ -127,6 +131,49 @@ public class AuthControllerTest {
                                 new UsernamePasswordAuthenticationToken(authUser, null, authUser.getAuthorities()))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("로그아웃 되었습니다."))
+                .andExpect(jsonPath("$.success").value(true));
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    @DisplayName("DELETE /withdraw - 회원 탈퇴 성공")
+    void withdraw_success() throws Exception {
+
+        // given
+        AuthUser authUser = new AuthUser(1L, UserRole.ROLE_USER);
+        WithdrawRequest request = new WithdrawRequest("hello123!@#");
+
+        doNothing().when(authService).withdraw(authUser.id(), request);
+
+        // when & then
+        mockMvc.perform(delete("/api/v1/auth/withdraw")
+                        .with(authentication(
+                                new UsernamePasswordAuthenticationToken(authUser, null, authUser.getAuthorities())))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("회원탈퇴 되었습니다."))
+                .andExpect(jsonPath("$.success").value(true));
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    @DisplayName("POST /refresh - 토큰 재발급 성공")
+    void refresh_success() throws Exception {
+
+        // given
+        String refreshToken = "validRefreshToken";
+        AccessTokenResponse response = new AccessTokenResponse("newAccessToken");
+
+        when(authService.refresh(refreshToken)).thenReturn(response);
+
+        // when & then
+        mockMvc.perform(post("/api/v1/auth/refresh")
+                        .cookie(new Cookie("refreshToken", refreshToken)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("토큰이 재발급되었습니다."))
+                .andExpect(jsonPath("$.data.accessToken").value("newAccessToken"))
                 .andExpect(jsonPath("$.success").value(true));
     }
 }
