@@ -173,7 +173,7 @@ public class BetControllerTest {
     @Test
     @DisplayName("GET /bets/me 베팅 내역 조회 성공")
     public void getBet_success() throws Exception {
-        //givn
+        //given
         Long userId = 1L;
         Long betId = 1L;
         Pageable pageable = PageRequest.of(0, 10);

@@ -21,7 +21,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-// JWT 토큰을 검증하고 사용자 정보 추출
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -36,21 +35,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse httpResponse,
             @NonNull FilterChain chain
     ) throws ServletException, IOException {
-
-        // Authorization 헤더에서 토큰 추출
         String authorizationHeader = httpRequest.getHeader("Authorization");
 
-        // Authorization 헤더가 있고 "Bearer "로 시작하는지 확인
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
 
-            // Bearer 접두사 제거
             String jwt = jwtUtil.substringToken(authorizationHeader);
 
             try {
-                // JWT 토큰 파싱 및 검증
                 Claims claims = jwtUtil.extractClaims(jwt);
 
-                // SecurityContext에 이미 인증 정보가 있는지 확인
                 if (SecurityContextHolder.getContext().getAuthentication() == null) {
                     setAuthentication(claims);
                 }
@@ -97,9 +90,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      * @param errorCode    인증 오류 코드(상태 코드 및 에러 메시지 포함)
      * @throws IOException 응답 작성 중 IO 오류 발생 시
      */
-    private void sendErrorResponse(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
-                                   AuthErrorCode errorCode)
-            throws IOException {
+    private void sendErrorResponse(
+            HttpServletRequest httpRequest,
+            HttpServletResponse httpResponse,
+            AuthErrorCode errorCode
+    ) throws IOException {
         ApiErrorResponse errorResponse = ApiErrorResponse.from(errorCode, httpRequest);
         httpResponse.setStatus(errorCode.getHttpStatus().value());
         httpResponse.setContentType("application/json;charset=UTF-8");

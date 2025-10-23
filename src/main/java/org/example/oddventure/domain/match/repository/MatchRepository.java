@@ -15,7 +15,7 @@ public interface MatchRepository extends JpaRepository<Match, Long>, MatchReposi
 
     @Modifying
     @Query("UPDATE Match m SET m.viewCount = m.viewCount + 1 WHERE m.id = :id")
-    void incrementViewCount(@Param("id") Long matchId);
+    int incrementViewCount(@Param("id") Long matchId);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select m from Match m where m.id = :id")

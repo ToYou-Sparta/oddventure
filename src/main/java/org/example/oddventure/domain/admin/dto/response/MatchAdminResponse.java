@@ -12,7 +12,7 @@ public record MatchAdminResponse(
         LocalDateTime startTime,
         MatchStatus status
 ) {
-    public static MatchAdminResponse fromEntity(Match match) {
+    public static MatchAdminResponse from(Match match) {
         return new MatchAdminResponse(
                 match.getId(),
                 match.getMatchName(),

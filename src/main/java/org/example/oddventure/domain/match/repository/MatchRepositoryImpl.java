@@ -23,7 +23,6 @@ public class MatchRepositoryImpl implements MatchRepositoryCustom {
 
     @Override
     public Page<MatchProjection> searchByCondition(MatchSearchCondition condition, Pageable pageable) {
-
         QMatch match = QMatch.match;
         BooleanBuilder builder = new BooleanBuilder();
 
