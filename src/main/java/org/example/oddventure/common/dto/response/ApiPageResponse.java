@@ -1,5 +1,6 @@
 package org.example.oddventure.common.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Getter;
@@ -7,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 
 @Getter
+@JsonPropertyOrder({"success", "message", "data", "timestamp"})
 public class ApiPageResponse<T> {
 
     private final boolean success;
@@ -15,10 +17,10 @@ public class ApiPageResponse<T> {
     private final LocalDateTime timestamp;
 
     private ApiPageResponse(PageData<T> data, String message) {
-        this.data = data;
-        this.message = message;
-        this.timestamp = LocalDateTime.now();
         this.success = true;
+        this.message = message;
+        this.data = data;
+        this.timestamp = LocalDateTime.now();
     }
 
     /**

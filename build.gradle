@@ -3,6 +3,7 @@ plugins {
     id 'org.springframework.boot' version '3.5.6'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'jacoco'
+    id "org.asciidoctor.jvm.convert" version "3.3.2"
 }
 
 group = 'org.example'
@@ -19,6 +20,7 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+    asciidoctorExt
 }
 
 repositories {
@@ -27,16 +29,24 @@ repositories {
 
 ext {
     set('springAiVersion', "1.0.3")
+    snippetsDir = file('build/generated-snippets')
 }
 
 dependencies {
+    // spring
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // lombok
     compileOnly 'org.projectlombok:lombok'
-    runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
+
+    // db
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    // test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'com.h2database:h2'
@@ -71,6 +81,10 @@ dependencies {
     //swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
 
+    // restdocs
+    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor:3.0.5'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc:3.0.5'
+
 }
 
 dependencyManagement {
@@ -86,6 +100,15 @@ dependencyManagement {
 tasks.test {
     useJUnitPlatform()
     finalizedBy tasks.jacocoTestReport
+    outputs.dir snippetsDir
+}
+
+tasks.register('copyDocument', Copy) {
+    // asciidoctor 작업이 완료된 후에 실행
+    dependsOn asciidoctor
+    // build/docs/asciidoc 디렉토리에 있는 파일을 src/main/resources/static/docs 디렉토리로 복사
+    from file("build/docs/asciidoc")
+    into file("src/main/resources/static/docs")
 }
 
 jacoco {
@@ -126,3 +149,18 @@ jacocoTestCoverageVerification {
 }
 
 check.dependsOn jacocoTestCoverageVerification
+
+asciidoctor {
+    inputs.dir snippetsDir
+    configurations 'asciidoctorExt'
+    dependsOn test
+    baseDirFollowsSourceFile() // 특정 .adoc에서 다른 .adoc 파일을 include할 때, 경로를 baseDir 기준으로 설정
+}
+
+asciidoctor.doFirst {
+    delete file('src/main/resources/static/docs') // 빌드 시 기존에 생성된 문서를 삭제
+}
+
+build {
+    dependsOn copyDocument // copyDocument 작업이 완료된 후에 빌드
+}
