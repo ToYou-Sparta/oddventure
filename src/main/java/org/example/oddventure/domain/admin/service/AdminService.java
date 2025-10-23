@@ -1,17 +1,15 @@
 package org.example.oddventure.domain.admin.service;
 
-import static org.example.oddventure.domain.admin.exception.AdminErrorCode.MATCH_NOT_FOUND;
-import static org.example.oddventure.domain.admin.exception.AdminErrorCode.USER_NOT_FOUND;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.oddventure.common.exception.GlobalException;
 import org.example.oddventure.domain.admin.dto.request.MatchCreateRequest;
 import org.example.oddventure.domain.admin.dto.request.MatchUpdateRequest;
 import org.example.oddventure.domain.admin.dto.request.PointAdjustRequest;
 import org.example.oddventure.domain.admin.dto.response.MatchAdminResponse;
 import org.example.oddventure.domain.admin.dto.response.PointAdjustResponse;
 import org.example.oddventure.domain.admin.dto.response.UserAdminResponse;
+import org.example.oddventure.domain.admin.exception.AdminErrorCode;
+import org.example.oddventure.domain.admin.exception.InvalidAdminException;
 import org.example.oddventure.domain.match.entity.Match;
 import org.example.oddventure.domain.match.repository.MatchRepository;
 import org.example.oddventure.domain.user.entity.User;
@@ -46,7 +44,7 @@ public class AdminService {
     @Transactional
     public MatchAdminResponse updateMatch(Long matchId, MatchUpdateRequest request) {
         Match match = matchRepository.findById(matchId)
-                .orElseThrow(() -> new GlobalException(MATCH_NOT_FOUND));
+                .orElseThrow(() -> new InvalidAdminException(AdminErrorCode.MATCH_NOT_FOUND));
 
         match.update(
                 request.matchName(),
@@ -70,26 +68,29 @@ public class AdminService {
     @Transactional(readOnly = true)
     public UserAdminResponse getUserDetails(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new GlobalException(USER_NOT_FOUND));
+                .orElseThrow(() -> new InvalidAdminException(AdminErrorCode.USER_NOT_FOUND));
 
         return UserAdminResponse.fromEntity(user);
     }
 
     // 포인트 지급
+    @Transactional
     public PointAdjustResponse adjustUserPoints(Long userId, PointAdjustRequest request) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new GlobalException(USER_NOT_FOUND));
+        {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new InvalidAdminException(AdminErrorCode.USER_NOT_FOUND));
 
-        user.plusPoint(request.amount());
+            user.plusPoint(request.amount());
 
-        log.info("[ADMIN_POINT_ADJUSTMENT] userId={}, amount={}, reason='{}', finalBalance={}",
-                userId, request.amount(), request.reason(), user.getPoint());
+            log.info("[ADMIN_POINT_ADJUSTMENT] userId={}, amount={}, reason='{}', finalBalance={}",
+                    userId, request.amount(), request.reason(), user.getPoint());
 
-        return new PointAdjustResponse(
-                user.getId(),
-                user.getUsername(),
-                request.amount(),
-                user.getPoint()
-        );
+            return new PointAdjustResponse(
+                    user.getId(),
+                    user.getUsername(),
+                    request.amount(),
+                    user.getPoint()
+            );
+        }
     }
 }

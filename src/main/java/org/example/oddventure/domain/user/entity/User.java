@@ -50,6 +50,16 @@ public class User extends BaseEntity {
         this.point = new BigDecimal("1000"); // 회원가입 시 기본 포인트 1000
     }
 
+    public void updateProfile(String username, String email) {
+        this.username = username;
+        this.email = email;
+    }
+
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
+    }
+
+
     public void minusPoint(BigDecimal amount) {
         this.point = this.point.subtract(amount);
     }
