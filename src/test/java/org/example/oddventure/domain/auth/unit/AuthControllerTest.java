@@ -2,6 +2,8 @@ package org.example.oddventure.domain.auth.unit;
 
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -12,6 +14,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import org.example.oddventure.base.restdocs.RestDocsTestSupport;
+import org.example.oddventure.base.restdocs.RestDocsUtils;
 import org.example.oddventure.domain.auth.config.SecurityConfig;
 import org.example.oddventure.domain.auth.controller.AuthController;
 import org.example.oddventure.domain.auth.dto.AuthUser;
@@ -35,14 +39,11 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(AuthController.class)
 @Import({SecurityConfig.class, JwtUtil.class})
-public class AuthControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
+public class AuthControllerTest extends RestDocsTestSupport {
 
     @MockitoBean
     private AuthService authService;
@@ -66,15 +67,32 @@ public class AuthControllerTest {
         );
         when(authService.signup(request)).thenReturn(response);
 
-        // when & then
-        mockMvc.perform(post("/api/v1/auth/signup")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isCreated())
+        // when
+        ResultActions result = mockMvc.perform(post("/api/v1/auth/signup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)));
+
+        // then
+        result.andExpect(status().isCreated())
                 .andExpect(jsonPath("$.message").value("회원가입이 완료되었습니다."))
                 .andExpect(jsonPath("$.data.userId").value(userId))
                 .andExpect(jsonPath("$.data.username").value("hello"))
-                .andExpect(jsonPath("$.data.point").value("1000"));
+                .andExpect(jsonPath("$.data.point").value("1000"))
+                .andDo(restDocs.document(
+                        requestFields(
+                                fieldWithPath("username").description("사용자 이름"),
+                                fieldWithPath("email").description("사용자 이메일"),
+                                fieldWithPath("password").description("비밀번호")
+                        ),
+                        RestDocsUtils.successWithDataFields(
+                                fieldWithPath("data.userId").description("회원 ID"),
+                                fieldWithPath("data.username").description("회원 이름"),
+                                fieldWithPath("data.email").description("회원 이메일"),
+                                fieldWithPath("data.role").description("회원 권한"),
+                                fieldWithPath("data.point").description("초기 포인트"),
+                                fieldWithPath("data.createdAt").description("회원가입 일시")
+                        )
+                ));
     }
 
     @Test
@@ -82,15 +100,24 @@ public class AuthControllerTest {
     void signup_fail_exists_email() throws Exception {
         // given
         SignupRequest request = new SignupRequest("hello", "hello@naver.com", "hello123!@#");
-
         when(authService.signup(request)).thenThrow(new UserException(UserErrorCode.ALREADY_EXIST_EMAIL));
 
-        // when & then
-        mockMvc.perform(post("/api/v1/auth/signup")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.message").value("이미 존재하는 이메일 입니다."));
+        // when
+        ResultActions result = mockMvc.perform(post("/api/v1/auth/signup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)));
+
+        // then
+        result.andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value(UserErrorCode.ALREADY_EXIST_EMAIL.getMessage()))
+                .andDo(restDocs.document(
+                        requestFields(
+                                fieldWithPath("username").description("사용자 이름"),
+                                fieldWithPath("email").description("사용자 이메일"),
+                                fieldWithPath("password").description("비밀번호")
+                        ),
+                        RestDocsUtils.errorResponseFields()
+                ));
     }
 
     @Test
@@ -102,14 +129,25 @@ public class AuthControllerTest {
         LoginResponse response = new LoginResponse("accessToken", "refreshToken");
         when(authService.login(request)).thenReturn(response);
 
-        // when & then
-        mockMvc.perform(post("/api/v1/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
+        // when
+        ResultActions result = mockMvc.perform(post("/api/v1/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)));
+        // then
+        result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("로그인 되었습니다."))
                 .andExpect(jsonPath("$.data.accessToken").value("accessToken"))
-                .andExpect(jsonPath("$.data.refreshToken").value("refreshToken"));
+                .andExpect(jsonPath("$.data.refreshToken").value("refreshToken"))
+                .andDo(restDocs.document(
+                        requestFields(
+                                fieldWithPath("email").description("사용자 이메일"),
+                                fieldWithPath("password").description("비밀번호")
+                        ),
+                        RestDocsUtils.successWithDataFields(
+                                fieldWithPath("data.accessToken").description("액세스 토큰"),
+                                fieldWithPath("data.refreshToken").description("리프레시 토큰")
+                        )
+                ));
     }
 
     @Test
@@ -120,13 +158,15 @@ public class AuthControllerTest {
         AuthUser authUser = new AuthUser(1L, UserRole.ROLE_USER);
         doNothing().when(authService).logout(authUser.id());
 
-        // when & then
-        mockMvc.perform(post("/api/v1/auth/logout")
-                        .with(authentication(
-                                new UsernamePasswordAuthenticationToken(authUser, null, authUser.getAuthorities()))))
-                .andExpect(status().isOk())
+        // when
+        ResultActions result = mockMvc.perform(post("/api/v1/auth/logout")
+                .with(authentication(
+                        new UsernamePasswordAuthenticationToken(authUser, null, authUser.getAuthorities()))));
+        // then
+        result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("로그아웃 되었습니다."))
-                .andExpect(jsonPath("$.success").value(true));
+                .andExpect(jsonPath("$.success").value(true))
+                .andDo(restDocs.document(RestDocsUtils.successWithDataFields()));
     }
 
     @Test
@@ -139,16 +179,23 @@ public class AuthControllerTest {
 
         doNothing().when(authService).withdraw(authUser.id(), request);
 
-        // when & then
-        mockMvc.perform(delete("/api/v1/auth/withdraw")
-                        .with(authentication(
-                                new UsernamePasswordAuthenticationToken(authUser, null, authUser.getAuthorities())))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request))
-                )
-                .andExpect(status().isOk())
+        // when
+        ResultActions result = mockMvc.perform(delete("/api/v1/auth/withdraw")
+                .with(authentication(
+                        new UsernamePasswordAuthenticationToken(authUser, null, authUser.getAuthorities())))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)));
+
+        // then
+        result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("회원탈퇴 되었습니다."))
-                .andExpect(jsonPath("$.success").value(true));
+                .andExpect(jsonPath("$.success").value(true))
+                .andDo(restDocs.document(
+                        requestFields(
+                                fieldWithPath("password").description("비밀번호 확인")
+                        ),
+                        RestDocsUtils.successWithDataFields()
+                ));
     }
 
     @Test
@@ -161,12 +208,18 @@ public class AuthControllerTest {
 
         when(authService.refresh(refreshToken)).thenReturn(response);
 
-        // when & then
-        mockMvc.perform(post("/api/v1/auth/refresh")
-                        .cookie(new Cookie("refreshToken", refreshToken)))
-                .andExpect(status().isOk())
+        // when
+        ResultActions result = mockMvc.perform(post("/api/v1/auth/refresh")
+                .cookie(new Cookie("refreshToken", refreshToken)));
+        // then
+        result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("토큰이 재발급되었습니다."))
                 .andExpect(jsonPath("$.data.accessToken").value("newAccessToken"))
-                .andExpect(jsonPath("$.success").value(true));
+                .andExpect(jsonPath("$.success").value(true))
+                .andDo(restDocs.document(
+                        RestDocsUtils.successWithDataFields(
+                                fieldWithPath("data.accessToken").description("새로 발급된 액세스 토큰")
+                        )
+                ));
     }
 }
