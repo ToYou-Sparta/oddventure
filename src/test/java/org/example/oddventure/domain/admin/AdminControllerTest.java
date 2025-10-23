@@ -3,6 +3,8 @@ package org.example.oddventure.domain.admin;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -41,9 +43,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
 @WebMvcTest(AdminController.class)
 @Import({SecurityConfig.class, JwtUtil.class})
@@ -130,7 +129,9 @@ class AdminControllerTest {
     void getAllUsers_Success() throws Exception {
         // given
         Pageable pageable = PageRequest.of(0, 5);
-        List<UserAdminResponse> userList = List.of(new UserAdminResponse(1L, "testuser1", "test1@email.com", new BigDecimal("1000"), UserRole.ROLE_USER, LocalDateTime.now()));
+        List<UserAdminResponse> userList = List.of(
+                new UserAdminResponse(1L, "testuser1", "test1@email.com", new BigDecimal("1000"), UserRole.ROLE_USER,
+                        LocalDateTime.now()));
         Page<UserAdminResponse> mockResponsePage = new PageImpl<>(userList, pageable, 1);
         given(adminService.getAllUsers(any(), any(), any(Pageable.class))).willReturn(mockResponsePage);
 
@@ -151,7 +152,8 @@ class AdminControllerTest {
     void getUserDetails_Success() throws Exception {
         // given
         Long userId = 1L;
-        UserAdminResponse responseDto = new UserAdminResponse(userId, "testuser", "test@test.com", new BigDecimal("1000"), UserRole.ROLE_USER, LocalDateTime.now());
+        UserAdminResponse responseDto = new UserAdminResponse(userId, "testuser", "test@test.com",
+                new BigDecimal("1000"), UserRole.ROLE_USER, LocalDateTime.now());
         given(adminService.getUserDetails(userId)).willReturn(responseDto);
 
         // when & then

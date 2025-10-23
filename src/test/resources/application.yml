@@ -10,12 +10,24 @@ spring:
     show-sql: true
   ai:
     openai:
-      api-key: dummy
+      api-key: ${API_KEY}
+      base-url: ${BASE_URL}
+      chat:
+        options:
+          model: llama-3.3-70b-versatile
+          temperature: 0.0
   data:
     redis:
       host: localhost
       port: 6379
       timeout: 6000
+  cloud:
+    aws:
+      credentials:
+        access-key: test-key
+        secret-key: test-secret
+      region:
+        static: ap-northeast-2
 
 jwt:
   secret:

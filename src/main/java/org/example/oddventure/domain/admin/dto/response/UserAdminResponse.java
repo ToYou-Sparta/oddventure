@@ -1,10 +1,9 @@
 package org.example.oddventure.domain.admin.dto.response;
 
-import org.example.oddventure.domain.user.entity.User;
-import org.example.oddventure.domain.user.enums.UserRole;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import org.example.oddventure.domain.user.entity.User;
+import org.example.oddventure.domain.user.enums.UserRole;
 
 public record UserAdminResponse(
         Long userId,
@@ -14,7 +13,7 @@ public record UserAdminResponse(
         UserRole role,
         LocalDateTime createdAt
 ) {
-    public static UserAdminResponse fromEntity(User user) {
+    public static UserAdminResponse from(User user) {
         return new UserAdminResponse(
                 user.getId(),
                 user.getUsername(),

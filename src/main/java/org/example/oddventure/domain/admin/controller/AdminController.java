@@ -34,7 +34,8 @@ public class AdminController {
     // 매치 생성
     @PostMapping("/matches")
     public ResponseEntity<ApiResponse<MatchAdminResponse>> createMatch(
-            @Valid @RequestBody MatchCreateRequest request) {
+            @Valid @RequestBody MatchCreateRequest request
+    ) {
         MatchAdminResponse response = adminService.createMatch(request);
         return ApiResponse.created(response, "매치가 생성되었습니다.");
     }
@@ -43,7 +44,8 @@ public class AdminController {
     @PatchMapping("/matches/{matchId}")
     public ResponseEntity<ApiResponse<MatchAdminResponse>> updateMatchStatus(
             @PathVariable Long matchId,
-            @Valid @RequestBody MatchUpdateRequest request) {
+            @Valid @RequestBody MatchUpdateRequest request
+    ) {
         MatchAdminResponse response = adminService.updateMatch(matchId, request);
         return ApiResponse.success(response, "매치 정보가 수정되었습니다.");
     }
@@ -53,19 +55,16 @@ public class AdminController {
     public ResponseEntity<ApiPageResponse<UserAdminResponse>> getAllUsers(
             @RequestParam(required = false) String email,
             @RequestParam(required = false) String username,
-            Pageable pageable)
-    {
+            Pageable pageable
+    ) {
         Page<UserAdminResponse> users = adminService.getAllUsers(email, username, pageable);
         return ApiPageResponse.success(users, "사용자 목록 조회에 성공했습니다.");
     }
 
     // 사용자 상세 조회
     @GetMapping("/users/{userId}")
-    public ResponseEntity<ApiResponse<UserAdminResponse>> getUserDetails(
-            @PathVariable Long userId)
-    {
+    public ResponseEntity<ApiResponse<UserAdminResponse>> getUserDetails(@PathVariable Long userId) {
         UserAdminResponse response = adminService.getUserDetails(userId);
-
         return ApiResponse.success(response, "사용자 상세 정보 조회에 성공했습니다.");
     }
 
@@ -73,10 +72,9 @@ public class AdminController {
     @PostMapping("/users/{userId}/points")
     public ResponseEntity<ApiResponse<PointAdjustResponse>> adjustUserPoints(
             @PathVariable Long userId,
-            @Valid @RequestBody PointAdjustRequest request)
-    {
+            @Valid @RequestBody PointAdjustRequest request
+    ) {
         PointAdjustResponse response = adminService.adjustUserPoints(userId, request);
-
         return ApiResponse.success(response, "포인트 지급에 성공했습니다.");
     }
 

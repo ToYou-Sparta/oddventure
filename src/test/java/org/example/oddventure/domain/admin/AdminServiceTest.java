@@ -24,7 +24,6 @@ import org.example.oddventure.domain.match.entity.Match;
 import org.example.oddventure.domain.match.enums.MatchStatus;
 import org.example.oddventure.domain.match.repository.MatchRepository;
 import org.example.oddventure.domain.user.entity.User;
-import org.example.oddventure.domain.user.enums.UserRole;
 import org.example.oddventure.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -126,7 +125,6 @@ class AdminServiceTest {
                 .email("test1@test.com")
                 .username("testuser1")
                 .password("password")
-                .userRole(UserRole.ROLE_USER)
                 .build();
 
         Page<User> mockUserPage = new PageImpl<>(List.of(user1), pageable, 1);
@@ -148,10 +146,8 @@ class AdminServiceTest {
     void getAllUsers_NoFilters_Success() {
         // given
         Pageable pageable = PageRequest.of(0, 10);
-        User user1 = User.builder().email("test1@test.com").username("user1").password("p").userRole(UserRole.ROLE_USER)
-                .build();
-        User user2 = User.builder().email("test2@test.com").username("user2").password("p").userRole(UserRole.ROLE_USER)
-                .build();
+        User user1 = User.builder().email("test1@test.com").username("user1").password("p").build();
+        User user2 = User.builder().email("test2@test.com").username("user2").password("p").build();
 
         Page<User> mockUserPage = new PageImpl<>(List.of(user1, user2), pageable, 2);
 
@@ -175,7 +171,6 @@ class AdminServiceTest {
                 .username("testuser")
                 .email("test@test.com")
                 .password("password")
-                .userRole(UserRole.ROLE_USER)
                 .build();
 
         given(userRepository.findById(userId)).willReturn(Optional.of(mockUser));
@@ -216,7 +211,6 @@ class AdminServiceTest {
                 .email("test@test.com")
                 .username("testuser")
                 .password("password")
-                .userRole(UserRole.ROLE_USER)
                 .build();
 
         given(userRepository.findById(userId)).willReturn(Optional.of(mockUser));

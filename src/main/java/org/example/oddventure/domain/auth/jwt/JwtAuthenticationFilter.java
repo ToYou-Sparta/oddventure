@@ -10,11 +10,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.oddventure.common.dto.response.ApiErrorResponse;
 import org.example.oddventure.domain.auth.dto.AuthUser;
 import org.example.oddventure.domain.auth.exception.AuthErrorCode;
 import org.example.oddventure.domain.user.enums.UserRole;
@@ -22,7 +21,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-// JWT 토큰을 검증하고 사용자 정보 추출
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -37,39 +35,33 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse httpResponse,
             @NonNull FilterChain chain
     ) throws ServletException, IOException {
-
-        // Authorization 헤더에서 토큰 추출
         String authorizationHeader = httpRequest.getHeader("Authorization");
 
-        // Authorization 헤더가 있고 "Bearer "로 시작하는지 확인
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
 
-            // Bearer 접두사 제거
             String jwt = jwtUtil.substringToken(authorizationHeader);
 
             try {
-                // JWT 토큰 파싱 및 검증
                 Claims claims = jwtUtil.extractClaims(jwt);
 
-                // SecurityContext에 이미 인증 정보가 있는지 확인
                 if (SecurityContextHolder.getContext().getAuthentication() == null) {
                     setAuthentication(claims);
                 }
             } catch (SecurityException | MalformedJwtException e) {
                 log.error("Invalid JWT signature", e);
-                sendErrorResponse(httpResponse, AuthErrorCode.JWT_INVALID_SIGNATURE);
+                sendErrorResponse(httpRequest, httpResponse, AuthErrorCode.TOKEN_INVALID);
                 return;
             } catch (ExpiredJwtException e) {
                 log.error("Expired JWT token", e);
-                sendErrorResponse(httpResponse, AuthErrorCode.JWT_EXPIRED);
+                sendErrorResponse(httpRequest, httpResponse, AuthErrorCode.TOKEN_EXPIRED);
                 return;
             } catch (UnsupportedJwtException e) {
                 log.error("Unsupported JWT token", e);
-                sendErrorResponse(httpResponse, AuthErrorCode.JWT_UNSUPPORTED);
+                sendErrorResponse(httpRequest, httpResponse, AuthErrorCode.TOKEN_UNSUPPORTED);
                 return;
             } catch (Exception e) {
                 log.error("Internal server error", e);
-                sendErrorResponse(httpResponse, AuthErrorCode.JWT_INTERNAL_ERROR);
+                sendErrorResponse(httpRequest, httpResponse, AuthErrorCode.TOKEN_INTERNAL_ERROR);
                 return;
             }
         }
@@ -93,18 +85,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     /**
      * HTTP 에러 응답을 JSON 형태로 클라이언트에게 전송하는 메서드
      *
+     * @param httpRequest  클라이언트의 요청
      * @param httpResponse 클라이언트에게 보낼 응답
-     * @param errorCode    AuthErrorCode(상태 코드 및 에러 메시지 포함)
+     * @param errorCode    인증 오류 코드(상태 코드 및 에러 메시지 포함)
      * @throws IOException 응답 작성 중 IO 오류 발생 시
      */
-    private void sendErrorResponse(HttpServletResponse httpResponse, AuthErrorCode errorCode)
-            throws IOException {
+    private void sendErrorResponse(
+            HttpServletRequest httpRequest,
+            HttpServletResponse httpResponse,
+            AuthErrorCode errorCode
+    ) throws IOException {
+        ApiErrorResponse errorResponse = ApiErrorResponse.from(errorCode, httpRequest);
         httpResponse.setStatus(errorCode.getHttpStatus().value());
         httpResponse.setContentType("application/json;charset=UTF-8");
-        Map<String, Object> errorResponse = new HashMap<>();
-        errorResponse.put("status", errorCode.getHttpStatus().name());
-        errorResponse.put("code", errorCode.getHttpStatus().value());
-        errorResponse.put("message", errorCode.getMessage());
         httpResponse.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }
 }

@@ -1,8 +1,10 @@
 package org.example.oddventure.domain.bet.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.oddventure.common.dto.response.ApiPageResponse;
 import org.example.oddventure.common.dto.response.ApiResponse;
+import org.example.oddventure.domain.auth.dto.AuthUser;
 import org.example.oddventure.domain.bet.dto.request.BetCreateRequest;
 import org.example.oddventure.domain.bet.dto.response.BetCreateResponse;
 import org.example.oddventure.domain.bet.dto.response.BetDeleteResponse;
@@ -12,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,24 +32,31 @@ public class BetController {
     private final BetService betService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<BetCreateResponse>> createBet(Long userId,
-                                                                    @RequestBody BetCreateRequest betCreateRequest) {
-        BetCreateResponse betCreateResponse = betService.createBet(userId, betCreateRequest);
-        return ApiResponse.created(betCreateResponse, "베팅이 완료 되었습니다.");
+    public ResponseEntity<ApiResponse<BetCreateResponse>> createBet(
+            @AuthenticationPrincipal AuthUser authUser,
+            @Valid @RequestBody BetCreateRequest betCreateRequest
+    ) {
+        BetCreateResponse betCreateResponse = betService.createBet(authUser.id(), betCreateRequest);
+        return ApiResponse.created(betCreateResponse, "베팅이 완료되었습니다.");
     }
 
     @GetMapping("/me")
-    public ResponseEntity<ApiPageResponse<BetResponse>> getBet(Long userId,
-                                                               @RequestParam(defaultValue = "0") int number,
-                                                               @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<ApiPageResponse<BetResponse>> getBet(
+            @AuthenticationPrincipal AuthUser authUser,
+            @RequestParam(defaultValue = "0") int number,
+            @RequestParam(defaultValue = "10") int size
+    ) {
         Pageable pageable = PageRequest.of(number, size);
-        Page<BetResponse> betResponsePage = betService.getBets(userId, pageable);
+        Page<BetResponse> betResponsePage = betService.getBets(authUser.id(), pageable);
         return ApiPageResponse.success(betResponsePage, "베팅 내역이 조회되었습니다.");
     }
 
-    @DeleteMapping("/bets/{betId}")
-    public ResponseEntity<ApiResponse<BetDeleteResponse>> deleteBet(Long userId, @PathVariable Long betId) {
-        BetDeleteResponse betDeleteResponse = betService.deleteBet(userId, betId);
-        return ApiResponse.success(betDeleteResponse, "베팅이 취소 되었습니다.");
+    @DeleteMapping("/{betId}")
+    public ResponseEntity<ApiResponse<BetDeleteResponse>> deleteBet(
+            @AuthenticationPrincipal AuthUser authUser,
+            @PathVariable Long betId
+    ) {
+        BetDeleteResponse betDeleteResponse = betService.deleteBet(authUser.id(), betId);
+        return ApiResponse.success(betDeleteResponse, "베팅이 취소되었습니다.");
     }
 }

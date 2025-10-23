@@ -79,11 +79,21 @@ public class Match extends BaseEntity {
     }
 
     public void update(String matchName, String teamA, String teamB, LocalDateTime startTime, MatchStatus status) {
-        this.matchName = matchName;
-        this.teamA = teamA;
-        this.teamB = teamB;
-        this.startTime = startTime;
-        this.status = status;
+        if (matchName != null) {
+            this.matchName = matchName;
+        }
+        if (teamA != null) {
+            this.teamA = teamA;
+        }
+        if (teamB != null) {
+            this.teamB = teamB;
+        }
+        if (startTime != null) {
+            this.startTime = startTime;
+        }
+        if (status != null) {
+            this.status = status;
+        }
     }
 
     public void plusTeamA(BigDecimal amount) {

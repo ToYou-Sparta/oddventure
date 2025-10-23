@@ -21,6 +21,7 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
 
     @Override
     public Object getCredentials() {
+        // JWT 기반 인증은 별도의 자격 증명(credentials)을 사용하지 않음
         return null;
     }
 
@@ -30,7 +31,7 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
      * @return AuthUser 객체
      */
     @Override
-    public Object getPrincipal() {
+    public AuthUser getPrincipal() {
         return authUser;
     }
 }

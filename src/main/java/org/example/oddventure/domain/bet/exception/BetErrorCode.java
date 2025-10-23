@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum BetErrorCode implements ErrorCode {
+
     NOT_ENOUGH_POINTS(HttpStatus.BAD_REQUEST, "보유 포인트가 부족합니다."),
     MATCH_NOT_BETTABLE(HttpStatus.BAD_REQUEST, "베팅이 마감되었거나 진행 중인 경기입니다."),
     MATCH_NOT_CANCELABLE(HttpStatus.BAD_REQUEST, "취소가 불가능한 경기입니다."),
