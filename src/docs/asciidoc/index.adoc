@@ -1,0 +1,49 @@
+= Oddventure REST API 문서
+:toc: left
+:toclevels: 2
+:sectnums:
+:source-highlighter: highlightjs
+
+== 베팅 API (Bet API)
+
+=== 1️⃣ 베팅 생성 (POST /api/v1/bets)
+
+==== 요청 예시
+include::{snippets}/bet-controller-test/create-bet_success/http-request.adoc[]
+
+==== 응답 예시
+include::{snippets}/bet-controller-test/create-bet_success/http-response.adoc[]
+
+==== 요청 필드 설명
+include::{snippets}/bet-controller-test/create-bet_success/request-fields.adoc[]
+
+==== 응답 필드 설명
+include::{snippets}/bet-controller-test/create-bet_success/response-fields.adoc[]
+
+---
+
+=== 2️⃣ 베팅 취소 (DELETE /api/v1/bets/{betId})
+
+==== 요청 예시
+include::{snippets}/bet-controller-test/delete-bet_success/http-request.adoc[]
+
+==== 응답 예시
+include::{snippets}/bet-controller-test/delete-bet_success/http-response.adoc[]
+
+==== 응답 필드 설명
+include::{snippets}/bet-controller-test/delete-bet_success/response-fields.adoc[]
+
+---
+
+=== 3️⃣ 베팅 내역 조회 (GET /api/v1/bets/me)
+
+==== 요청 예시
+include::{snippets}/bet-controller-test/get-bet_success/http-request.adoc[]
+
+==== 응답 예시
+include::{snippets}/bet-controller-test/get-bet_success/http-response.adoc[]
+
+==== 응답 필드 설명
+include::{snippets}/bet-controller-test/get-bet_success/response-fields.adoc[]
+
+:icons: font
