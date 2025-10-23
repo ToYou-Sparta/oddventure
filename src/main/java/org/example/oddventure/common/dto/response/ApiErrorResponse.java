@@ -13,7 +13,7 @@ import org.springframework.http.HttpStatus;
 public class ApiErrorResponse {
 
     private final String httpStatus;
-    private final String code;
+    private final int code;
     private final boolean success;
     private final String message;
     private final Object data;
@@ -22,7 +22,7 @@ public class ApiErrorResponse {
 
     private ApiErrorResponse(HttpStatus status, String message, String requestUrl) {
         this.httpStatus = status.name();
-        this.code = String.valueOf(status.value());
+        this.code = status.value();
         this.success = false;
         this.message = message;
         this.data = null;
@@ -33,7 +33,7 @@ public class ApiErrorResponse {
     public static ApiErrorResponse from(ErrorCode errorCode, HttpServletRequest request) {
         return new ApiErrorResponse(errorCode.getHttpStatus(),
                 errorCode.getMessage(),
-                request.getRequestURL().toString());
+                request.getRequestURI());
     }
 
     public static ApiErrorResponse from(HttpStatus httpStatus, String message, HttpServletRequest request) {

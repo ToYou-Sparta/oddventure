@@ -1,4 +1,4 @@
-package org.example.oddventure.domain.match.unit;
+package org.example.oddventure.domain.match.controller;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.example.oddventure.domain.auth.config.SecurityConfig;
 import org.example.oddventure.domain.auth.jwt.JwtUtil;
-import org.example.oddventure.domain.match.controller.MatchController;
 import org.example.oddventure.domain.match.dto.request.MatchSearchCondition;
 import org.example.oddventure.domain.match.dto.response.MatchResponse;
 import org.example.oddventure.domain.match.enums.MatchStatus;
@@ -28,20 +27,25 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(MatchController.class)
 @Import({SecurityConfig.class, JwtUtil.class})
 @WithMockUser(roles = {"USER"})
-public class MatchControllerTest {
+class MatchControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockitoBean
     private MatchService matchService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     private MatchResponse response;
 
@@ -66,63 +70,60 @@ public class MatchControllerTest {
 
     @Test
     @DisplayName("GET /matches - 경기 목록 조회 성공")
-    void getMatches() throws Exception {
-
+    void getMatches_success() throws Exception {
         // given
         Pageable pageable = PageRequest.of(0, 10, Sort.by("startTime").ascending());
         Page<MatchResponse> responsePage = new PageImpl<>(List.of(response), pageable, 1);
         when(matchService.getMatches(pageable)).thenReturn(responsePage);
 
-        // when & then
-        mockMvc.perform(get("/api/v1/matches")
-                        .param("page", "0")
-                        .param("size", "10"))
-                .andExpect(status().isOk())
+        // when
+        ResultActions result = mockMvc.perform(get("/api/v1/matches")
+                .param("page", "0")
+                .param("size", "10"));
+
+        // then
+        result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.content[0].matchId").value(1))
                 .andExpect(jsonPath("$.data.content[0].teamB").value("GEN.G"))
-                .andExpect(jsonPath("$.data.content[0].status").value("SCHEDULED")
-                );
+                .andExpect(jsonPath("$.data.content[0].status").value("SCHEDULED"));
     }
 
     @Test
     @DisplayName("GET /matches/{matchId} - 경기 상세 조회 성공")
-    void getMatch() throws Exception {
-
+    void getMatchDetail_success() throws Exception {
         // given
         Long matchId = 1L;
         when(matchService.getMatch(matchId)).thenReturn(response);
 
-        // when & then
-        mockMvc.perform(get("/api/v1/matches/{matchId}", matchId))
-                .andExpect(status().isOk())
+        // when
+        ResultActions result = mockMvc.perform(get("/api/v1/matches/{matchId}", matchId));
+
+        // then
+        result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.matchId").value(matchId))
                 .andExpect(jsonPath("$.data.teamA").value("T1"))
-                .andExpect(jsonPath("$.data.viewCount").value(153L)
-                );
+                .andExpect(jsonPath("$.data.viewCount").value(153L));
     }
 
     @Test
     @DisplayName("POST /matches/search - 경기 검색 성공")
-    void searchMatches() throws Exception {
-
+    void searchMatches_success() throws Exception {
         // given
         MatchSearchCondition condition = new MatchSearchCondition("", null, null);
         Pageable pageable = PageRequest.of(0, 10);
         PageImpl<MatchResponse> responsePage = new PageImpl<>(List.of(response), pageable, 1);
         when(matchService.searchMatches(condition, pageable)).thenReturn(responsePage);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        String requestBody = objectMapper.writeValueAsString(condition);
+        // when
+        ResultActions result = mockMvc.perform(post("/api/v1/matches/search")
+                .param("page", "0")
+                .param("size", "10")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(condition)));
 
-        // when & then
-        mockMvc.perform(post("/api/v1/matches/search")
-                        .param("page", "0")
-                        .param("size", "10")
-                        .contentType("application/json")
-                        .content(requestBody))
-                .andExpect(status().isOk())
+        // then
+        result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.content[0].matchId").value(1))
-                .andExpect(jsonPath("$.data.content[0].teamB").value("GEN.G")
-                );
+                .andExpect(jsonPath("$.data.content[0].teamB").value("GEN.G"));
     }
 }

@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class HotKeywordsController {
+
     private final HotKeywordsService hotKeywordsService;
 
     @GetMapping("/api/v1/hotkeyword")
     public ResponseEntity<ApiResponse<HotKeywordsResponse>> getHotKeywords() {
-        return ApiResponse.success(hotKeywordsService.getHotKeywords(), "인기 검색어 top5를 조회했습니다.");
+        HotKeywordsResponse hotKeywords = hotKeywordsService.getHotKeywords();
+        return ApiResponse.success(hotKeywords, "인기 검색어 top5를 조회했습니다.");
     }
 }
