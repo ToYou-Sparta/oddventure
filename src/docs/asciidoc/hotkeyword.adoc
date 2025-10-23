@@ -7,12 +7,12 @@
 === 1️⃣ 인기 검색어 top5 조회 (GET /api/v1/hotkeyword)
 
 ==== 요청 예시
-include::{snippets}/hotkeyword-controller-test/get-hotkeyword_success/http-request.adoc[]
+include::{snippets}/hotkeyword-controller-test/get-top5-hot-keywords_success/http-request.adoc[]
 
 ==== 응답 예시
-include::{snippets}/hotkeyword-controller-test/get-hotkeyword_success/http-response.adoc[]
+include::{snippets}/hotkeyword-controller-test/get-top5-hot-keywords_success/http-response.adoc[]
 
 ==== 응답 필드 설명
-include::{snippets}/hotkeyword-controller-test/get-hotkeyword_success/response-fields.adoc[]
+include::{snippets}/hotkeyword-controller-test/get-top5-hot-keywords_success/response-fields.adoc[]
 
 :icons: font
