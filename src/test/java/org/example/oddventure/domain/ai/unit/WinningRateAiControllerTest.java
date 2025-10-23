@@ -32,13 +32,13 @@ public class WinningRateAiControllerTest extends RestDocsTestSupport {
 
     @Autowired
     private ObjectMapper objectMapper;
-
+    
     @MockitoBean
     private AiService aiService;
 
     @Test
     @DisplayName("AI를 통해 승률을 제공한다")
-    void provideWinningRate() throws Exception {
+    void ProvideWinningRate_success() throws Exception {
         // given
         AiRequest request = new AiRequest("팀 T1과 팀 GEN.G의 승률 알려줘");
         AiResponse response = new AiResponse(
@@ -58,12 +58,12 @@ public class WinningRateAiControllerTest extends RestDocsTestSupport {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)));
 
-
         result.andExpect(status().isOk())
                 .andDo(restDocs.document(
                         RestDocsUtils.successWithDataFields(
                                 fieldWithPath("data.result").description("ai 호출 결과"),
-                                fieldWithPath("data.hasTeamName").description("질문 내 team 이름 존재 여부"),
+                                fieldWithPath("data.hasTeamName").description("질문 내 팀 이름 존재 여부"),
+                                fieldWithPath("data.teamName").description("존재하는 팀 이름"),
                                 fieldWithPath("data.winningCount").description("팀 별 승리 카운트"),
                                 fieldWithPath("data.losingCount").description("팀 별 패배 카운트"),
                                 fieldWithPath("data.winningRate").description("승률"),
