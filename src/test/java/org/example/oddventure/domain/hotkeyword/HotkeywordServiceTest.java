@@ -1,4 +1,4 @@
-package org.example.oddventure.hotkeyword;
+package org.example.oddventure.domain.hotkeyword;
 
 import org.example.oddventure.base.RedisTestContainerConfig;
 import org.example.oddventure.domain.hotKeywords.dto.HotKeywordsResponse;
