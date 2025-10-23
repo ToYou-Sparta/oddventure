@@ -1,45 +1,32 @@
-package org.example.oddventure.hotkeyword;
+package org.example.oddventure.domain.hotkeyword;
 
 import org.example.oddventure.base.RedisTestContainerConfig;
 import org.example.oddventure.base.WithMockAuthUser;
 import org.example.oddventure.domain.auth.config.SecurityConfig;
 import org.example.oddventure.domain.auth.jwt.JwtUtil;
-import org.example.oddventure.domain.bet.controller.BetController;
-import org.example.oddventure.domain.bet.service.BetService;
 import org.example.oddventure.domain.hotKeywords.controller.HotKeywordsController;
 import org.example.oddventure.domain.hotKeywords.dto.HotKeywordsResponse;
-import org.example.oddventure.domain.hotKeywords.entity.HotKeywords;
-import org.example.oddventure.domain.hotKeywords.repository.HotKeywordsRepository;
 import org.example.oddventure.domain.hotKeywords.service.HotKeywordsService;
 import org.example.oddventure.domain.user.enums.UserRole;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.redis.connection.zset.Tuple;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
-
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
-
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
@@ -66,12 +53,12 @@ public class HotkeywordControllerTest extends RedisTestContainerConfig {
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
         top5 = Set.of(
-                "korea", 6.0,
-                "america", 5.0,
-                "china", 4.0,
-                "india", 3.0,
-                "england", 2.0,
-                "japan", 1.0
+                "korea",
+                "america",
+                "china",
+                "india",
+                "england",
+                "japan"
         );
 
         this.restDocs = MockMvcRestDocumentation.document("{class-name}/{method-name}",
@@ -87,7 +74,8 @@ public class HotkeywordControllerTest extends RedisTestContainerConfig {
     }
 
     @Test
-    public void 인기_검색어_Top5를_조회할_수_있다() throws Exception {
+    @DisplayName("인기 검색어 Top5를 조회할 수 있다.")
+    void getTop5HotKeywords_success() throws Exception {
         // given
         HotKeywordsResponse response = HotKeywordsResponse.of(top5);
         when(hotKeywordsService.getHotKeywords()).thenReturn(response);
