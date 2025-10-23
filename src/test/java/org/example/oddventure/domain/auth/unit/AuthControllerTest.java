@@ -24,8 +24,8 @@ import org.example.oddventure.domain.auth.dto.response.SignupResponse;
 import org.example.oddventure.domain.auth.jwt.JwtUtil;
 import org.example.oddventure.domain.auth.service.AuthService;
 import org.example.oddventure.domain.user.enums.UserRole;
-import org.example.oddventure.domain.user.exception.InvalidUserException;
 import org.example.oddventure.domain.user.exception.UserErrorCode;
+import org.example.oddventure.domain.user.exception.UserException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +53,6 @@ public class AuthControllerTest {
     @Test
     @DisplayName("POST /signup - 회원가입 성공")
     void signup_success() throws Exception {
-
         // given
         Long userId = 1L;
         SignupRequest request = new SignupRequest("hello", "hello@naver.com", "hello123!@#");
@@ -81,12 +80,10 @@ public class AuthControllerTest {
     @Test
     @DisplayName("POST /signup - 회원가입 실패")
     void signup_fail_exists_email() throws Exception {
-
         // given
         SignupRequest request = new SignupRequest("hello", "hello@naver.com", "hello123!@#");
 
-        when(authService.signup(request))
-                .thenThrow(new InvalidUserException(UserErrorCode.ALREADY_EXIST_EMAIL));
+        when(authService.signup(request)).thenThrow(new UserException(UserErrorCode.ALREADY_EXIST_EMAIL));
 
         // when & then
         mockMvc.perform(post("/api/v1/auth/signup")
@@ -99,7 +96,6 @@ public class AuthControllerTest {
     @Test
     @DisplayName("POST /login - 로그인 성공")
     void login() throws Exception {
-
         // given
         Long userId = 1L;
         LoginRequest request = new LoginRequest("hello@naver.com", "hello123!@#");
@@ -120,7 +116,6 @@ public class AuthControllerTest {
     @WithMockUser(roles = "USER")
     @DisplayName("POST /logout - 로그아웃 성공")
     void logout() throws Exception {
-
         // given
         AuthUser authUser = new AuthUser(1L, UserRole.ROLE_USER);
         doNothing().when(authService).logout(authUser.id());
@@ -138,7 +133,6 @@ public class AuthControllerTest {
     @WithMockUser(roles = "USER")
     @DisplayName("DELETE /withdraw - 회원 탈퇴 성공")
     void withdraw_success() throws Exception {
-
         // given
         AuthUser authUser = new AuthUser(1L, UserRole.ROLE_USER);
         WithdrawRequest request = new WithdrawRequest("hello123!@#");
@@ -161,7 +155,6 @@ public class AuthControllerTest {
     @WithMockUser(roles = "USER")
     @DisplayName("POST /refresh - 토큰 재발급 성공")
     void refresh_success() throws Exception {
-
         // given
         String refreshToken = "validRefreshToken";
         AccessTokenResponse response = new AccessTokenResponse("newAccessToken");
