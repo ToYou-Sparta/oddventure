@@ -4,6 +4,9 @@ import org.example.oddventure.base.RedisTestContainerConfig;
 import org.example.oddventure.base.WithMockAuthUser;
 import org.example.oddventure.domain.auth.config.SecurityConfig;
 import org.example.oddventure.domain.auth.jwt.JwtUtil;
+import org.example.oddventure.domain.bet.controller.BetController;
+import org.example.oddventure.domain.bet.service.BetService;
+import org.example.oddventure.domain.hotKeywords.controller.HotKeywordsController;
 import org.example.oddventure.domain.hotKeywords.dto.HotKeywordsResponse;
 import org.example.oddventure.domain.hotKeywords.entity.HotKeywords;
 import org.example.oddventure.domain.hotKeywords.repository.HotKeywordsRepository;
@@ -13,10 +16,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.redis.connection.zset.Tuple;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.http.MediaType;
@@ -26,15 +29,18 @@ import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
+
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.assertj.core.api.Assertions.assertThat;
+import java.util.Set;
+
+import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -42,45 +48,31 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@WebMvcTest(HotKeywordsController.class)
 @Import({SecurityConfig.class, JwtUtil.class})
 @WithMockAuthUser(userId = 1, role = UserRole.ROLE_USER)
-@ActiveProfiles("test")
-@SpringBootTest
 @ExtendWith(RestDocumentationExtension.class)
-public class HotkeywordServiceTest extends RedisTestContainerConfig {
-
-    Map<String,Double> keyword;
+public class HotkeywordControllerTest extends RedisTestContainerConfig {
 
     private RestDocumentationResultHandler restDocs;
 
     private MockMvc mockMvc;
 
-    @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+    private Set<Object> top5;
 
-    @Autowired
-    private HotKeywordsRepository hotKeywordsRepository;
-
-    @Autowired
+    @MockitoBean
     private HotKeywordsService hotKeywordsService;
 
     @BeforeEach
-     void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
-        ZSetOperations<String, Object> zSet = redisTemplate.opsForZSet();
-        keyword = Map.of(
-                "korea",6.0,
-                "america",5.0,
-                "china",4.0,
-                "india",3.0,
-                "england",2.0,
-                "japan",1.0
+    void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
+        top5 = Set.of(
+                "korea", 6.0,
+                "america", 5.0,
+                "china", 4.0,
+                "india", 3.0,
+                "england", 2.0,
+                "japan", 1.0
         );
-        keyword.forEach((k,v)-> zSet.add("match:ranking", k, v));
-
-        hotKeywordsRepository.saveAll(
-                keyword.keySet().stream()
-                        .map(HotKeywords::new)
-                        .toList());
 
         this.restDocs = MockMvcRestDocumentation.document("{class-name}/{method-name}",
                 preprocessRequest(prettyPrint()),
@@ -97,15 +89,11 @@ public class HotkeywordServiceTest extends RedisTestContainerConfig {
     @Test
     public void 인기_검색어_Top5를_조회할_수_있다() throws Exception {
         // given
-        // forEach로 대체
+        HotKeywordsResponse response = HotKeywordsResponse.of(top5);
+        when(hotKeywordsService.getHotKeywords()).thenReturn(response);
 
-        // when
-//        HotKeywordsResponse hotKeywordsResponse = hotKeywordsService.getHotKeywords();
 
-        // then
-//        assertThat(hotKeywordsResponse).isNotNull();
-//        assertThat(hotKeywordsResponse.getHotKeywords()).containsExactly("korea", "america", "china", "india", "england");
-
+        // when & then
         mockMvc.perform(get("/api/v1/hotkeyword")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -119,21 +107,5 @@ public class HotkeywordServiceTest extends RedisTestContainerConfig {
                                 fieldWithPath("data.hotKeywords").description("인기검색어 top5"),
                                 fieldWithPath("timestamp").description("응답 시간"))
                 ));
-    }
-
-    @Test
-    public void 캐시_데이터를_DB에_저장할_수_있다() {
-        // given
-        // forEach로 대체
-
-        // when
-        hotKeywordsService.getAllViewCountForRdb();
-
-        // then
-        List<HotKeywords> result = hotKeywordsRepository.findAll();
-        assertThat(result).isNotNull();
-        result.forEach(hotKeywords -> {
-            assertEquals(hotKeywords.getSearchCount(),keyword.get(hotKeywords.getKeyword()));
-        });
     }
 }

@@ -1,0 +1,18 @@
+= Oddventure REST API 문서
+:toc: left
+:toclevels: 2
+:sectnums:
+:source-highlighter: highlightjs
+
+=== 1️⃣ 인기 검색어 top5 조회 (GET /api/v1/hotkeyword)
+
+==== 요청 예시
+include::{snippets}/hotkeyword-controller-test/get-hotkeyword_success/http-request.adoc[]
+
+==== 응답 예시
+include::{snippets}/hotkeyword-controller-test/get-hotkeyword_success/http-response.adoc[]
+
+==== 응답 필드 설명
+include::{snippets}/hotkeyword-controller-test/get-hotkeyword_success/response-fields.adoc[]
+
+:icons: font
