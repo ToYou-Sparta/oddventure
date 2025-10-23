@@ -1,4 +1,4 @@
-package org.example.oddventure.team;
+package org.example.oddventure.domain.team;
 
 import org.assertj.core.api.Assertions;
 import org.example.oddventure.domain.team.dto.TeamResponse;
