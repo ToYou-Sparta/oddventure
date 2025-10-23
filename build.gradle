@@ -45,6 +45,7 @@ dependencies {
     // spring AI
     implementation 'org.springframework.ai:spring-ai-starter-model-openai'
 
+
     // redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.data:spring-data-redis'
@@ -63,11 +64,22 @@ dependencies {
     annotationProcessor 'com.querydsl:querydsl-apt:5.1.0:jakarta'
     annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
     annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
+
+    // aws
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter-parameter-store'
+
+    //swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+
 }
 
 dependencyManagement {
     imports {
         mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
+
+        // Spring Cloud AWS의 버전을 관리해주는 BOM
+        // Spring Boot 3.5.x 와 호환
+        mavenBom "io.awspring.cloud:spring-cloud-aws-dependencies:3.4.0"
     }
 }
 
