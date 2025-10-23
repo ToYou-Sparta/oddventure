@@ -2,7 +2,6 @@ package org.example.oddventure.domain.match.unit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
@@ -12,6 +11,7 @@ import org.example.oddventure.domain.match.dto.projection.MatchProjection;
 import org.example.oddventure.domain.match.dto.request.MatchSearchCondition;
 import org.example.oddventure.domain.match.dto.response.MatchResponse;
 import org.example.oddventure.domain.match.entity.Match;
+import org.example.oddventure.domain.match.exception.MatchErrorCode;
 import org.example.oddventure.domain.match.exception.MatchException;
 import org.example.oddventure.domain.match.repository.MatchRepository;
 import org.example.oddventure.domain.match.service.MatchService;
@@ -26,7 +26,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class MatchServiceTest {
@@ -40,7 +39,6 @@ class MatchServiceTest {
     @Test
     @DisplayName("경기 목록 조회 성공")
     void getMatches_success() {
-
         // given
         Match match1 = Match.builder()
                 .matchName("LCK")
@@ -75,7 +73,6 @@ class MatchServiceTest {
     @Test
     @DisplayName("경기 상세 조회 성공")
     void getMatch_success() {
-
         // given
         Long matchId = 1L;
         Match match = Match.builder()
@@ -85,8 +82,7 @@ class MatchServiceTest {
                 .startTime(LocalDateTime.now().plusDays(1))
                 .build();
 
-        doNothing().when(matchRepository).incrementViewCount(matchId);
-        ReflectionTestUtils.setField(match, "viewCount", 1L);
+        when(matchRepository.incrementViewCount(matchId)).thenReturn(1);
         when(matchRepository.findById(matchId)).thenReturn(Optional.of(match));
 
         // when
@@ -96,28 +92,40 @@ class MatchServiceTest {
         assertThat(result).isNotNull();
         assertThat(result.teamA()).isEqualTo("T1");
         assertThat(result.startTime()).isEqualTo(match.getStartTime());
-        assertThat(result.viewCount()).isEqualTo(1L);
     }
 
     @Test
-    @DisplayName("경기 상세 조회 실패 - 일정이 존재하지 않는 경우")
-    void getMatch_matchNotFound() {
-
+    @DisplayName("경기 상세 조회 실패 - 조회수 증가 실패 시 MatchException 발생")
+    void getMatch_fail_incrementViewCount() {
         // given
         Long matchId = 1L;
+        when(matchRepository.incrementViewCount(matchId)).thenReturn(0);
+
+        // when
+        MatchException exception = assertThrows(MatchException.class, () -> matchService.getMatch(matchId));
+
+        // then
+        assertThat(exception.getMessage()).isEqualTo(MatchErrorCode.MATCH_NOT_FOUND.getMessage());
+    }
+
+    @Test
+    @DisplayName("경기 상세 조회 실패 - increment 성공 후 findById에서 MatchException 발생")
+    void getMatch_fail_findById() {
+        // given
+        Long matchId = 1L;
+        when(matchRepository.incrementViewCount(matchId)).thenReturn(1);
         when(matchRepository.findById(matchId)).thenReturn(Optional.empty());
 
         // when
         MatchException exception = assertThrows(MatchException.class, () -> matchService.getMatch(matchId));
 
         // then
-        assertThat(exception.getMessage()).isEqualTo("해당 경기 정보를 찾을 수 없습니다.");
+        assertThat(exception.getMessage()).isEqualTo(MatchErrorCode.MATCH_NOT_FOUND.getMessage());
     }
 
     @Test
     @DisplayName("경기 검색 성공")
-    void searchMatches() {
-
+    void searchMatches_success() {
         // given
         MatchSearchCondition condition = new MatchSearchCondition("T", null, null);
         Pageable pageable = PageRequest.of(0, 10);
@@ -138,7 +146,7 @@ class MatchServiceTest {
 
         MatchProjection response1 = MatchProjection.from(match1);
         MatchProjection response2 = MatchProjection.from(match2);
-        Page<MatchProjection> matches = new PageImpl<>(List.of(response1, response2), pageable, 1);
+        Page<MatchProjection> matches = new PageImpl<>(List.of(response1, response2), pageable, 2);
 
         when(matchRepository.searchByCondition(condition, pageable)).thenReturn(matches);
 

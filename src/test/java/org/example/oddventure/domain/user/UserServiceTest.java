@@ -1,12 +1,19 @@
 package org.example.oddventure.domain.user;
 
-import org.example.oddventure.common.exception.GlobalException;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+
+import java.util.Optional;
 import org.example.oddventure.domain.user.dto.request.PasswordUpdateRequest;
 import org.example.oddventure.domain.user.dto.request.ProfileUpdateRequest;
 import org.example.oddventure.domain.user.dto.response.UserProfileResponse;
 import org.example.oddventure.domain.user.entity.User;
-import org.example.oddventure.domain.user.enums.UserRole;
 import org.example.oddventure.domain.user.exception.UserErrorCode;
+import org.example.oddventure.domain.user.exception.UserException;
 import org.example.oddventure.domain.user.repository.UserRepository;
 import org.example.oddventure.domain.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
@@ -15,14 +22,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -38,14 +38,13 @@ class UserServiceTest {
 
     @Test
     @DisplayName("사용자 프로필 조회 성공")
-    void getUserProfile_Success() {
+    void getUserProfile_success() {
         // given
         Long userId = 1L;
         User mockUser = User.builder()
                 .email("test@test.com")
                 .username("testuser")
                 .password("password")
-                .userRole(UserRole.ROLE_USER)
                 .build();
         given(userRepository.findById(userId)).willReturn(Optional.of(mockUser));
 
@@ -59,7 +58,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("프로필 수정 성공 - 이메일 변경")
-    void updateUserProfile_Success_EmailChanged() {
+    void updateUserProfile_success_emailChanged() {
         // given
         Long userId = 1L;
         String newUsername = "updatedUser";
@@ -70,7 +69,6 @@ class UserServiceTest {
                 .email("original@email.com")
                 .username("originalUser")
                 .password("password")
-                .userRole(UserRole.ROLE_USER)
                 .build();
 
         given(userRepository.findById(userId)).willReturn(Optional.of(mockUser));
@@ -88,7 +86,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("프로필 수정 실패 - 이메일 중복")
-    void updateUserProfile_Fail_EmailAlreadyExists() {
+    void updateUserProfile_fail_emailAlreadyExists() {
         // given
         Long userId = 1L;
         String newEmail = "already.exists@email.com";
@@ -99,7 +97,7 @@ class UserServiceTest {
         given(userRepository.existsByEmail(newEmail)).willReturn(true);
 
         // when & then
-        GlobalException exception = assertThrows(GlobalException.class, () -> {
+        UserException exception = assertThrows(UserException.class, () -> {
             userService.updateUserProfile(userId, request);
         });
         assertThat(exception.getErrorCode()).isEqualTo(UserErrorCode.ALREADY_EXIST_EMAIL);
@@ -107,7 +105,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("프로필 수정 성공 - 이메일 변경 없음")
-    void updateUserProfile_Success_EmailUnchanged() {
+    void updateUserProfile_success_emailUnchanged() {
         // given
         Long userId = 1L;
         String sameEmail = "original@email.com";
@@ -126,8 +124,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("비밀번호 변경 성공")
-    void updatePassword_Success()
-    {
+    void updatePassword_success() {
         // given
         Long userId = 1L;
         PasswordUpdateRequest request = new PasswordUpdateRequest("currentPassword123!", "newPassword123!");
@@ -145,8 +142,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("비밀번호 변경 실패 - 현재 비밀번호 불일치")
-    void updatePassword_Fail_PasswordIncorrect()
-    {
+    void updatePassword_fail_passwordIncorrect() {
         // given
         Long userId = 1L;
         PasswordUpdateRequest request = new PasswordUpdateRequest("wrongPassword!", "newPassword123!");
@@ -156,7 +152,7 @@ class UserServiceTest {
         given(passwordEncoder.matches("wrongPassword!", "encodedCurrentPassword")).willReturn(false);
 
         // when & then
-        assertThrows(GlobalException.class, () -> {
+        assertThrows(UserException.class, () -> {
             userService.updatePassword(userId, request);
         });
     }

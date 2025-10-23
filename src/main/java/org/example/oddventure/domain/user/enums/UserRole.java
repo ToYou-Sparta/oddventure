@@ -1,11 +1,10 @@
 package org.example.oddventure.domain.user.enums;
 
+import java.util.Arrays;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.example.oddventure.domain.user.exception.InvalidUserException;
 import org.example.oddventure.domain.user.exception.UserErrorCode;
-
-import java.util.Arrays;
+import org.example.oddventure.domain.user.exception.UserException;
 
 @Getter
 @RequiredArgsConstructor
@@ -20,7 +19,7 @@ public enum UserRole {
         return Arrays.stream(UserRole.values())
                 .filter(r -> r.name().equalsIgnoreCase(userRole))
                 .findFirst()
-                .orElseThrow(() -> new InvalidUserException(UserErrorCode.USR_INVALID_USER_ROLE));
+                .orElseThrow(() -> new UserException(UserErrorCode.INVALID_USER_ROLE));
     }
 
     public static class Authority {

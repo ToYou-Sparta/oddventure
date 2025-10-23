@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 public interface BetRepository extends JpaRepository<Bet, Long> {
+
     @EntityGraph(attributePaths = {"match"})
     Page<Bet> findByUserId(Long userId, Pageable pageable);
 

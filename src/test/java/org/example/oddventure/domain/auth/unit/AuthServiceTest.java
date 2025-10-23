@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -22,7 +21,7 @@ import org.example.oddventure.domain.auth.jwt.JwtUtil;
 import org.example.oddventure.domain.auth.service.AuthService;
 import org.example.oddventure.domain.user.entity.User;
 import org.example.oddventure.domain.user.enums.UserRole;
-import org.example.oddventure.domain.user.exception.InvalidUserException;
+import org.example.oddventure.domain.user.exception.UserException;
 import org.example.oddventure.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -58,7 +57,6 @@ public class AuthServiceTest {
     @Test
     @DisplayName("회원가입 성공")
     void signup_success() {
-
         // given
         SignupRequest request = new SignupRequest("hello", "hello@naver.com", "hello123!@#");
         String encodedPassword = "$2a$10$eB9vYJzqZK8Zb3Q9gFZJ9uK0xE9gUuZzT1eYwKJvZzFzYxOqL9rP3O";
@@ -66,7 +64,6 @@ public class AuthServiceTest {
                 .username("hello")
                 .email("hello@naver.com")
                 .password("encodedPassword")
-                .userRole(UserRole.ROLE_USER)
                 .build();
 
         when(userRepository.existsByEmail(request.email())).thenReturn(false);
@@ -85,26 +82,23 @@ public class AuthServiceTest {
     @Test
     @DisplayName("회원가입 실패 - 이미 존재하는 이메일")
     void signup_fail_already_exists() {
-
         // given
         SignupRequest request = new SignupRequest("hello", "hello@naver.com", "hello123!@#");
         when(userRepository.existsByEmail(request.email())).thenReturn(true);
 
         // when & then
-        assertThrows(InvalidUserException.class, () -> authService.signup(request));
+        assertThrows(UserException.class, () -> authService.signup(request));
     }
 
     @Test
     @DisplayName("로그인 성공")
     void login_success() {
-
         // given
         LoginRequest request = new LoginRequest("hello@naver.com", "hello123!@#");
         User user = User.builder()
                 .username("hello")
                 .email("hello@naver.com")
                 .password("$2a$10$eB9vYJzqZK8Zb3Q9gFZJ9uK0xE9gUuZzT1eYwKJvZzFzYxOqL9rP3O")
-                .userRole(UserRole.ROLE_USER)
                 .build();
 
         when(userRepository.findByEmail(request.email())).thenReturn(Optional.of(user));
@@ -113,9 +107,7 @@ public class AuthServiceTest {
         when(jwtUtil.createRefreshToken(user.getId())).thenReturn("refreshToken");
 
         // redis Mocking
-        @SuppressWarnings("unchecked")
-        ValueOperations<String, String> operations = mock(ValueOperations.class);
-        when(redisTemplate.opsForValue()).thenReturn(operations);
+        when(redisTemplate.opsForValue()).thenReturn(valueOperations);
 
         // when
         LoginResponse response = authService.login(request);
@@ -129,7 +121,6 @@ public class AuthServiceTest {
     @Test
     @DisplayName("로그인 실패 - 존재하지 않는 이메일")
     void login_fail_unknown_email() {
-
         // given
         LoginRequest request = new LoginRequest("unknown@naver.com", "unknown123!@#");
         when(userRepository.findByEmail(request.email())).thenReturn(Optional.empty());
@@ -141,13 +132,11 @@ public class AuthServiceTest {
     @Test
     @DisplayName("로그인 실패 - 비밀번호 불일치")
     void login_fail_invalid_password() {
-
         // given
         LoginRequest request = new LoginRequest("hello@naver.com", "wrongPassword");
         User user = User.builder()
                 .email("hello@naver.com")
                 .password("$2a$10$eB9vYJzqZK8Zb3Q9gFZJ9uK0xE9gUuZzT1eYwKJvZzFzYxOqL9rP3O")
-                .userRole(UserRole.ROLE_USER)
                 .build();
         when(userRepository.findByEmail(request.email())).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(request.password(), user.getPassword())).thenReturn(false);
@@ -159,7 +148,6 @@ public class AuthServiceTest {
     @Test
     @DisplayName("로그아웃 성공")
     void logout_success() {
-
         // given
         Long userId = 1L;
 
@@ -173,7 +161,6 @@ public class AuthServiceTest {
     @Test
     @DisplayName("회원 탈퇴 성공")
     void withdraw_success() {
-
         // given
         Long userId = 1L;
         WithdrawRequest request = new WithdrawRequest("correctPassword");
@@ -181,7 +168,6 @@ public class AuthServiceTest {
                 .username("hello")
                 .email("hello@naver.com")
                 .password("$2a$10$eB9vYJzqZK8Zb3Q9gFZJ9uK0xE9gUuZzT1eYwKJvZzFzYxOqL9rP3O")
-                .userRole(UserRole.ROLE_USER)
                 .build();
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
@@ -198,7 +184,6 @@ public class AuthServiceTest {
     @Test
     @DisplayName("회원 탈퇴 실패 - 비밀번호 불일치")
     void withdraw_fail_incorrect_password() {
-
         // given
         Long userId = 1L;
         WithdrawRequest request = new WithdrawRequest("wrongPassword");
@@ -206,20 +191,18 @@ public class AuthServiceTest {
                 .username("hello")
                 .email("hello@naver.com")
                 .password("$2a$10$eB9vYJzqZK8Zb3Q9gFZJ9uK0xE9gUuZzT1eYwKJvZzFzYxOqL9rP3O")
-                .userRole(UserRole.ROLE_USER)
                 .build();
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(request.password(), user.getPassword())).thenReturn(false);
 
         // when & then
-        assertThrows(InvalidUserException.class, () -> authService.withdraw(userId, request));
+        assertThrows(UserException.class, () -> authService.withdraw(userId, request));
     }
 
     @Test
     @DisplayName("회원 탈퇴 실패 - 이미 탈퇴된 사용자")
     void withdraw_fail_already_deleted() {
-
         // given
         Long userId = 1L;
         WithdrawRequest request = new WithdrawRequest("correctPassword");
@@ -227,7 +210,6 @@ public class AuthServiceTest {
                 .username("hello")
                 .email("hello@naver.com")
                 .password("$2a$10$eB9vYJzqZK8Zb3Q9gFZJ9uK0xE9gUuZzT1eYwKJvZzFzYxOqL9rP3O")
-                .userRole(UserRole.ROLE_USER)
                 .build();
         user.delete();
 
@@ -235,13 +217,12 @@ public class AuthServiceTest {
         when(passwordEncoder.matches(request.password(), user.getPassword())).thenReturn(true);
 
         // when & then
-        assertThrows(InvalidUserException.class, () -> authService.withdraw(userId, request));
+        assertThrows(UserException.class, () -> authService.withdraw(userId, request));
     }
 
     @Test
     @DisplayName("토큰 재발급 성공")
     void refresh_success() {
-
         // given
         String refreshToken = "validRefreshToken";
         Long userId = 1L;
@@ -265,7 +246,6 @@ public class AuthServiceTest {
     @Test
     @DisplayName("토큰 재발급 실패 - 유효하지 않은 토큰")
     void refresh_fail_invalid_token() {
-
         // given
         String refreshToken = "invalidToken";
         when(jwtUtil.validateToken(refreshToken)).thenReturn(false);
@@ -277,7 +257,6 @@ public class AuthServiceTest {
     @Test
     @DisplayName("토큰 재발급 실패 - 저장된 토큰과 불일치")
     void refresh_fail_token_mismatch() {
-
         // given
         String refreshToken = "validRefreshToken";
         Long userId = 1L;

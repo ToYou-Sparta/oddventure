@@ -26,7 +26,6 @@ public class JwtUtilTest {
     @Test
     @DisplayName("액세스 토큰 생성 성공")
     void createAccessToken_success() {
-
         // given
         Long userId = 1L;
         UserRole role = UserRole.ROLE_USER;
@@ -41,7 +40,6 @@ public class JwtUtilTest {
     @Test
     @DisplayName("리프레시 토큰 생성 및 검증 성공")
     void createRefreshToken_success() {
-
         // given
         Long userId = 2L;
 
@@ -57,7 +55,6 @@ public class JwtUtilTest {
     @Test
     @DisplayName("Bearer 접두사 제거 성공")
     void substringToken_success() {
-
         // given
         String bearerToken = "Bearer abc.def.ghi";
 
@@ -71,7 +68,6 @@ public class JwtUtilTest {
     @Test
     @DisplayName("토큰 유효성 검증 실패")
     void validateToken_fail() {
-
         // given
         String invalidToken = "invalid.token.value";
 

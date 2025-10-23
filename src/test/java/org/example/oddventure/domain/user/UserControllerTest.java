@@ -1,10 +1,19 @@
 package org.example.oddventure.domain.user;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import org.example.oddventure.domain.auth.dto.AuthUser;
-import org.example.oddventure.domain.auth.jwt.JwtAuthenticationToken;
+import org.example.oddventure.base.WithMockAuthUser;
+import org.example.oddventure.domain.auth.jwt.JwtUtil;
 import org.example.oddventure.domain.user.controller.UserController;
 import org.example.oddventure.domain.user.dto.request.PasswordUpdateRequest;
 import org.example.oddventure.domain.user.dto.request.ProfileUpdateRequest;
@@ -18,18 +27,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import org.example.oddventure.domain.auth.jwt.JwtUtil;
 
 @WebMvcTest(UserController.class)
+@WithMockAuthUser(userId = 1L, role = UserRole.ROLE_USER)
 class UserControllerTest {
 
     @Autowired
@@ -59,12 +59,8 @@ class UserControllerTest {
         );
         given(userService.getUserProfile(userId)).willReturn(responseDto);
 
-        AuthUser authUser = new AuthUser(userId, UserRole.ROLE_USER);
-        JwtAuthenticationToken token = new JwtAuthenticationToken(authUser);
-
         // when & then
-        mockMvc.perform(get("/api/v1/users/me")
-                        .with(authentication(token)))
+        mockMvc.perform(get("/api/v1/users/me"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.userId").value(userId))
@@ -83,12 +79,8 @@ class UserControllerTest {
                 UserRole.ROLE_USER, LocalDateTime.now());
         given(userService.updateUserProfile(eq(userId), any(ProfileUpdateRequest.class))).willReturn(responseDto);
 
-        AuthUser authUser = new AuthUser(userId, UserRole.ROLE_USER);
-        JwtAuthenticationToken token = new JwtAuthenticationToken(authUser);
-
         // when & then
-        mockMvc.perform(put("/api/v1/users/me")
-                        .with(authentication(token))
+        mockMvc.perform(patch("/api/v1/users/me")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
@@ -107,12 +99,8 @@ class UserControllerTest {
         Long userId = 1L;
         ProfileUpdateRequest requestDto = new ProfileUpdateRequest("updatedUser", "invalid-email");
 
-        AuthUser authUser = new AuthUser(userId, UserRole.ROLE_USER);
-        JwtAuthenticationToken token = new JwtAuthenticationToken(authUser);
-
         // when & then
-        mockMvc.perform(put("/api/v1/users/me")
-                        .with(authentication(token))
+        mockMvc.perform(patch("/api/v1/users/me")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
@@ -121,18 +109,13 @@ class UserControllerTest {
 
     @Test
     @DisplayName("비밀번호 변경 API 성공")
-    void updatePassword_Success() throws Exception
-    {
+    void updatePassword_Success() throws Exception {
         // given
         Long userId = 1L;
         PasswordUpdateRequest requestDto = new PasswordUpdateRequest("currentPassword123!", "newPassword123!");
 
-        AuthUser authUser = new AuthUser(userId, UserRole.ROLE_USER);
-        JwtAuthenticationToken token = new JwtAuthenticationToken(authUser);
-
         // when & then
-        mockMvc.perform(put("/api/v1/users/password")
-                        .with(authentication(token))
+        mockMvc.perform(patch("/api/v1/users/password")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
@@ -143,18 +126,13 @@ class UserControllerTest {
 
     @Test
     @DisplayName("비밀번호 변경 API 실패 - 유효성 검사 실패 (새 비밀번호 형식 오류)")
-    void updatePassword_Fail_InvalidPassword() throws Exception
-    {
+    void updatePassword_Fail_InvalidPassword() throws Exception {
         // given
         Long userId = 1L;
         PasswordUpdateRequest requestDto = new PasswordUpdateRequest("currentPassword123!", "weak");
 
-        AuthUser authUser = new AuthUser(userId, UserRole.ROLE_USER);
-        JwtAuthenticationToken token = new JwtAuthenticationToken(authUser);
-
         // when & then
-        mockMvc.perform(put("/api/v1/users/password")
-                        .with(authentication(token))
+        mockMvc.perform(patch("/api/v1/users/password")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))

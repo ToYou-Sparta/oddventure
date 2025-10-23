@@ -7,4 +7,5 @@ public record PointAdjustResponse(
         String username,
         BigDecimal adjustedAmount,
         BigDecimal finalBalance
-) {}
+) {
+}
