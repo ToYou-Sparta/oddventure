@@ -16,6 +16,13 @@ spring:
       host: localhost
       port: 6379
       timeout: 6000
+  cloud:
+    aws:
+      credentials:
+        access-key: test-key
+        secret-key: test-secret
+      region:
+        static: ap-northeast-2
 
 jwt:
   secret:
