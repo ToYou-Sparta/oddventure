@@ -469,13 +469,20 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_1️⃣_ai_승률_조회_post_apiv1aiwinningrate">3.1. 1️⃣ AI 승률 조회 (POST /api/v1/ai/winningrate)</a></li>
 </ul>
 </li>
-<li><a href="#_관리자_api_admin_api">4. 관리자 API (Admin API)</a>
+<li><a href="#_사용자_api_user_api">4. 사용자 API (User API)</a>
 <ul class="sectlevel2">
-<li><a href="#_1️⃣_매치_생성_post_apiv1adminmatches">4.1. 1️⃣ 매치 생성 (POST /api/v1/admin/matches)</a></li>
-<li><a href="#_2️⃣_매치_정보_수정_patch_apiv1adminmatchesmatchid">4.2. 2️⃣ 매치 정보 수정 (PATCH /api/v1/admin/matches/{matchId})</a></li>
-<li><a href="#_3️⃣_전체_사용자_목록_조회_get_apiv1adminusers">4.3. 3️⃣ 전체 사용자 목록 조회 (GET /api/v1/admin/users)</a></li>
-<li><a href="#_4️⃣_사용자_상세_조회_get_apiv1adminusersuserid">4.4. 4️⃣ 사용자 상세 조회 (GET /api/v1/admin/users/{userId})</a></li>
-<li><a href="#_5️⃣_사용자_포인트_지급_post_apiv1adminusersuseridpoints">4.5. 5️⃣ 사용자 포인트 지급 (POST /api/v1/admin/users/{userId}/points)</a></li>
+<li><a href="#_1️⃣_내_프로필_조회_get_apiv1usersme">4.1. 1️⃣ 내 프로필 조회 (GET /api/v1/users/me)</a></li>
+<li><a href="#_2️⃣_내_프로필_수정_patch_apiv1usersme">4.2. 2️⃣ 내 프로필 수정 (PATCH /api/v1/users/me)</a></li>
+<li><a href="#_3️⃣_비밀번호_변경_patch_apiv1userspassword">4.3. 3️⃣ 비밀번호 변경 (PATCH /api/v1/users/password)</a></li>
+</ul>
+</li>
+<li><a href="#_관리자_api_admin_api">5. 관리자 API (Admin API)</a>
+<ul class="sectlevel2">
+<li><a href="#_1️⃣_매치_생성_post_apiv1adminmatches">5.1. 1️⃣ 매치 생성 (POST /api/v1/admin/matches)</a></li>
+<li><a href="#_2️⃣_매치_정보_수정_patch_apiv1adminmatchesmatchid">5.2. 2️⃣ 매치 정보 수정 (PATCH /api/v1/admin/matches/{matchId})</a></li>
+<li><a href="#_3️⃣_전체_사용자_목록_조회_get_apiv1adminusers">5.3. 3️⃣ 전체 사용자 목록 조회 (GET /api/v1/admin/users)</a></li>
+<li><a href="#_4️⃣_사용자_상세_조회_get_apiv1adminusersuserid">5.4. 4️⃣ 사용자 상세 조회 (GET /api/v1/admin/users/{userId})</a></li>
+<li><a href="#_5️⃣_사용자_포인트_지급_post_apiv1adminusersuseridpoints">5.5. 5️⃣ 사용자 포인트 지급 (POST /api/v1/admin/users/{userId}/points)</a></li>
 </ul>
 </li>
 </ul>
@@ -533,9 +540,9 @@ Content-Length: 372
     "email" : "hello@naver.com",
     "role" : "ROLE_USER",
     "point" : 1000,
-    "createdAt" : "2025-10-24T14:57:02.0486643"
+    "createdAt" : "2025-10-24T15:01:33.0591954"
   },
-  "timestamp" : "2025-10-24T14:57:02.2053812"
+  "timestamp" : "2025-10-24T15:01:33.0904018"
 }</code></pre>
 </div>
 </div>
@@ -697,7 +704,7 @@ Content-Length: 238
   "success" : false,
   "message" : "이미 존재하는 이메일 입니다.",
   "data" : null,
-  "timestamp" : "2025-10-24T14:57:02.4152412",
+  "timestamp" : "2025-10-24T15:01:33.1553083",
   "requestUrl" : "/api/v1/auth/signup"
 }</code></pre>
 </div>
@@ -820,7 +827,7 @@ Host: localhost:8080
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
-Set-Cookie: refreshToken=refreshToken; Path=/; Max-Age=604800; Expires=Fri, 31 Oct 2025 05:57:02 GMT; Secure; HttpOnly; SameSite=Strict
+Set-Cookie: refreshToken=refreshToken; Path=/; Max-Age=604800; Expires=Fri, 31 Oct 2025 06:01:33 GMT; Secure; HttpOnly; SameSite=Strict
 Content-Type: application/json;charset=UTF-8
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -839,7 +846,7 @@ Content-Length: 251
     "accessToken" : "accessToken",
     "refreshToken" : "refreshToken"
   },
-  "timestamp" : "2025-10-24T14:57:02.2980282"
+  "timestamp" : "2025-10-24T15:01:33.1217744"
 }</code></pre>
 </div>
 </div>
@@ -971,7 +978,7 @@ Content-Length: 179
   "success" : true,
   "message" : "로그아웃 되었습니다.",
   "data" : null,
-  "timestamp" : "2025-10-24T14:57:01.7771666"
+  "timestamp" : "2025-10-24T15:01:33.0062794"
 }</code></pre>
 </div>
 </div>
@@ -1068,7 +1075,7 @@ Content-Length: 179
   "success" : true,
   "message" : "회원탈퇴 되었습니다.",
   "data" : null,
-  "timestamp" : "2025-10-24T14:57:01.9131416"
+  "timestamp" : "2025-10-24T15:01:33.0390519"
 }</code></pre>
 </div>
 </div>
@@ -1187,7 +1194,7 @@ Content-Length: 225
   "data" : {
     "accessToken" : "newAccessToken"
   },
-  "timestamp" : "2025-10-24T14:57:02.5493589"
+  "timestamp" : "2025-10-24T15:01:33.1795142"
 }</code></pre>
 </div>
 </div>
@@ -1300,7 +1307,7 @@ Content-Length: 369
     "oddsAtBetting" : 1.5,
     "userPointAfter" : 0
   },
-  "timestamp" : "2025-10-24T14:57:05.6884221"
+  "timestamp" : "2025-10-24T15:01:34.1096183"
 }</code></pre>
 </div>
 </div>
@@ -1461,7 +1468,7 @@ Content-Length: 256
     "refundAmount" : 1000,
     "userPointAfter" : 0
   },
-  "timestamp" : "2025-10-24T14:57:05.5950863"
+  "timestamp" : "2025-10-24T15:01:34.0815685"
 }</code></pre>
 </div>
 </div>
@@ -1556,7 +1563,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 662
+Content-Length: 663
 
 {
   "httpStatus" : "OK",
@@ -1570,20 +1577,20 @@ Content-Length: 662
         "matchId" : 1,
         "teamA" : "T1",
         "teamB" : "GEN.G",
-        "startTime" : "2025-10-25T14:57:05.496336"
+        "startTime" : "2025-10-25T15:01:34.0424905"
       },
       "selectedTeam" : "Team_A",
       "betAmount" : 1000,
       "oddsAtBetting" : 1.5,
       "isWin" : false,
-      "createdAt" : "2025-10-24T14:57:05.5084349"
+      "createdAt" : "2025-10-24T15:01:34.0434924"
     } ],
     "totalElements" : 1,
     "totalPages" : 1,
     "size" : 10,
     "number" : 0
   },
-  "timestamp" : "2025-10-24T14:57:05.5249516"
+  "timestamp" : "2025-10-24T15:01:34.0470037"
 }</code></pre>
 </div>
 </div>
@@ -1759,7 +1766,7 @@ Content-Length: 596
     "winningRate" : [ 0, 0 ],
     "content" : "팀의 이름은 t1과 GEN.G입니다. 경기 요약이 제공되지 않았으므로\n승리 횟수와 패배 횟수를 계산할 수 없습니다. 따라서 승률도 계산할 수 없습니다.\n"
   },
-  "timestamp" : "2025-10-24T14:56:59.0103117"
+  "timestamp" : "2025-10-24T15:01:32.2295239"
 }</code></pre>
 </div>
 </div>
@@ -1853,33 +1860,119 @@ Content-Length: 596
 </div>
 </div>
 <div class="sect1">
-<h2 id="_관리자_api_admin_api">4. 관리자 API (Admin API)</h2>
+<h2 id="_사용자_api_user_api">4. 사용자 API (User API)</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_1️⃣_매치_생성_post_apiv1adminmatches">4.1. 1️⃣ 매치 생성 (POST /api/v1/admin/matches)</h3>
+<h3 id="_1️⃣_내_프로필_조회_get_apiv1usersme">4.1. 1️⃣ 내 프로필 조회 (GET /api/v1/users/me)</h3>
+<div class="paragraph">
+<p>현재 로그인된 사용자의 프로필 정보를 조회합니다.</p>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_11">4.1.1. 응답 예시</h4>
+<div class="paragraph">
+<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/user-controller-test/get-my-profile_success/http-response.adoc[]</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_설명_11">4.1.2. 응답 필드 설명</h4>
+<div class="paragraph">
+<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/user-controller-test/get-my-profile_success/response-fields.adoc[]</p>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_2️⃣_내_프로필_수정_patch_apiv1usersme">4.2. 2️⃣ 내 프로필 수정 (PATCH /api/v1/users/me)</h3>
+<div class="paragraph">
+<p>현재 로그인된 사용자의 프로필(사용자 이름, 이메일)을 수정합니다.</p>
+</div>
+<div class="sect3">
+<h4 id="_요청_예시_11">4.2.1. 요청 예시</h4>
+<div class="paragraph">
+<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/user-controller-test/update-my-profile_success/http-request.adoc[]</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_12">4.2.2. 응답 예시</h4>
+<div class="paragraph">
+<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/user-controller-test/update-my-profile_success/http-response.adoc[]</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_요청_필드_설명_6">4.2.3. 요청 필드 설명</h4>
+<div class="paragraph">
+<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/user-controller-test/update-my-profile_success/request-fields.adoc[]</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_설명_12">4.2.4. 응답 필드 설명</h4>
+<div class="paragraph">
+<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/user-controller-test/update-my-profile_success/response-fields.adoc[]</p>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_3️⃣_비밀번호_변경_patch_apiv1userspassword">4.3. 3️⃣ 비밀번호 변경 (PATCH /api/v1/users/password)</h3>
+<div class="paragraph">
+<p>현재 로그인된 사용자의 비밀번호를 변경합니다.</p>
+</div>
+<div class="sect3">
+<h4 id="_요청_예시_12">4.3.1. 요청 예시</h4>
+<div class="paragraph">
+<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/user-controller-test/update-password_success/http-request.adoc[]</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_13">4.3.2. 응답 예시</h4>
+<div class="paragraph">
+<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/user-controller-test/update-password_success/http-response.adoc[]</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_요청_필드_설명_7">4.3.3. 요청 필드 설명</h4>
+<div class="paragraph">
+<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/user-controller-test/update-password_success/request-fields.adoc[]</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_설명_13">4.3.4. 응답 필드 설명</h4>
+<div class="paragraph">
+<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/user-controller-test/update-password_success/response-fields.adoc[]</p>
+</div>
+<hr>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_관리자_api_admin_api">5. 관리자 API (Admin API)</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_1️⃣_매치_생성_post_apiv1adminmatches">5.1. 1️⃣ 매치 생성 (POST /api/v1/admin/matches)</h3>
 <div class="paragraph">
 <p>새로운 경기를 생성합니다.</p>
 </div>
 <div class="sect3">
-<h4 id="_요청_예시_11">4.1.1. 요청 예시</h4>
+<h4 id="_요청_예시_13">5.1.1. 요청 예시</h4>
 <div class="paragraph">
 <p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/create-match_success/http-request.adoc[]</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_예시_11">4.1.2. 응답 예시</h4>
+<h4 id="_응답_예시_14">5.1.2. 응답 예시</h4>
 <div class="paragraph">
 <p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/create-match_success/http-response.adoc[]</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_요청_필드_설명_6">4.1.3. 요청 필드 설명</h4>
+<h4 id="_요청_필드_설명_8">5.1.3. 요청 필드 설명</h4>
 <div class="paragraph">
 <p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/create-match_success/request-fields.adoc[]</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_설명_11">4.1.4. 응답 필드 설명</h4>
+<h4 id="_응답_필드_설명_14">5.1.4. 응답 필드 설명</h4>
 <div class="paragraph">
 <p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/create-match_success/response-fields.adoc[]</p>
 </div>
@@ -1887,36 +1980,36 @@ Content-Length: 596
 </div>
 </div>
 <div class="sect2">
-<h3 id="_2️⃣_매치_정보_수정_patch_apiv1adminmatchesmatchid">4.2. 2️⃣ 매치 정보 수정 (PATCH /api/v1/admin/matches/{matchId})</h3>
+<h3 id="_2️⃣_매치_정보_수정_patch_apiv1adminmatchesmatchid">5.2. 2️⃣ 매치 정보 수정 (PATCH /api/v1/admin/matches/{matchId})</h3>
 <div class="paragraph">
 <p>기존 경기의 정보를 수정합니다.</p>
 </div>
 <div class="sect3">
-<h4 id="_요청_예시_12">4.2.1. 요청 예시</h4>
+<h4 id="_요청_예시_14">5.2.1. 요청 예시</h4>
 <div class="paragraph">
 <p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/update-match_success/http-request.adoc[]</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_예시_12">4.2.2. 응답 예시</h4>
+<h4 id="_응답_예시_15">5.2.2. 응답 예시</h4>
 <div class="paragraph">
 <p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/update-match_success/http-response.adoc[]</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_경로_파라미터_설명">4.2.3. 경로 파라미터 설명</h4>
+<h4 id="_경로_파라미터_설명">5.2.3. 경로 파라미터 설명</h4>
 <div class="paragraph">
 <p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/update-match_success/path-parameters.adoc[]</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_요청_필드_설명_7">4.2.4. 요청 필드 설명</h4>
+<h4 id="_요청_필드_설명_9">5.2.4. 요청 필드 설명</h4>
 <div class="paragraph">
 <p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/update-match_success/request-fields.adoc[]</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_설명_12">4.2.5. 응답 필드 설명</h4>
+<h4 id="_응답_필드_설명_15">5.2.5. 응답 필드 설명</h4>
 <div class="paragraph">
 <p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/update-match_success/response-fields.adoc[]</p>
 </div>
@@ -1924,30 +2017,30 @@ Content-Length: 596
 </div>
 </div>
 <div class="sect2">
-<h3 id="_3️⃣_전체_사용자_목록_조회_get_apiv1adminusers">4.3. 3️⃣ 전체 사용자 목록 조회 (GET /api/v1/admin/users)</h3>
+<h3 id="_3️⃣_전체_사용자_목록_조회_get_apiv1adminusers">5.3. 3️⃣ 전체 사용자 목록 조회 (GET /api/v1/admin/users)</h3>
 <div class="paragraph">
 <p>조건에 맞는 사용자 목록을 페이징하여 조회합니다.</p>
 </div>
 <div class="sect3">
-<h4 id="_요청_예시_13">4.3.1. 요청 예시</h4>
+<h4 id="_요청_예시_15">5.3.1. 요청 예시</h4>
 <div class="paragraph">
 <p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/get-all-users_success/http-request.adoc[]</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_예시_13">4.3.2. 응답 예시</h4>
+<h4 id="_응답_예시_16">5.3.2. 응답 예시</h4>
 <div class="paragraph">
 <p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/get-all-users_success/http-response.adoc[]</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_쿼리_파라미터_설명">4.3.3. 쿼리 파라미터 설명</h4>
+<h4 id="_쿼리_파라미터_설명">5.3.3. 쿼리 파라미터 설명</h4>
 <div class="paragraph">
 <p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/get-all-users_success/query-parameters.adoc[]</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_설명_13">4.3.4. 응답 필드 설명</h4>
+<h4 id="_응답_필드_설명_16">5.3.4. 응답 필드 설명</h4>
 <div class="paragraph">
 <p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/get-all-users_success/response-fields.adoc[]</p>
 </div>
@@ -1955,30 +2048,30 @@ Content-Length: 596
 </div>
 </div>
 <div class="sect2">
-<h3 id="_4️⃣_사용자_상세_조회_get_apiv1adminusersuserid">4.4. 4️⃣ 사용자 상세 조회 (GET /api/v1/admin/users/{userId})</h3>
+<h3 id="_4️⃣_사용자_상세_조회_get_apiv1adminusersuserid">5.4. 4️⃣ 사용자 상세 조회 (GET /api/v1/admin/users/{userId})</h3>
 <div class="paragraph">
 <p>특정 사용자의 상세 정보를 조회합니다.</p>
 </div>
 <div class="sect3">
-<h4 id="_요청_예시_14">4.4.1. 요청 예시</h4>
+<h4 id="_요청_예시_16">5.4.1. 요청 예시</h4>
 <div class="paragraph">
 <p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/get-user-details_success/http-request.adoc[]</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_예시_14">4.4.2. 응답 예시</h4>
+<h4 id="_응답_예시_17">5.4.2. 응답 예시</h4>
 <div class="paragraph">
 <p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/get-user-details_success/http-response.adoc[]</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_경로_파라미터_설명_2">4.4.3. 경로 파라미터 설명</h4>
+<h4 id="_경로_파라미터_설명_2">5.4.3. 경로 파라미터 설명</h4>
 <div class="paragraph">
 <p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/get-user-details_success/path-parameters.adoc[]</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_설명_14">4.4.4. 응답 필드 설명</h4>
+<h4 id="_응답_필드_설명_17">5.4.4. 응답 필드 설명</h4>
 <div class="paragraph">
 <p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/get-user-details_success/response-fields.adoc[]</p>
 </div>
@@ -1986,36 +2079,36 @@ Content-Length: 596
 </div>
 </div>
 <div class="sect2">
-<h3 id="_5️⃣_사용자_포인트_지급_post_apiv1adminusersuseridpoints">4.5. 5️⃣ 사용자 포인트 지급 (POST /api/v1/admin/users/{userId}/points)</h3>
+<h3 id="_5️⃣_사용자_포인트_지급_post_apiv1adminusersuseridpoints">5.5. 5️⃣ 사용자 포인트 지급 (POST /api/v1/admin/users/{userId}/points)</h3>
 <div class="paragraph">
 <p>특정 사용자의 포인트를 수동으로 조정합니다.</p>
 </div>
 <div class="sect3">
-<h4 id="_요청_예시_15">4.5.1. 요청 예시</h4>
+<h4 id="_요청_예시_17">5.5.1. 요청 예시</h4>
 <div class="paragraph">
 <p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/adjust-user-points_success/http-request.adoc[]</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_예시_15">4.5.2. 응답 예시</h4>
+<h4 id="_응답_예시_18">5.5.2. 응답 예시</h4>
 <div class="paragraph">
 <p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/adjust-user-points_success/http-response.adoc[]</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_경로_파라미터_설명_3">4.5.3. 경로 파라미터 설명</h4>
+<h4 id="_경로_파라미터_설명_3">5.5.3. 경로 파라미터 설명</h4>
 <div class="paragraph">
 <p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/adjust-user-points_success/path-parameters.adoc[]</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_요청_필드_설명_8">4.5.4. 요청 필드 설명</h4>
+<h4 id="_요청_필드_설명_10">5.5.4. 요청 필드 설명</h4>
 <div class="paragraph">
 <p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/adjust-user-points_success/request-fields.adoc[]</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_설명_15">4.5.5. 응답 필드 설명</h4>
+<h4 id="_응답_필드_설명_18">5.5.5. 응답 필드 설명</h4>
 <div class="paragraph">
 <p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/adjust-user-points_success/response-fields.adoc[]</p>
 </div>
@@ -2027,7 +2120,7 @@ Content-Length: 596
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2025-10-24 12:42:13 +0900
+Last updated 2025-10-24 15:00:51 +0900
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
