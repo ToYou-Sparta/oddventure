@@ -3,6 +3,7 @@ package org.example.oddventure.domain.ai.unit;
 import org.example.oddventure.domain.ai.dto.AiRequest;
 import org.example.oddventure.domain.ai.dto.AiResponse;
 import org.example.oddventure.domain.ai.service.AiService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,21 +14,22 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-class WinningRateAiUnitTest {
+class WinningRateAiServiceTest {
 
     @InjectMocks
     private AiService aiService;
 
     @Test
-    void 팀별_승패를_요약_문자열로_생성할_수_있다() {
-        //given
+    @DisplayName("팀 별 승패를 요약 문자열로 생성할 수 있다")
+    void createRecordSummary() {
+        // given
         List<String> winMatches = List.of("T1", "GEN.G", "T1", "DRX");
         List<String> loseMatches = List.of("GEN.G", "T1", "DRX", "DRX");
 
-        //when
+        // when
         String summary = aiService.buildSummary(winMatches, loseMatches);
 
-        //then
+        // then
         assertThat(summary).isEqualTo("""
         팀별 승리 횟수:
         - GEN.G: 1번
@@ -42,8 +44,9 @@ class WinningRateAiUnitTest {
     }
 
     @Test
-    void 기본_프롬프트를_생성할_수_있다() {
-        //given
+    @DisplayName("기본 프롬프트를 생성할 수 있다")
+    void createGeneratePrompt() {
+        // given
         AiRequest request = new AiRequest("팀 T1과 팀 GEN.G의 승률 예측해줘");
         // when
         String summary = aiService.generatePrompt(request);
@@ -58,7 +61,8 @@ class WinningRateAiUnitTest {
     }
 
     @Test
-    void JSON_문자열을_AiResponse로_파싱할_수_있다() {
+    @DisplayName("JSON 문자열을 AiResponse로 파싱할 수 있다")
+    void parsingJsonToAiResponse () {
         // given
         String jsonText = """
                 {
@@ -82,5 +86,4 @@ class WinningRateAiUnitTest {
         assertThat(response.losingCount()).isEqualTo(List.of(0L, 1L));
         assertThat(response.winningRate()).isEqualTo(List.of(100L, 0L));
     }
-
 }
