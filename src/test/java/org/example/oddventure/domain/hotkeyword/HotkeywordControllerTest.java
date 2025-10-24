@@ -53,8 +53,6 @@ public class HotkeywordControllerTest extends RestDocsTestSupport{
         result.andExpect(status().isOk())
                 .andDo(restDocs.document(
                         RestDocsUtils.successWithDataFields(
-                                fieldWithPath("data.hotKeywords").description("인기검색어 top5"),
-                                fieldWithPath("timestamp").description("응답 시간"))
-                ));
+                                fieldWithPath("data.hotKeywords").description("인기검색어 top5"))));
     }
 }
