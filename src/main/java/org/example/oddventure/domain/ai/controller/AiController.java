@@ -15,9 +15,8 @@ public class AiController {
 
     private final AiService aiService;
 
-    @GetMapping("/winningrate")
-    ResponseEntity<ApiResponse<AiResponse>> generation(@RequestBody String content) {
-        AiRequest request = new AiRequest(content);
+    @PostMapping("/winningrate")
+    ResponseEntity<ApiResponse<AiResponse>> generation(@RequestBody AiRequest request) {
         return ApiResponse.success(aiService.calculateWinningRateWithAi(request), "ai 기반 승률 예측 결과를 반환한다.");
     }
 }
