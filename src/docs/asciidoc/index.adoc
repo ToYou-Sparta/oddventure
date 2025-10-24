@@ -170,3 +170,49 @@ include::{snippets}/winning-rate-ai-controller-test/provide-winning-rate_success
 ==== 응답 필드 설명
 include::{snippets}/winning-rate-ai-controller-test/provide-winning-rate_success/response-fields.adoc[]
 
+---
+
+== 사용자 API (User API)
+
+=== 1️⃣ 내 프로필 조회 (GET /api/v1/users/me)
+현재 로그인된 사용자의 프로필 정보를 조회합니다.
+
+==== 응답 예시
+include::{snippets}/user-controller-test/get-my-profile_success/http-response.adoc[]
+
+==== 응답 필드 설명
+include::{snippets}/user-controller-test/get-my-profile_success/response-fields.adoc[]
+
+---
+
+=== 2️⃣ 내 프로필 수정 (PATCH /api/v1/users/me)
+현재 로그인된 사용자의 프로필(사용자 이름, 이메일)을 수정합니다.
+
+==== 요청 예시
+include::{snippets}/user-controller-test/update-my-profile_success/http-request.adoc[]
+
+==== 응답 예시
+include::{snippets}/user-controller-test/update-my-profile_success/http-response.adoc[]
+
+==== 요청 필드 설명
+include::{snippets}/user-controller-test/update-my-profile_success/request-fields.adoc[]
+
+==== 응답 필드 설명
+include::{snippets}/user-controller-test/update-my-profile_success/response-fields.adoc[]
+
+---
+
+=== 3️⃣ 비밀번호 변경 (PATCH /api/v1/users/password)
+현재 로그인된 사용자의 비밀번호를 변경합니다.
+
+==== 요청 예시
+include::{snippets}/user-controller-test/update-password_success/http-request.adoc[]
+
+==== 응답 예시
+include::{snippets}/user-controller-test/update-password_success/http-response.adoc[]
+
+==== 요청 필드 설명
+include::{snippets}/user-controller-test/update-password_success/request-fields.adoc[]
+
+==== 응답 필드 설명
+include::{snippets}/user-controller-test/update-password_success/response-fields.adoc[]
