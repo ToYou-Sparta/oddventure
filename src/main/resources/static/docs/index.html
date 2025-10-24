@@ -464,9 +464,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_3️⃣_베팅_내역_조회_get_apiv1betsme">2.3. 3️⃣ 베팅 내역 조회 (GET /api/v1/bets/me)</a></li>
 </ul>
 </li>
-<li><a href="#_인기_검색어_api_hotkeyword_api">3. 인기 검색어 API (Hotkeyword API)</a>
+<li><a href="#_승률_api_ai_api">3. 승률 API (AI API)</a>
 <ul class="sectlevel2">
-<li><a href="#_1️⃣_인기_검색어_top5_조회_get_apiv1hotkeyword">3.1. 1️⃣ 인기 검색어 top5 조회 (GET /api/v1/hotkeyword)</a></li>
+<li><a href="#_1️⃣_ai_승률_조회_post_apiv1aiwinningrate">3.1. 1️⃣ AI 승률 조회 (POST /api/v1/ai/winningrate)</a></li>
 </ul>
 </li>
 </ul>
@@ -524,9 +524,9 @@ Content-Length: 372
     "email" : "hello@naver.com",
     "role" : "ROLE_USER",
     "point" : 1000,
-    "createdAt" : "2025-10-24T11:39:38.5567597"
+    "createdAt" : "2025-10-24T11:34:21.8611823"
   },
-  "timestamp" : "2025-10-24T11:39:38.5860462"
+  "timestamp" : "2025-10-24T11:34:21.8949198"
 }</code></pre>
 </div>
 </div>
@@ -680,7 +680,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 238
+Content-Length: 236
 
 {
   "httpStatus" : "CONFLICT",
@@ -688,7 +688,7 @@ Content-Length: 238
   "success" : false,
   "message" : "이미 존재하는 이메일 입니다.",
   "data" : null,
-  "timestamp" : "2025-10-24T11:39:38.6805827",
+  "timestamp" : "2025-10-24T11:34:21.98482",
   "requestUrl" : "/api/v1/auth/signup"
 }</code></pre>
 </div>
@@ -811,7 +811,7 @@ Host: localhost:8080
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
-Set-Cookie: refreshToken=refreshToken; Path=/; Max-Age=604800; Expires=Fri, 31 Oct 2025 02:39:38 GMT; Secure; HttpOnly; SameSite=Strict
+Set-Cookie: refreshToken=refreshToken; Path=/; Max-Age=604800; Expires=Fri, 31 Oct 2025 02:34:21 GMT; Secure; HttpOnly; SameSite=Strict
 Content-Type: application/json;charset=UTF-8
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -830,7 +830,7 @@ Content-Length: 251
     "accessToken" : "accessToken",
     "refreshToken" : "refreshToken"
   },
-  "timestamp" : "2025-10-24T11:39:38.6334854"
+  "timestamp" : "2025-10-24T11:34:21.9393062"
 }</code></pre>
 </div>
 </div>
@@ -962,7 +962,7 @@ Content-Length: 179
   "success" : true,
   "message" : "로그아웃 되었습니다.",
   "data" : null,
-  "timestamp" : "2025-10-24T11:39:38.3832385"
+  "timestamp" : "2025-10-24T11:34:21.7817961"
 }</code></pre>
 </div>
 </div>
@@ -1051,7 +1051,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 178
+Content-Length: 179
 
 {
   "httpStatus" : "OK",
@@ -1059,7 +1059,7 @@ Content-Length: 178
   "success" : true,
   "message" : "회원탈퇴 되었습니다.",
   "data" : null,
-  "timestamp" : "2025-10-24T11:39:38.516499"
+  "timestamp" : "2025-10-24T11:34:21.8294077"
 }</code></pre>
 </div>
 </div>
@@ -1168,7 +1168,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 225
+Content-Length: 224
 
 {
   "httpStatus" : "OK",
@@ -1178,7 +1178,7 @@ Content-Length: 225
   "data" : {
     "accessToken" : "newAccessToken"
   },
-  "timestamp" : "2025-10-24T11:39:38.7215413"
+  "timestamp" : "2025-10-24T11:34:22.024509"
 }</code></pre>
 </div>
 </div>
@@ -1291,7 +1291,7 @@ Content-Length: 369
     "oddsAtBetting" : 1.5,
     "userPointAfter" : 0
   },
-  "timestamp" : "2025-10-24T11:39:40.3928904"
+  "timestamp" : "2025-10-24T11:34:23.5226864"
 }</code></pre>
 </div>
 </div>
@@ -1452,7 +1452,7 @@ Content-Length: 256
     "refundAmount" : 1000,
     "userPointAfter" : 0
   },
-  "timestamp" : "2025-10-24T11:39:40.3479368"
+  "timestamp" : "2025-10-24T11:34:23.4745461"
 }</code></pre>
 </div>
 </div>
@@ -1547,7 +1547,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 621
+Content-Length: 618
 
 {
   "success" : true,
@@ -1559,20 +1559,20 @@ Content-Length: 621
         "matchId" : 1,
         "teamA" : "T1",
         "teamB" : "GEN.G",
-        "startTime" : "2025-10-25T11:39:40.293455"
+        "startTime" : "2025-10-25T11:34:23.42244"
       },
       "selectedTeam" : "Team_A",
       "betAmount" : 1000,
       "oddsAtBetting" : 1.5,
       "isWin" : false,
-      "createdAt" : "2025-10-24T11:39:40.2944684"
+      "createdAt" : "2025-10-24T11:34:23.4234407"
     } ],
     "totalElements" : 1,
     "totalPages" : 1,
     "size" : 10,
     "number" : 0
   },
-  "timestamp" : "2025-10-24T11:39:40.2995844"
+  "timestamp" : "2025-10-24T11:34:23.42756"
 }</code></pre>
 </div>
 </div>
@@ -1691,16 +1691,22 @@ Content-Length: 621
 </div>
 </div>
 <div class="sect1">
-<h2 id="_인기_검색어_api_hotkeyword_api">3. 인기 검색어 API (Hotkeyword API)</h2>
+<h2 id="_승률_api_ai_api">3. 승률 API (AI API)</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_1️⃣_인기_검색어_top5_조회_get_apiv1hotkeyword">3.1. 1️⃣ 인기 검색어 top5 조회 (GET /api/v1/hotkeyword)</h3>
+<h3 id="_1️⃣_ai_승률_조회_post_apiv1aiwinningrate">3.1. 1️⃣ AI 승률 조회 (POST /api/v1/ai/winningrate)</h3>
 <div class="sect3">
 <h4 id="_요청_예시_10">3.1.1. 요청 예시</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/hotkeyword HTTP/1.1
-Host: localhost:8080</code></pre>
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/v1/ai/winningrate HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Content-Length: 61
+Host: localhost:8080
+
+{
+  "content" : "팀 T1과 팀 GEN.G의 승률 알려줘"
+}</code></pre>
 </div>
 </div>
 </div>
@@ -1716,17 +1722,23 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 278
+Content-Length: 596
 
 {
   "httpStatus" : "OK",
   "code" : 200,
   "success" : true,
-  "message" : "인기 검색어 top5를 조회했습니다.",
+  "message" : "ai 기반 승률 예측 결과를 반환한다.",
   "data" : {
-    "hotKeywords" : [ "india", "japan", "england", "america", "korea", "china" ]
+    "result" : true,
+    "hasTeamName" : true,
+    "teamName" : [ "T1", "GEN.G" ],
+    "winningCount" : [ 0, 0 ],
+    "losingCount" : [ 0, 0 ],
+    "winningRate" : [ 0, 0 ],
+    "content" : "팀의 이름은 t1과 GEN.G입니다. 경기 요약이 제공되지 않았으므로\n승리 횟수와 패배 횟수를 계산할 수 없습니다. 따라서 승률도 계산할 수 없습니다.\n"
   },
-  "timestamp" : "2025-10-24T11:39:41.0688055"
+  "timestamp" : "2025-10-24T11:34:20.7897557"
 }</code></pre>
 </div>
 </div>
@@ -1778,9 +1790,39 @@ Content-Length: 278
 <td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.hotKeywords</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.result</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ai 호출 결과</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.hasTeamName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">질문 내 팀 이름 존재 여부</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.teamName</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">인기검색어 top5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">존재하는 팀 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.winningCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">팀 별 승리 카운트</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.losingCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">팀 별 패배 카운트</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.winningRate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">승률</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">승률 예측 근거</p></td>
 </tr>
 </tbody>
 </table>
@@ -1792,7 +1834,7 @@ Content-Length: 278
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2025-10-24 11:37:01 +0900
+Last updated 2025-10-24 11:31:57 +0900
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>

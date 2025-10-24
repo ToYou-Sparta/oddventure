@@ -157,18 +157,16 @@ include::{snippets}/bet-controller-test/get-bet_success/http-response.adoc[]
 include::{snippets}/bet-controller-test/get-bet_success/response-fields.adoc[]
 
 ---
+== 승률 API (AI API)
 
-== 인기 검색어 API (Hotkeyword API)
-
-=== 1️⃣ 인기 검색어 top5 조회 (GET /api/v1/hotkeyword)
+=== 1️⃣ AI 승률 조회 (POST /api/v1/ai/winningrate)
 
 ==== 요청 예시
-include::{snippets}/hotkeyword-controller-test/get-top5-hot-keywords_success/http-request.adoc[]
+include::{snippets}/winning-rate-ai-controller-test/provide-winning-rate_success/http-request.adoc[]
 
 ==== 응답 예시
-include::{snippets}/hotkeyword-controller-test/get-top5-hot-keywords_success/http-response.adoc[]
+include::{snippets}/winning-rate-ai-controller-test/provide-winning-rate_success/http-response.adoc[]
 
 ==== 응답 필드 설명
-include::{snippets}/hotkeyword-controller-test/get-top5-hot-keywords_success/response-fields.adoc[]
+include::{snippets}/winning-rate-ai-controller-test/provide-winning-rate_success/response-fields.adoc[]
 
-:icons: font
