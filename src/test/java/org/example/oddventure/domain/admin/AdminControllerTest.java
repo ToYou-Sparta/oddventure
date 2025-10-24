@@ -160,16 +160,29 @@ public class AdminControllerTest extends RestDocsTestSupport {
     @DisplayName("사용자 목록 조회 API 성공")
     void getAllUsers_Success() throws Exception {
         // given
+        String email = "test";
+        String username = "user";
         Pageable pageable = PageRequest.of(0, 5);
-        List<UserAdminResponse> userList = List.of(new UserAdminResponse(1L, "testuser1", "test1@email.com", new BigDecimal("1000"), UserRole.ROLE_USER, LocalDateTime.now()));
+
+        List<UserAdminResponse> userList = List.of(
+                new UserAdminResponse(1L, "testuser1", "test1@email.com", new BigDecimal("1000"), UserRole.ROLE_USER, LocalDateTime.now())
+        );
         Page<UserAdminResponse> mockResponsePage = new PageImpl<>(userList, pageable, 1);
-        given(adminService.getAllUsers(any(), any(), any(Pageable.class))).willReturn(mockResponsePage);
+
+        given(adminService.getAllUsers(eq(email), eq(username), any(Pageable.class))).willReturn(mockResponsePage);
 
         // when & then
         mockMvc.perform(get("/api/v1/admin/users")
-                        .param("page", "0").param("size", "5"))
+                        .param("email", email)
+                        .param("username", username)
+                        .param("page", "0")
+                        .param("size", "5")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("사용자 목록 조회에 성공했습니다."))
+                .andExpect(jsonPath("$.data.totalElements").value(1))
+                .andExpect(jsonPath("$.data.number").value(0))
                 .andDo(restDocs.document(
                         queryParameters(
                                 parameterWithName("email").description("검색할 이메일 (선택적)").optional(),
@@ -177,13 +190,18 @@ public class AdminControllerTest extends RestDocsTestSupport {
                                 parameterWithName("page").description("페이지 번호 (0부터 시작)"),
                                 parameterWithName("size").description("페이지 당 항목 수")
                         ),
-                        RestDocsUtils.pageResponseFields(
+                        RestDocsUtils.successWithDataFields(
+                                fieldWithPath("data.content[]").description("사용자 정보 목록"),
                                 fieldWithPath("data.content[].userId").description("사용자 ID"),
                                 fieldWithPath("data.content[].username").description("사용자 이름"),
                                 fieldWithPath("data.content[].email").description("사용자 이메일"),
                                 fieldWithPath("data.content[].point").description("보유 포인트"),
                                 fieldWithPath("data.content[].role").description("사용자 역할"),
-                                fieldWithPath("data.content[].createdAt").description("가입 일시")
+                                fieldWithPath("data.content[].createdAt").description("가입 일시"),
+                                fieldWithPath("data.totalElements").description("전체 항목 수"),
+                                fieldWithPath("data.totalPages").description("전체 페이지 수"),
+                                fieldWithPath("data.size").description("페이지 크기"),
+                                fieldWithPath("data.number").description("현재 페이지 번호 (0부터 시작)")
                         )
                 ));
     }
