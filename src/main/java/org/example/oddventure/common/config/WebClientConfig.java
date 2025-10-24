@@ -9,13 +9,13 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Configuration
 public class WebClientConfig {
 
-    @Value("${match-data.grid.central-data.base-url}")
+    @Value("${grid.central-data.base-url}")
     private String GRID_CENTRAL_BASE_URL;
 
-    @Value("${match-data.grid.live-data.base-url}")
+    @Value("${grid.live-data.base-url}")
     private String GRID_LIVE_BASE_URL;
 
-    @Value("${match-data.grid.api-key}")
+    @Value("${grid.api-key}")
     private String GRID_API_KEY;
 
     @Bean

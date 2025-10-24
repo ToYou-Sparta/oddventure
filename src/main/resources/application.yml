@@ -33,3 +33,10 @@ spring:
 jwt:
   secret:
     key: "${SECRET_KEY}"
+
+grid:
+  central-data:
+    base-url: ${GRID_CENTRAL_BASE_URL}
+  live-data:
+    base-url: ${GRID_LIVE_BASE_URL}
+  api-key: ${GRID_API_KEY}
