@@ -157,6 +157,7 @@ include::{snippets}/bet-controller-test/get-bet_success/http-response.adoc[]
 include::{snippets}/bet-controller-test/get-bet_success/response-fields.adoc[]
 
 ---
+== 승률 API (AI API)
 
 === 1️⃣ AI 승률 조회 (POST /api/v1/ai/winningrate)
 
