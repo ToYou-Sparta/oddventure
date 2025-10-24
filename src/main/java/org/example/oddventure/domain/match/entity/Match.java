@@ -27,6 +27,8 @@ public class Match extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long fetchId;
+
     @Column(nullable = false)
     private String matchName;
 

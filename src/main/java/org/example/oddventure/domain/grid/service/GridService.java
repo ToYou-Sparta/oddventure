@@ -98,10 +98,12 @@ public class GridService {
 
             for (JsonNode edge : allSeries.path("edges")) {
                 JsonNode node = edge.path("node");
+                Long fetchId = node.path("id").asLong();
                 String teamA = node.path("teams").get(0).path("baseInfo").path("name").asText();
                 String teamB = node.path("teams").get(1).path("baseInfo").path("name").asText();
 
                 results.add(MatchFetchResponse.builder()
+                        .fetchId(fetchId)
                         .matchName(node.path("tournament").path("nameShortened").asText())
                         .teamA(teamA)
                         .teamB(teamB)

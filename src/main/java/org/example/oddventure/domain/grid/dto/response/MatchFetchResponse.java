@@ -5,6 +5,7 @@ import lombok.Builder;
 
 @Builder
 public record MatchFetchResponse(
+        Long fetchId,
         String matchName,
         String teamA,
         String teamB,
