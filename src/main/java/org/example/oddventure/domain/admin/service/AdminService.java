@@ -97,20 +97,20 @@ public class AdminService {
     }
 
     // 초기 배당률 설정
-    public MatchAdminResponse setInitialOdds(Long matchId, InitialOddsSetRequest request)
-    {
+    @Transactional
+    public MatchAdminResponse setInitialOdds(Long matchId, InitialOddsSetRequest request) {
         Match match = matchRepository.findById(matchId)
-                .orElseThrow(() -> new InvalidAdminException(AdminErrorCode.MATCH_NOT_FOUND));
+                .orElseThrow(() -> new AdminException(AdminErrorCode.MATCH_NOT_FOUND));
 
         // 베팅 총액이 0보다 크면, 이미 베팅이 시작된 것이므로 예외 발생
         boolean hasBets = match.getTotalAmountA().add(match.getTotalAmountB())
                 .compareTo(BigDecimal.ZERO) > 0;
         if (hasBets) {
-            throw new InvalidAdminException(AdminErrorCode.CANNOT_SET_INITIAL_ODDS);
+            throw new AdminException(AdminErrorCode.CANNOT_SET_INITIAL_ODDS);
         }
 
         match.updateInitialOdds(request.oddsA(), request.oddsB());
 
-        return MatchAdminResponse.fromEntity(match);
+        return MatchAdminResponse.from(match);
     }
 }
