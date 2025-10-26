@@ -29,6 +29,12 @@ spring:
         options:
           model: llama-3.3-70b-versatile
           temperature: 0.0
+  cloud:
+    aws:
+      region:
+        static: ap-northeast-2
+      credentials:
+        instance-profile: false
 
 jwt:
   secret:
