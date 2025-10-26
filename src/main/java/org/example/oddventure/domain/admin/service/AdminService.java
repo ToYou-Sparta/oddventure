@@ -97,7 +97,7 @@ public class AdminService {
         );
     }
 
-    // 매치 일정 연
+    // 매치 일정 연동
     @Transactional
     public void fetchMatches() {
         List<MatchFetchResponse> fetchResponses = gridService.fetchMatches();
