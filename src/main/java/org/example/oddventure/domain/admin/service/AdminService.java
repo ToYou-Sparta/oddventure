@@ -1,5 +1,6 @@
 package org.example.oddventure.domain.admin.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.oddventure.domain.admin.dto.request.MatchCreateRequest;
@@ -10,6 +11,8 @@ import org.example.oddventure.domain.admin.dto.response.PointAdjustResponse;
 import org.example.oddventure.domain.admin.dto.response.UserAdminResponse;
 import org.example.oddventure.domain.admin.exception.AdminErrorCode;
 import org.example.oddventure.domain.admin.exception.AdminException;
+import org.example.oddventure.domain.grid.dto.response.MatchFetchResponse;
+import org.example.oddventure.domain.grid.service.GridService;
 import org.example.oddventure.domain.match.entity.Match;
 import org.example.oddventure.domain.match.repository.MatchRepository;
 import org.example.oddventure.domain.user.entity.User;
@@ -26,6 +29,7 @@ public class AdminService {
 
     private final MatchRepository matchRepository;
     private final UserRepository userRepository;
+    private final GridService gridService;
 
     // 매치 생성
     @Transactional
@@ -91,5 +95,23 @@ public class AdminService {
                 request.amount(),
                 user.getPoint()
         );
+    }
+
+    // 매치 일정 연동
+    @Transactional
+    public void fetchMatches() {
+        List<MatchFetchResponse> fetchResponses = gridService.fetchMatches();
+
+        fetchResponses.stream()
+                .filter(dto -> !matchRepository.existsByFetchId(dto.fetchId()))
+                .filter(dto -> !dto.teamA().contains("TBD")) // 미정된 경기
+                .filter(dto -> !dto.teamB().contains("TBD"))
+                .map(dto -> Match.builder()
+                        .fetchId(dto.fetchId())
+                        .matchName(dto.matchName())
+                        .teamA(dto.teamA())
+                        .teamB(dto.teamB())
+                        .startTime(dto.startTime())
+                        .build()).forEach(matchRepository::save);
     }
 }

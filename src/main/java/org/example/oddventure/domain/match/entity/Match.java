@@ -27,6 +27,8 @@ public class Match extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long fetchId;
+
     @Column(nullable = false)
     private String matchName;
 
@@ -59,7 +61,8 @@ public class Match extends BaseEntity {
     private Long viewCount = 0L;
 
     @Builder
-    public Match(String matchName, String teamA, String teamB, LocalDateTime startTime) {
+    public Match(Long fetchId, String matchName, String teamA, String teamB, LocalDateTime startTime) {
+        this.fetchId = fetchId;
         this.matchName = matchName;
         this.teamA = teamA;
         this.teamB = teamB;

@@ -28,4 +28,9 @@ jwt:
   secret:
     key: ${jwt.secret.key}
 
-
+grid:
+  central-data:
+    base-url: ${grid.central.base.url}
+  live-data:
+    base-url: ${grid.live.base.url}
+  api-key: ${grid.api.key}
