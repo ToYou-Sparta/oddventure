@@ -5,18 +5,23 @@ import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Getter;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 @Getter
-@JsonPropertyOrder({"success", "message", "data", "timestamp"})
+@JsonPropertyOrder({"httpStatus", "code", "success", "message", "data", "timestamp"})
 public class ApiPageResponse<T> {
 
+    private final HttpStatus httpStatus;
+    private final int code;
     private final boolean success;
     private final String message;
     private final PageData<T> data;
     private final LocalDateTime timestamp;
 
-    private ApiPageResponse(PageData<T> data, String message) {
+    private ApiPageResponse(HttpStatus httpStatus, int code, PageData<T> data, String message) {
+        this.httpStatus = httpStatus;
+        this.code = code;
         this.success = true;
         this.message = message;
         this.data = data;
@@ -30,7 +35,8 @@ public class ApiPageResponse<T> {
      * @return HTTP 200 OK 응답과 함께 성공 데이터가 포함된 ApiPageResponse
      */
     public static <T> ResponseEntity<ApiPageResponse<T>> success(Page<T> page, String message) {
-        return ResponseEntity.ok(new ApiPageResponse<>(PageData.from(page), message));
+        return ResponseEntity.ok(
+                new ApiPageResponse<>(HttpStatus.OK, HttpStatus.OK.value(), PageData.from(page), message));
     }
 
     @Getter
