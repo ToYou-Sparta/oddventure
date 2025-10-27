@@ -70,8 +70,8 @@ public class Match extends BaseEntity {
         this.status = MatchStatus.SCHEDULED;
         this.winner = null;
         this.loser = null;
-        this.totalAmountA = BigDecimal.ZERO;
-        this.totalAmountB = BigDecimal.ZERO;
+        this.totalAmountA = BigDecimal.valueOf(1000);
+        this.totalAmountB = BigDecimal.valueOf(1000);
         this.viewCount = 0L;
     }
 

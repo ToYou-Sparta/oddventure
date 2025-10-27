@@ -14,6 +14,8 @@ import org.example.oddventure.domain.admin.exception.AdminException;
 import org.example.oddventure.domain.grid.dto.MatchResultDto;
 import org.example.oddventure.domain.grid.dto.response.MatchFetchResponse;
 import org.example.oddventure.domain.grid.service.GridService;
+import org.example.oddventure.domain.event.RedisPublisher;
+import org.example.oddventure.domain.match.dto.event.MatchInfoUpdateDto;
 import org.example.oddventure.domain.match.entity.Match;
 import org.example.oddventure.domain.match.repository.MatchRepository;
 import org.example.oddventure.domain.match.service.MatchService;
@@ -33,6 +35,7 @@ public class AdminService {
     private final UserRepository userRepository;
     private final GridService gridService;
     private final MatchService matchService;
+    private final RedisPublisher redisPublisher;
 
     // 매치 생성
     @Transactional
@@ -61,6 +64,17 @@ public class AdminService {
                 request.startTime(),
                 request.status()
         );
+
+        // 매치 정보 변경 시 Redis Pub/Sub으로 실시간 알림 전송
+        MatchInfoUpdateDto dto = new MatchInfoUpdateDto(
+                match.getId(),
+                match.getMatchName(),
+                match.getTeamA(),
+                match.getTeamB(),
+                match.getStartTime(),
+                match.getStatus()
+        );
+        redisPublisher.publish("match:" + matchId + ":info", dto);
 
         return MatchAdminResponse.from(match);
     }
