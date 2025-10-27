@@ -60,7 +60,7 @@ public class AuthController {
 
         refreshTokenCookie(httpResponse, "", 0);
 
-        return ApiResponse.success(null, "로그아웃 되었습니다.");
+        return ApiResponse.success("로그아웃 되었습니다.");
     }
 
     @ValidUser
@@ -70,7 +70,7 @@ public class AuthController {
             @Valid @RequestBody WithdrawRequest request
     ) {
         authService.withdraw(user.id(), request);
-        return ApiResponse.success(null, "회원탈퇴 되었습니다.");
+        return ApiResponse.success("회원탈퇴 되었습니다.");
     }
 
     @PostMapping("/refresh")

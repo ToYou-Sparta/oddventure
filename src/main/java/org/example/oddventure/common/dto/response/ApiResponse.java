@@ -49,6 +49,11 @@ public class ApiResponse<T> {
                 new ApiResponse<>(data, HttpStatus.OK, message));
     }
 
+    public static <T> ResponseEntity<ApiResponse<T>> success(String message) {
+        return ResponseEntity.ok(
+                new ApiResponse<>(null, HttpStatus.OK, message));
+    }
+
     /**
      * 성공적인 요청에 대한 응답을 반환하는 메서드 주어진 데이터를 포함하여 HTTP 204 No Content 상태 코드와 함께 응답을 반환
      *

@@ -29,7 +29,20 @@ spring:
         options:
           model: llama-3.3-70b-versatile
           temperature: 0.0
+  cloud:
+    aws:
+      region:
+        static: ap-northeast-2
+      credentials:
+        instance-profile: false
 
 jwt:
   secret:
     key: "${SECRET_KEY}"
+
+grid:
+  central-data:
+    base-url: ${GRID_CENTRAL_BASE_URL}
+  live-data:
+    base-url: ${GRID_LIVE_BASE_URL}
+  api-key: ${GRID_API_KEY}

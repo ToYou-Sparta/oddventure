@@ -76,4 +76,18 @@ public class AdminController {
         PointAdjustResponse response = adminService.adjustUserPoints(userId, request);
         return ApiResponse.success(response, "포인트 지급에 성공했습니다.");
     }
+
+    // 매치 일정 연동
+    @PostMapping("/matches/fetch")
+    public ResponseEntity<ApiResponse<Void>> fetchMatches() {
+        adminService.fetchMatches();
+        return ApiResponse.success("매치가 연동되었습니다.");
+    }
+
+    // 매치 결과 연동
+    @PatchMapping("/matches/fetch/{fetchId}")
+    public ResponseEntity<ApiResponse<Void>> syncMatchResult(@PathVariable Long fetchId) {
+        adminService.fetchMatchResult(fetchId);
+        return ApiResponse.success("매치 결과가 연동되었습니다.");
+    }
 }

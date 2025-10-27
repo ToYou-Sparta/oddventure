@@ -9,7 +9,8 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum MatchErrorCode implements ErrorCode {
 
-    MATCH_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 경기 정보를 찾을 수 없습니다.");
+    MATCH_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 경기 정보를 찾을 수 없습니다."),
+    MATCH_FINISHED(HttpStatus.UNAUTHORIZED, "이미 종료된 매치입니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
