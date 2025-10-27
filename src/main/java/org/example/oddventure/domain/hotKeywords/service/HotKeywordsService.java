@@ -3,6 +3,7 @@ package org.example.oddventure.domain.hotKeywords.service;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.example.oddventure.domain.hotKeywords.dto.HotKeywordsResponse;
+import org.example.oddventure.domain.hotKeywords.entity.HotKeywords;
 import org.example.oddventure.domain.hotKeywords.repository.HotKeywordsRepository;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
@@ -35,5 +36,12 @@ public class HotKeywordsService {
                 hotKeywordsRepository.increaseSearchCountByValue(keyword, score);
             }
         }
+    }
+
+    public void incrementSearchScore(String keyword) {
+        if (hotKeywordsRepository.findByKeyword(keyword) == null) {
+            hotKeywordsRepository.save(HotKeywords.of(keyword)); //검색 키워드 저장
+        }
+        redisTemplate.opsForZSet().incrementScore(HOT_KEYWORDS_KEY, keyword, 1);
     }
 }

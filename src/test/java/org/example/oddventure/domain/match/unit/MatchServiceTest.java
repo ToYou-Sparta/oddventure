@@ -2,11 +2,13 @@ package org.example.oddventure.domain.match.unit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import org.example.oddventure.domain.hotKeywords.service.HotKeywordsService;
 import org.example.oddventure.domain.match.dto.projection.MatchProjection;
 import org.example.oddventure.domain.match.dto.request.MatchSearchCondition;
 import org.example.oddventure.domain.match.dto.response.MatchResponse;
@@ -35,6 +37,9 @@ class MatchServiceTest {
 
     @Mock
     private MatchRepository matchRepository;
+
+    @Mock
+    private HotKeywordsService hotKeywordsService;
 
     @Test
     @DisplayName("경기 목록 조회 성공")
@@ -148,6 +153,7 @@ class MatchServiceTest {
         MatchProjection response2 = MatchProjection.from(match2);
         Page<MatchProjection> matches = new PageImpl<>(List.of(response1, response2), pageable, 2);
 
+        doNothing().when(hotKeywordsService).incrementSearchScore(condition.keyword());
         when(matchRepository.searchByCondition(condition, pageable)).thenReturn(matches);
 
         // when
