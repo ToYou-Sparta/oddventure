@@ -2,6 +2,7 @@ package org.example.oddventure.domain.auth.config;
 
 import lombok.RequiredArgsConstructor;
 import org.example.oddventure.domain.auth.jwt.JwtAuthenticationFilter;
+import org.example.oddventure.domain.user.enums.UserRole;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -45,7 +46,7 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/signup", "/api/v1/auth/login").permitAll()
-                        .requestMatchers("/api/v1/admin/**").permitAll()
+                        .requestMatchers("/api/v1/admin/**").hasAuthority(UserRole.Authority.ADMIN)
                         .anyRequest().authenticated()
                 )
                 .build();
