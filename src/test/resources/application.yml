@@ -32,3 +32,10 @@ spring:
 jwt:
   secret:
     key: dGVzdC1zZWNyZXQta2V5LWZvci10ZXN0aW5nLWp3dC10b2tlbi1nZW5lcmF0aW9uLW1pbmltdW0tMzItYnl0ZXM=
+
+grid:
+  central-data:
+    base-url: dummy
+  live-data:
+    base-url: dummy
+  api-key: dummy
