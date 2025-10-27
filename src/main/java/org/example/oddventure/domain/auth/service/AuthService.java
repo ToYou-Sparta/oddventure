@@ -104,7 +104,10 @@ public class AuthService {
             throw new AuthException(AuthErrorCode.REFRESH_TOKEN_MISMATCH);
         }
 
-        String newAccessToken = jwtUtil.createAccessToken(userId, jwtUtil.extractUserRole(refreshToken));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
+
+        String newAccessToken = jwtUtil.createAccessToken(userId, user.getUserRole());
 
         return AccessTokenResponse.of(newAccessToken);
     }
