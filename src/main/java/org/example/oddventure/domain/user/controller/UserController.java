@@ -46,6 +46,6 @@ public class UserController {
             @Valid @RequestBody PasswordUpdateRequest request
     ) {
         userService.updatePassword(authUser.id(), request);
-        return ApiResponse.success(null, "비밀번호 변경에 성공했습니다.");
+        return ApiResponse.success("비밀번호 변경에 성공했습니다.");
     }
 }

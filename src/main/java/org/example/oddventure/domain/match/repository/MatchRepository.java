@@ -27,4 +27,6 @@ public interface MatchRepository extends JpaRepository<Match, Long>, MatchReposi
     List<String> findByLoserIsNotNull();
 
     boolean existsByFetchId(Long fetchId);
+
+    Optional<Match> findByFetchId(Long fetchId);
 }
