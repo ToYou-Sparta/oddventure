@@ -35,7 +35,8 @@ public class WebClientConfig {
     public WebClient gridLiveClient() {
         return WebClient.builder()
                 .baseUrl(GRID_LIVE_BASE_URL)
-                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + GRID_API_KEY)
+                .defaultHeader("x-api-key", GRID_API_KEY)
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .build();
     }
 }

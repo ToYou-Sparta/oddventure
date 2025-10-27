@@ -5,6 +5,7 @@ import org.example.oddventure.domain.match.dto.projection.MatchProjection;
 import org.example.oddventure.domain.match.dto.request.MatchSearchCondition;
 import org.example.oddventure.domain.match.dto.response.MatchResponse;
 import org.example.oddventure.domain.match.entity.Match;
+import org.example.oddventure.domain.match.enums.MatchStatus;
 import org.example.oddventure.domain.match.exception.MatchErrorCode;
 import org.example.oddventure.domain.match.exception.MatchException;
 import org.example.oddventure.domain.match.repository.MatchRepository;
@@ -42,5 +43,19 @@ public class MatchService {
     public Page<MatchResponse> searchMatches(MatchSearchCondition condition, Pageable pageable) {
         Page<MatchProjection> projections = matchRepository.searchByCondition(condition, pageable);
         return projections.map(MatchResponse::of);
+    }
+
+    @Transactional
+    public Match updateMatchResult(Long fetchId, String winner, String looser) {
+        Match match = matchRepository.findByFetchId(fetchId)
+                .orElseThrow(() -> new MatchException(MatchErrorCode.MATCH_NOT_FOUND));
+
+        if (match.getStatus().equals(MatchStatus.FINISHED)) {
+            throw new MatchException(MatchErrorCode.MATCH_FINISHED);
+        }
+        
+        match.finishMatch(winner, looser);
+
+        return match;
     }
 }

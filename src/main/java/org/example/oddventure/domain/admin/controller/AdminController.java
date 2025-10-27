@@ -83,4 +83,11 @@ public class AdminController {
         adminService.fetchMatches();
         return ApiResponse.noContent("매치가 연동되었습니다.");
     }
+
+    // 매치 결과 연동
+    @PatchMapping("/matches/fetch/{fetchId}")
+    public ResponseEntity<ApiResponse<Void>> syncMatchResult(@PathVariable Long fetchId) {
+        adminService.fetchMatchResult(fetchId);
+        return ApiResponse.success(null, "매치 결과가 연동되었습니다.");
+    }
 }

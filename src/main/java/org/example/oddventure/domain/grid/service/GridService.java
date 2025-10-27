@@ -13,6 +13,7 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.example.oddventure.common.config.WebClientConfig;
+import org.example.oddventure.domain.grid.dto.MatchResultDto;
 import org.example.oddventure.domain.grid.dto.response.MatchFetchResponse;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -70,6 +71,16 @@ public class GridService {
               }
             }
             """;
+    private static final String GRID_LIVE_DATA_QUERY = """
+            query GetLiveCS2SeriesState ($id: ID!){
+               seriesState(id: $id) {
+                 teams {
+                   name
+                   won
+                 }
+               }
+             }
+            """;
     private final WebClientConfig webClientConfig;
     private final ObjectMapper objectMapper;
 
@@ -84,8 +95,7 @@ public class GridService {
             try {
                 request = objectMapper.writeValueAsString(
                         Map.of("query", GRID_CENTRAL_DATA_QUERY,
-                                "variables", variables
-                        )
+                                "variables", variables)
                 );
 //                log.info("Fetching matches from GRID: {}", request);
             } catch (JsonProcessingException e) {
@@ -130,5 +140,51 @@ public class GridService {
         }
 
         return results;
+    }
+
+    public MatchResultDto fetchMatchResult(Long fetchId) {
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("id", fetchId.toString());
+        String request = null;
+        try {
+            request = objectMapper.writeValueAsString(
+                    Map.of("query", GRID_LIVE_DATA_QUERY,
+                            "variables", variables)
+            );
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException("Failed to serialize GraphQL request body.", e);
+        }
+
+        JsonNode response = webClientConfig.gridLiveClient().post()
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(request)
+                .retrieve()
+                .bodyToMono(JsonNode.class)
+                .block();
+//        log.info(response.toString());
+        if (response == null || response.path("data").isMissingNode()) {
+            throw new IllegalStateException("Response body is empty.");
+        }
+
+        JsonNode teams = response.path("data").path("seriesState").path("teams");
+        String winner = null;
+        String looser = null;
+
+        for (JsonNode team : teams) {
+            String name = team.path("name").asText();
+            boolean won = team.path("won").asBoolean();
+
+            if (won) {
+                winner = name;
+            } else {
+                looser = name;
+            }
+        }
+
+        return MatchResultDto.builder()
+                .fetchId(fetchId)
+                .winner(winner)
+                .looser(looser)
+                .build();
     }
 }

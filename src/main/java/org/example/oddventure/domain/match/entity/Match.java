@@ -108,4 +108,10 @@ public class Match extends BaseEntity {
     public void minusTeamB(BigDecimal amount) {
         this.totalAmountB = this.totalAmountB.subtract(amount);
     }
+
+    public void finishMatch(String winner, String loser) {
+        this.winner = winner;
+        this.loser = loser;
+        this.status = MatchStatus.FINISHED;
+    }
 }
