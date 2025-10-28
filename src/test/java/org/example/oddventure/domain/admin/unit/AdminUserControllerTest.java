@@ -1,4 +1,4 @@
-package org.example.oddventure.domain.admin;
+package org.example.oddventure.domain.admin.unit;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;

@@ -1,4 +1,4 @@
-package org.example.oddventure.domain.user;
+package org.example.oddventure.domain.user.unit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;

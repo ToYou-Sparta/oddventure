@@ -1,6 +1,14 @@
-package org.example.oddventure.domain.hotkeyword;
+package org.example.oddventure.domain.hotkeyword.unit;
 
+import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Set;
 import org.example.oddventure.base.WithMockAuthUser;
+import org.example.oddventure.base.restdocs.RestDocsTestSupport;
+import org.example.oddventure.base.restdocs.RestDocsUtils;
 import org.example.oddventure.domain.auth.config.SecurityConfig;
 import org.example.oddventure.domain.auth.jwt.JwtUtil;
 import org.example.oddventure.domain.hotKeywords.controller.HotKeywordsController;
@@ -11,21 +19,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.ResultActions;
-import org.example.oddventure.base.restdocs.RestDocsTestSupport;
-import org.example.oddventure.base.restdocs.RestDocsUtils;
-import java.util.Set;
-import static org.mockito.Mockito.when;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(HotKeywordsController.class)
 @Import({SecurityConfig.class, JwtUtil.class})
 @WithMockAuthUser(userId = 1, role = UserRole.ROLE_USER)
-public class HotkeywordControllerTest extends RestDocsTestSupport{
+public class HotkeywordControllerTest extends RestDocsTestSupport {
 
     @MockitoBean
     private HotKeywordsService hotKeywordsService;
@@ -48,7 +48,6 @@ public class HotkeywordControllerTest extends RestDocsTestSupport{
 
         // when & then
         ResultActions result = mockMvc.perform(get("/api/v1/hotkeyword"));
-
 
         result.andExpect(status().isOk())
                 .andDo(restDocs.document(

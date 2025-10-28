@@ -1,4 +1,4 @@
-package org.example.oddventure.domain.admin;
+package org.example.oddventure.domain.admin.unit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
