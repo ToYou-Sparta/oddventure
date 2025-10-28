@@ -1,6 +1,11 @@
 package org.example.oddventure.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.example.oddventure.domain.admin.dto.request.PointAdjustRequest;
+import org.example.oddventure.domain.admin.dto.response.PointAdjustResponse;
+import org.example.oddventure.domain.admin.exception.AdminErrorCode;
+import org.example.oddventure.domain.admin.exception.AdminException;
 import org.example.oddventure.domain.user.dto.request.PasswordUpdateRequest;
 import org.example.oddventure.domain.user.dto.request.ProfileUpdateRequest;
 import org.example.oddventure.domain.user.dto.response.UserProfileResponse;
@@ -12,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -51,6 +57,25 @@ public class UserService {
         String newEncodedPassword = passwordEncoder.encode(request.newPassword());
 
         user.updatePassword(newEncodedPassword);
+    }
+
+    // 포인트 지급
+    @Transactional
+    public PointAdjustResponse adjustUserPoints(Long userId, PointAdjustRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AdminException(AdminErrorCode.USER_NOT_FOUND));
+
+        user.plusPoint(request.amount());
+
+        log.info("[ADMIN_POINT_ADJUSTMENT] userId={}, amount={}, reason='{}', finalBalance={}",
+                userId, request.amount(), request.reason(), user.getPoint());
+
+        return new PointAdjustResponse(
+                user.getId(),
+                user.getUsername(),
+                request.amount(),
+                user.getPoint()
+        );
     }
 
     private User findUserById(Long userId) {

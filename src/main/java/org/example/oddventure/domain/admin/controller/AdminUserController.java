@@ -8,6 +8,7 @@ import org.example.oddventure.domain.admin.dto.request.PointAdjustRequest;
 import org.example.oddventure.domain.admin.dto.response.PointAdjustResponse;
 import org.example.oddventure.domain.admin.dto.response.UserAdminResponse;
 import org.example.oddventure.domain.admin.service.AdminUserService;
+import org.example.oddventure.domain.user.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AdminUserController {
 
     private final AdminUserService adminUserService;
+    private final UserService userService;
 
     // 전체 사용자 목록 조회
     @GetMapping
@@ -50,7 +52,7 @@ public class AdminUserController {
             @PathVariable Long userId,
             @Valid @RequestBody PointAdjustRequest request
     ) {
-        PointAdjustResponse response = adminUserService.adjustUserPoints(userId, request);
+        PointAdjustResponse response = userService.adjustUserPoints(userId, request);
         return ApiResponse.success(response, "포인트 지급에 성공했습니다.");
     }
 }

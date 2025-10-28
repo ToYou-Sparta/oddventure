@@ -2,8 +2,6 @@ package org.example.oddventure.domain.admin.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.oddventure.domain.admin.dto.request.PointAdjustRequest;
-import org.example.oddventure.domain.admin.dto.response.PointAdjustResponse;
 import org.example.oddventure.domain.admin.dto.response.UserAdminResponse;
 import org.example.oddventure.domain.admin.exception.AdminErrorCode;
 import org.example.oddventure.domain.admin.exception.AdminException;
@@ -35,24 +33,5 @@ public class AdminUserService {
                 .orElseThrow(() -> new AdminException(AdminErrorCode.USER_NOT_FOUND));
 
         return UserAdminResponse.from(user);
-    }
-
-    // 포인트 지급
-    @Transactional
-    public PointAdjustResponse adjustUserPoints(Long userId, PointAdjustRequest request) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new AdminException(AdminErrorCode.USER_NOT_FOUND));
-
-        user.plusPoint(request.amount());
-
-        log.info("[ADMIN_POINT_ADJUSTMENT] userId={}, amount={}, reason='{}', finalBalance={}",
-                userId, request.amount(), request.reason(), user.getPoint());
-
-        return new PointAdjustResponse(
-                user.getId(),
-                user.getUsername(),
-                request.amount(),
-                user.getPoint()
-        );
     }
 }

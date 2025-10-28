@@ -31,6 +31,7 @@ import org.example.oddventure.domain.admin.service.AdminUserService;
 import org.example.oddventure.domain.auth.config.SecurityConfig;
 import org.example.oddventure.domain.auth.jwt.JwtUtil;
 import org.example.oddventure.domain.user.enums.UserRole;
+import org.example.oddventure.domain.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,9 @@ public class AdminUserControllerTest extends RestDocsTestSupport {
 
     @MockitoBean
     private AdminUserService adminUserService;
+
+    @MockitoBean
+    private UserService userService;
 
     @MockitoBean
     private JwtUtil jwtUtil;
@@ -166,7 +170,7 @@ public class AdminUserControllerTest extends RestDocsTestSupport {
         BigDecimal amount = new BigDecimal("5000");
         PointAdjustRequest request = new PointAdjustRequest(amount, "베팅 승리 보상");
         PointAdjustResponse response = new PointAdjustResponse(userId, "testuser", amount, new BigDecimal("6000"));
-        given(adminUserService.adjustUserPoints(eq(userId), any(PointAdjustRequest.class))).willReturn(response);
+        given(userService.adjustUserPoints(eq(userId), any(PointAdjustRequest.class))).willReturn(response);
 
         // when
         ResultActions result = mockMvc.perform(post("/api/v1/admin/users/{userId}/points", userId)
