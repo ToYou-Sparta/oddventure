@@ -17,7 +17,6 @@ import org.example.oddventure.domain.admin.dto.request.PointAdjustRequest;
 import org.example.oddventure.domain.admin.dto.response.MatchAdminResponse;
 import org.example.oddventure.domain.admin.dto.response.PointAdjustResponse;
 import org.example.oddventure.domain.admin.dto.response.UserAdminResponse;
-import org.example.oddventure.domain.admin.service.AdminService;
 import org.example.oddventure.domain.match.entity.Match;
 import org.example.oddventure.domain.match.enums.MatchStatus;
 import org.example.oddventure.domain.match.repository.MatchRepository;

@@ -14,6 +14,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.queryPar
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,7 +23,6 @@ import org.example.oddventure.base.WithMockAuthUser;
 import org.example.oddventure.base.restdocs.RestDocsTestSupport;
 import org.example.oddventure.base.restdocs.RestDocsUtils;
 import org.example.oddventure.common.exception.GlobalException;
-import org.example.oddventure.domain.admin.controller.AdminController;
 import org.example.oddventure.domain.admin.dto.request.MatchCreateRequest;
 import org.example.oddventure.domain.admin.dto.request.MatchUpdateRequest;
 import org.example.oddventure.domain.admin.dto.request.PointAdjustRequest;
@@ -30,7 +30,6 @@ import org.example.oddventure.domain.admin.dto.response.MatchAdminResponse;
 import org.example.oddventure.domain.admin.dto.response.PointAdjustResponse;
 import org.example.oddventure.domain.admin.dto.response.UserAdminResponse;
 import org.example.oddventure.domain.admin.exception.AdminErrorCode;
-import org.example.oddventure.domain.admin.service.AdminService;
 import org.example.oddventure.domain.auth.config.SecurityConfig;
 import org.example.oddventure.domain.auth.jwt.JwtUtil;
 import org.example.oddventure.domain.match.enums.MatchStatus;
@@ -68,7 +67,8 @@ public class AdminControllerTest extends RestDocsTestSupport {
         // given
         LocalDateTime startTime = LocalDateTime.now().plusDays(1);
         MatchCreateRequest request = new MatchCreateRequest("LCK", "T1", "Gen.G", startTime);
-        MatchAdminResponse response = new MatchAdminResponse(1L, "LCK", "T1", "Gen.G", startTime, MatchStatus.SCHEDULED);
+        MatchAdminResponse response = new MatchAdminResponse(1L, "LCK", "T1", "Gen.G", startTime,
+                MatchStatus.SCHEDULED);
         given(adminService.createMatch(any(MatchCreateRequest.class))).willReturn(response);
 
         // when
@@ -121,8 +121,10 @@ public class AdminControllerTest extends RestDocsTestSupport {
         // given
         Long matchId = 1L;
         LocalDateTime newStartTime = LocalDateTime.now().plusDays(2).withNano(0);
-        MatchUpdateRequest request = new MatchUpdateRequest("LCK", "New Team A", "New Team B", newStartTime, MatchStatus.ONGOING);
-        MatchAdminResponse response = new MatchAdminResponse(matchId, "LCK", "New Team A", "New Team B", newStartTime, MatchStatus.ONGOING);
+        MatchUpdateRequest request = new MatchUpdateRequest("LCK", "New Team A", "New Team B", newStartTime,
+                MatchStatus.ONGOING);
+        MatchAdminResponse response = new MatchAdminResponse(matchId, "LCK", "New Team A", "New Team B", newStartTime,
+                MatchStatus.ONGOING);
         given(adminService.updateMatch(any(Long.class), any(MatchUpdateRequest.class))).willReturn(response);
 
         // when
@@ -165,7 +167,8 @@ public class AdminControllerTest extends RestDocsTestSupport {
         Pageable pageable = PageRequest.of(0, 5);
 
         List<UserAdminResponse> userList = List.of(
-                new UserAdminResponse(1L, "testuser1", "test1@email.com", new BigDecimal("1000"), UserRole.ROLE_USER, LocalDateTime.now())
+                new UserAdminResponse(1L, "testuser1", "test1@email.com", new BigDecimal("1000"), UserRole.ROLE_USER,
+                        LocalDateTime.now())
         );
         Page<UserAdminResponse> mockResponsePage = new PageImpl<>(userList, pageable, 1);
 
@@ -211,7 +214,8 @@ public class AdminControllerTest extends RestDocsTestSupport {
     void getUserDetails_Success() throws Exception {
         // given
         Long userId = 1L;
-        UserAdminResponse responseDto = new UserAdminResponse(userId, "testuser", "test@test.com", new BigDecimal("1000"), UserRole.ROLE_USER, LocalDateTime.now());
+        UserAdminResponse responseDto = new UserAdminResponse(userId, "testuser", "test@test.com",
+                new BigDecimal("1000"), UserRole.ROLE_USER, LocalDateTime.now());
         given(adminService.getUserDetails(userId)).willReturn(responseDto);
 
         // when
