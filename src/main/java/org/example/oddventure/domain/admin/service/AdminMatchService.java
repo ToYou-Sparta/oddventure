@@ -14,7 +14,6 @@ import org.example.oddventure.domain.grid.service.GridService;
 import org.example.oddventure.domain.match.entity.Match;
 import org.example.oddventure.domain.match.repository.MatchRepository;
 import org.example.oddventure.domain.match.service.MatchService;
-import org.example.oddventure.domain.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class AdminMatchService {
 
     private final MatchRepository matchRepository;
-    private final UserRepository userRepository;
     private final GridService gridService;
     private final MatchService matchService;
 

@@ -7,9 +7,6 @@ import org.example.oddventure.domain.admin.dto.response.PointAdjustResponse;
 import org.example.oddventure.domain.admin.dto.response.UserAdminResponse;
 import org.example.oddventure.domain.admin.exception.AdminErrorCode;
 import org.example.oddventure.domain.admin.exception.AdminException;
-import org.example.oddventure.domain.grid.service.GridService;
-import org.example.oddventure.domain.match.repository.MatchRepository;
-import org.example.oddventure.domain.match.service.MatchService;
 import org.example.oddventure.domain.user.entity.User;
 import org.example.oddventure.domain.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
@@ -22,10 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class AdminUserService {
 
-    private final MatchRepository matchRepository;
     private final UserRepository userRepository;
-    private final GridService gridService;
-    private final MatchService matchService;
 
     // 전체 사용자 목록 조회
     @Transactional(readOnly = true)

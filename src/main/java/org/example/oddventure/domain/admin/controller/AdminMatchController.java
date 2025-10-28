@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/admin/matches")
 public class AdminMatchController {
 
-    private final AdminMatchService matchService;
     private final AdminMatchService adminMatchService;
 
     // 매치 생성
