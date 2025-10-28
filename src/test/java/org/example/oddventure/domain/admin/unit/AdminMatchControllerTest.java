@@ -25,6 +25,7 @@ import org.example.oddventure.domain.admin.service.AdminMatchService;
 import org.example.oddventure.domain.auth.config.SecurityConfig;
 import org.example.oddventure.domain.auth.jwt.JwtUtil;
 import org.example.oddventure.domain.match.enums.MatchStatus;
+import org.example.oddventure.domain.match.service.MatchService;
 import org.example.oddventure.domain.user.enums.UserRole;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -47,6 +48,9 @@ public class AdminMatchControllerTest extends RestDocsTestSupport {
     private AdminMatchService adminMatchService;
 
     @MockitoBean
+    private MatchService matchService;
+
+    @MockitoBean
     private JwtUtil jwtUtil;
 
     @Test
@@ -57,7 +61,7 @@ public class AdminMatchControllerTest extends RestDocsTestSupport {
         MatchCreateRequest request = new MatchCreateRequest("LCK", "T1", "Gen.G", startTime);
         MatchAdminResponse response = new MatchAdminResponse(1L, "LCK", "T1", "Gen.G", startTime,
                 MatchStatus.SCHEDULED);
-        given(adminMatchService.createMatch(any(MatchCreateRequest.class))).willReturn(response);
+        given(matchService.createMatch(any(MatchCreateRequest.class))).willReturn(response);
 
         // when
         ResultActions result = mockMvc.perform(post("/api/v1/admin/matches")
@@ -113,7 +117,7 @@ public class AdminMatchControllerTest extends RestDocsTestSupport {
                 MatchStatus.ONGOING);
         MatchAdminResponse response = new MatchAdminResponse(matchId, "LCK", "New Team A", "New Team B", newStartTime,
                 MatchStatus.ONGOING);
-        given(adminMatchService.updateMatch(any(Long.class), any(MatchUpdateRequest.class))).willReturn(response);
+        given(matchService.updateMatch(any(Long.class), any(MatchUpdateRequest.class))).willReturn(response);
 
         // when
         ResultActions result = mockMvc.perform(patch("/api/v1/admin/matches/{matchId}", matchId)

@@ -1,6 +1,12 @@
 package org.example.oddventure.domain.match.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.oddventure.domain.admin.dto.request.MatchCreateRequest;
+import org.example.oddventure.domain.admin.dto.request.MatchUpdateRequest;
+import org.example.oddventure.domain.admin.dto.response.MatchAdminResponse;
+import org.example.oddventure.domain.admin.exception.AdminErrorCode;
+import org.example.oddventure.domain.admin.exception.AdminException;
+import org.example.oddventure.domain.grid.dto.response.MatchFetchResponse;
 import org.example.oddventure.domain.hotKeywords.service.HotKeywordsService;
 import org.example.oddventure.domain.match.dto.projection.MatchProjection;
 import org.example.oddventure.domain.match.dto.request.MatchSearchCondition;
@@ -21,6 +27,37 @@ public class MatchService {
 
     private final MatchRepository matchRepository;
     private final HotKeywordsService hotKeywordsService;
+
+    // 매치 생성
+    @Transactional
+    public MatchAdminResponse createMatch(MatchCreateRequest request) {
+        Match match = Match.builder()
+                .matchName(request.matchName())
+                .teamA(request.teamA())
+                .teamB(request.teamB())
+                .startTime(request.startTime())
+                .build();
+        Match savedMatch = matchRepository.save(match);
+
+        return MatchAdminResponse.from(savedMatch);
+    }
+
+    // 매치 정보 수정
+    @Transactional
+    public MatchAdminResponse updateMatch(Long matchId, MatchUpdateRequest request) {
+        Match match = matchRepository.findById(matchId)
+                .orElseThrow(() -> new AdminException(AdminErrorCode.MATCH_NOT_FOUND));
+
+        match.update(
+                request.matchName(),
+                request.teamA(),
+                request.teamB(),
+                request.startTime(),
+                request.status()
+        );
+
+        return MatchAdminResponse.from(match);
+    }
 
     @Transactional(readOnly = true)
     public Page<MatchResponse> getMatches(Pageable pageable) {
@@ -51,7 +88,25 @@ public class MatchService {
     }
 
     @Transactional
-    public Match updateMatchResult(Long fetchId, String winner, String looser) {
+    public void fetchMatches(MatchFetchResponse dto) {
+        boolean isExist = matchRepository.existsByFetchId(dto.fetchId());
+        boolean isPending = dto.teamA().contains("TBD") || dto.teamB().contains("TBD");
+
+        if (!isExist && !isPending) {
+            Match match = Match.builder()
+                    .fetchId(dto.fetchId())
+                    .matchName(dto.matchName())
+                    .teamA(dto.teamA())
+                    .teamB(dto.teamB())
+                    .startTime(dto.startTime())
+                    .build();
+
+            matchRepository.save(match);
+        }
+    }
+
+    @Transactional
+    public void updateMatchResult(Long fetchId, String winner, String looser) {
         Match match = matchRepository.findByFetchId(fetchId)
                 .orElseThrow(() -> new MatchException(MatchErrorCode.MATCH_NOT_FOUND));
 
@@ -61,6 +116,5 @@ public class MatchService {
 
         match.finishMatch(winner, looser);
 
-        return match;
     }
 }

@@ -7,6 +7,7 @@ import org.example.oddventure.domain.admin.dto.request.MatchCreateRequest;
 import org.example.oddventure.domain.admin.dto.request.MatchUpdateRequest;
 import org.example.oddventure.domain.admin.dto.response.MatchAdminResponse;
 import org.example.oddventure.domain.admin.service.AdminMatchService;
+import org.example.oddventure.domain.match.service.MatchService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,13 +22,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class AdminMatchController {
 
     private final AdminMatchService adminMatchService;
+    private final MatchService matchService;
 
     // 매치 생성
     @PostMapping
     public ResponseEntity<ApiResponse<MatchAdminResponse>> createMatch(
             @Valid @RequestBody MatchCreateRequest request
     ) {
-        MatchAdminResponse response = adminMatchService.createMatch(request);
+        MatchAdminResponse response = matchService.createMatch(request);
         return ApiResponse.created(response, "매치가 생성되었습니다.");
     }
 
@@ -37,7 +39,7 @@ public class AdminMatchController {
             @PathVariable Long matchId,
             @Valid @RequestBody MatchUpdateRequest request
     ) {
-        MatchAdminResponse response = adminMatchService.updateMatch(matchId, request);
+        MatchAdminResponse response = matchService.updateMatch(matchId, request);
         return ApiResponse.success(response, "매치 정보가 수정되었습니다.");
     }
 
