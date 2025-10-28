@@ -24,7 +24,7 @@ public class AdminMatchController {
     private final AdminMatchService adminMatchService;
 
     // 매치 생성
-    @PostMapping("/matches")
+    @PostMapping
     public ResponseEntity<ApiResponse<MatchAdminResponse>> createMatch(
             @Valid @RequestBody MatchCreateRequest request
     ) {
@@ -33,7 +33,7 @@ public class AdminMatchController {
     }
 
     // 매치 상태 수정
-    @PatchMapping("/matches/{matchId}")
+    @PatchMapping("/{matchId}")
     public ResponseEntity<ApiResponse<MatchAdminResponse>> updateMatchStatus(
             @PathVariable Long matchId,
             @Valid @RequestBody MatchUpdateRequest request

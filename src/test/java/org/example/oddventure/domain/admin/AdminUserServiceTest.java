@@ -2,23 +2,16 @@ package org.example.oddventure.domain.admin;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.example.oddventure.common.exception.GlobalException;
-import org.example.oddventure.domain.admin.dto.request.MatchCreateRequest;
-import org.example.oddventure.domain.admin.dto.request.MatchUpdateRequest;
 import org.example.oddventure.domain.admin.dto.request.PointAdjustRequest;
-import org.example.oddventure.domain.admin.dto.response.MatchAdminResponse;
 import org.example.oddventure.domain.admin.dto.response.PointAdjustResponse;
 import org.example.oddventure.domain.admin.dto.response.UserAdminResponse;
-import org.example.oddventure.domain.match.entity.Match;
-import org.example.oddventure.domain.match.enums.MatchStatus;
+import org.example.oddventure.domain.admin.service.AdminUserService;
 import org.example.oddventure.domain.match.repository.MatchRepository;
 import org.example.oddventure.domain.user.entity.User;
 import org.example.oddventure.domain.user.repository.UserRepository;
@@ -34,80 +27,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
-class AdminServiceTest {
+public class AdminUserServiceTest {
 
     @InjectMocks
-    private AdminService adminService;
+    private AdminUserService adminUserService;
 
     @Mock
     private MatchRepository matchRepository;
 
     @Mock
     private UserRepository userRepository;
-
-    @Test
-    @DisplayName("매치 생성 성공")
-    void createMatch_Success() {
-        // given
-        LocalDateTime startTime = LocalDateTime.now().plusDays(1);
-        MatchCreateRequest request = new MatchCreateRequest("LCK", "T1", "Gen.G", startTime);
-
-        Match match = Match.builder().teamA("T1").teamB("Gen.G").startTime(startTime).build();
-
-        given(matchRepository.save(any(Match.class))).willReturn(match);
-
-        // when
-        MatchAdminResponse response = adminService.createMatch(request);
-
-        // then
-        assertThat(response.teamA()).isEqualTo("T1");
-        assertThat(response.teamB()).isEqualTo("Gen.G");
-        verify(matchRepository).save(any(Match.class));
-    }
-
-    @Test
-    @DisplayName("매치 정보 수정 성공")
-    void updateMatch_Success() {
-        // given
-        Long matchId = 1L;
-        LocalDateTime newStartTime = LocalDateTime.now().plusHours(5);
-        MatchUpdateRequest request = new MatchUpdateRequest(
-                "LCK", "DWG KIA", "T1", newStartTime, MatchStatus.ONGOING
-        );
-
-        Match existingMatch = Match.builder()
-                .teamA("DK")
-                .teamB("T1")
-                .startTime(LocalDateTime.now().plusHours(3))
-                .build();
-
-        given(matchRepository.findById(matchId)).willReturn(Optional.of(existingMatch));
-
-        // when
-        MatchAdminResponse response = adminService.updateMatch(matchId, request);
-
-        // then
-        assertThat(response.teamA()).isEqualTo("DWG KIA");
-        assertThat(response.startTime()).isEqualTo(newStartTime);
-        assertThat(response.status()).isEqualTo(MatchStatus.ONGOING);
-    }
-
-    @Test
-    @DisplayName("매치 수정 실패 - 존재하지 않는 매치")
-    void updateMatch_Fail_MatchNotFound() {
-        // given
-        Long matchId = 999L;
-        MatchUpdateRequest request = new MatchUpdateRequest(
-                "LCK", "DWG KIA", "T1", LocalDateTime.now().plusHours(5), MatchStatus.ONGOING
-        );
-
-        given(matchRepository.findById(matchId)).willReturn(Optional.empty());
-
-        // when & then
-        assertThrows(GlobalException.class, () -> {
-            adminService.updateMatch(matchId, request);
-        });
-    }
 
     @Test
     @DisplayName("검색 조건 포함 사용자 목록 조회 성공")
@@ -128,7 +57,7 @@ class AdminServiceTest {
         given(userRepository.findBySearchConditions(email, username, pageable)).willReturn(mockUserPage);
 
         // when
-        Page<UserAdminResponse> result = adminService.getAllUsers(email, username, pageable);
+        Page<UserAdminResponse> result = adminUserService.getAllUsers(email, username, pageable);
 
         // then
         assertThat(result.getTotalElements()).isEqualTo(1);
@@ -151,7 +80,7 @@ class AdminServiceTest {
         given(userRepository.findBySearchConditions(null, null, pageable)).willReturn(mockUserPage);
 
         // when
-        Page<UserAdminResponse> result = adminService.getAllUsers(null, null, pageable);
+        Page<UserAdminResponse> result = adminUserService.getAllUsers(null, null, pageable);
 
         // then
         assertThat(result.getTotalElements()).isEqualTo(2);
@@ -172,7 +101,7 @@ class AdminServiceTest {
         given(userRepository.findById(userId)).willReturn(Optional.of(mockUser));
 
         // when
-        UserAdminResponse response = adminService.getUserDetails(userId);
+        UserAdminResponse response = adminUserService.getUserDetails(userId);
 
         // then
         assertThat(response).isNotNull();
@@ -190,7 +119,7 @@ class AdminServiceTest {
 
         // when & then
         assertThrows(GlobalException.class, () -> {
-            adminService.getUserDetails(userId);
+            adminUserService.getUserDetails(userId);
         });
     }
 
@@ -212,7 +141,7 @@ class AdminServiceTest {
         given(userRepository.findById(userId)).willReturn(Optional.of(mockUser));
 
         // when
-        PointAdjustResponse response = adminService.adjustUserPoints(userId, request);
+        PointAdjustResponse response = adminUserService.adjustUserPoints(userId, request);
 
         // then
         assertThat(response.userId()).isEqualTo(mockUser.getId());
@@ -231,7 +160,7 @@ class AdminServiceTest {
 
         // when & then
         assertThrows(GlobalException.class, () -> {
-            adminService.adjustUserPoints(userId, request);
+            adminUserService.adjustUserPoints(userId, request);
         });
     }
 }
