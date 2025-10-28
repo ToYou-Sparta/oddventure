@@ -1,6 +1,7 @@
 package org.example.oddventure.domain.match.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.oddventure.domain.hotKeywords.service.HotKeywordsService;
 import org.example.oddventure.domain.match.dto.projection.MatchProjection;
 import org.example.oddventure.domain.match.dto.request.MatchSearchCondition;
 import org.example.oddventure.domain.match.dto.response.MatchResponse;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MatchService {
 
     private final MatchRepository matchRepository;
+    private final HotKeywordsService hotKeywordsService;
 
     @Transactional(readOnly = true)
     public Page<MatchResponse> getMatches(Pageable pageable) {
@@ -39,9 +41,12 @@ public class MatchService {
         return MatchResponse.from(match);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public Page<MatchResponse> searchMatches(MatchSearchCondition condition, Pageable pageable) {
         Page<MatchProjection> projections = matchRepository.searchByCondition(condition, pageable);
+
+        hotKeywordsService.incrementSearchScore(condition.keyword());
+
         return projections.map(MatchResponse::of);
     }
 
@@ -53,7 +58,7 @@ public class MatchService {
         if (match.getStatus().equals(MatchStatus.FINISHED)) {
             throw new MatchException(MatchErrorCode.MATCH_FINISHED);
         }
-        
+
         match.finishMatch(winner, looser);
 
         return match;
