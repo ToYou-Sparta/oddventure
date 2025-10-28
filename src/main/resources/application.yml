@@ -30,6 +30,15 @@ spring:
           model: llama-3.3-70b-versatile
           temperature: 0.0
 
+management:
+  server:
+    port: 8090
+  endpoints:
+    web:
+      base-path: /api/v1/monitoring
+      exposure:
+        include: "health,info,metrics,env,prometheus"
+
 jwt:
   secret:
     key: "${SECRET_KEY}"
