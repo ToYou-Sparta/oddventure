@@ -19,6 +19,7 @@ import org.example.oddventure.domain.bet.entity.Bet;
 import org.example.oddventure.domain.bet.enums.SelectedTeam;
 import org.example.oddventure.domain.bet.repository.BetRepository;
 import org.example.oddventure.domain.bet.service.BetService;
+import org.example.oddventure.domain.event.RedisPublisher;
 import org.example.oddventure.domain.match.entity.Match;
 import org.example.oddventure.domain.match.repository.MatchRepository;
 import org.example.oddventure.domain.user.entity.User;
@@ -49,6 +50,9 @@ public class BetServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private RedisPublisher redisPublisher;
 
     @Test
     @DisplayName("베팅을 생성 성공하면 유저 포인트가 차감되고 베팅 금액이 저장된다.")

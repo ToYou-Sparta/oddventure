@@ -18,6 +18,7 @@ import org.example.oddventure.domain.admin.dto.response.MatchAdminResponse;
 import org.example.oddventure.domain.admin.dto.response.PointAdjustResponse;
 import org.example.oddventure.domain.admin.dto.response.UserAdminResponse;
 import org.example.oddventure.domain.admin.service.AdminService;
+import org.example.oddventure.domain.event.RedisPublisher;
 import org.example.oddventure.domain.match.entity.Match;
 import org.example.oddventure.domain.match.enums.MatchStatus;
 import org.example.oddventure.domain.match.repository.MatchRepository;
@@ -45,6 +46,9 @@ class AdminServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private RedisPublisher redisPublisher;
 
     @Test
     @DisplayName("매치 생성 성공")
