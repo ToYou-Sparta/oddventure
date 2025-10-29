@@ -1,4 +1,4 @@
-package org.example.oddventure.domain.team;
+package org.example.oddventure.domain.team.unit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
