@@ -3,9 +3,9 @@ package org.example.oddventure.domain.admin.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.oddventure.common.dto.response.ApiResponse;
-import org.example.oddventure.domain.admin.dto.request.MatchCreateRequest;
 import org.example.oddventure.domain.admin.dto.request.MatchUpdateRequest;
-import org.example.oddventure.domain.admin.dto.response.MatchAdminResponse;
+import org.example.oddventure.domain.admin.dto.response.MatchCreateAdminResponse;
+import org.example.oddventure.domain.admin.dto.response.MatchUpdateAdminResponse;
 import org.example.oddventure.domain.admin.service.AdminMatchService;
 import org.example.oddventure.domain.match.service.MatchService;
 import org.springframework.http.ResponseEntity;
@@ -26,28 +26,19 @@ public class AdminMatchController {
 
     // 매치 생성
     @PostMapping
-    public ResponseEntity<ApiResponse<MatchAdminResponse>> createMatch(
-            @Valid @RequestBody MatchCreateRequest request
-    ) {
-        MatchAdminResponse response = matchService.createMatch(request);
+    public ResponseEntity<ApiResponse<MatchCreateAdminResponse>> createMatch() {
+        MatchCreateAdminResponse response = adminMatchService.createMatch();
         return ApiResponse.created(response, "매치가 생성되었습니다.");
     }
 
     // 매치 상태 수정
     @PatchMapping("/{matchId}")
-    public ResponseEntity<ApiResponse<MatchAdminResponse>> updateMatchStatus(
+    public ResponseEntity<ApiResponse<MatchUpdateAdminResponse>> updateMatchStatus(
             @PathVariable Long matchId,
             @Valid @RequestBody MatchUpdateRequest request
     ) {
-        MatchAdminResponse response = matchService.updateMatch(matchId, request);
+        MatchUpdateAdminResponse response = matchService.updateMatch(matchId, request);
         return ApiResponse.success(response, "매치 정보가 수정되었습니다.");
-    }
-
-    // 매치 일정 연동
-    @PostMapping("/fetch")
-    public ResponseEntity<ApiResponse<Void>> createMatchSchedules() {
-        adminMatchService.createMatchSchedules();
-        return ApiResponse.success("매치가 연동되었습니다.");
     }
 
     // 매치 결과 연동

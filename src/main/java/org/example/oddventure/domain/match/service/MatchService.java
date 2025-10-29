@@ -1,13 +1,15 @@
 package org.example.oddventure.domain.match.service;
 
+import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
+
 import lombok.RequiredArgsConstructor;
-import org.example.oddventure.domain.admin.dto.request.MatchCreateRequest;
 import org.example.oddventure.domain.admin.dto.request.MatchUpdateRequest;
-import org.example.oddventure.domain.admin.dto.response.MatchAdminResponse;
+import org.example.oddventure.domain.admin.dto.response.MatchUpdateAdminResponse;
 import org.example.oddventure.domain.admin.exception.AdminErrorCode;
 import org.example.oddventure.domain.admin.exception.AdminException;
 import org.example.oddventure.domain.grid.dto.MatchScheduleDto;
 import org.example.oddventure.domain.hotKeywords.service.HotKeywordsService;
+import org.example.oddventure.domain.match.dto.MatchCreateDto;
 import org.example.oddventure.domain.match.dto.projection.MatchProjection;
 import org.example.oddventure.domain.match.dto.request.MatchSearchCondition;
 import org.example.oddventure.domain.match.dto.response.MatchResponse;
@@ -28,23 +30,32 @@ public class MatchService {
     private final MatchRepository matchRepository;
     private final HotKeywordsService hotKeywordsService;
 
-    // 매치 생성
-    @Transactional
-    public MatchAdminResponse createMatch(MatchCreateRequest request) {
-        Match match = Match.builder()
-                .matchName(request.matchName())
-                .teamA(request.teamA())
-                .teamB(request.teamB())
-                .startTime(request.startTime())
-                .build();
-        Match savedMatch = matchRepository.save(match);
+    // 매치 생성 (매치별로 독립적인 트랜잭션 보유)
+    @Transactional(propagation = REQUIRES_NEW)
+    public MatchCreateDto createMatch(MatchScheduleDto dto) {
+        boolean isExist = matchRepository.existsByFetchId(dto.fetchId());
+        boolean isPending = dto.teamA().contains("TBD") || dto.teamB().contains("TBD");
 
-        return MatchAdminResponse.from(savedMatch);
+        if (isExist || isPending) {
+            throw new MatchException(MatchErrorCode.MATCH_NOT_CREATABLE);
+        }
+
+        Match match = Match.builder()
+                .fetchId(dto.fetchId())
+                .matchName(dto.matchName())
+                .teamA(dto.teamA())
+                .teamB(dto.teamB())
+                .startTime(dto.startTime())
+                .build();
+
+        matchRepository.save(match);
+
+        return MatchCreateDto.builder().fetchId(dto.fetchId()).build();
     }
 
     // 매치 정보 수정
     @Transactional
-    public MatchAdminResponse updateMatch(Long matchId, MatchUpdateRequest request) {
+    public MatchUpdateAdminResponse updateMatch(Long matchId, MatchUpdateRequest request) {
         Match match = matchRepository.findById(matchId)
                 .orElseThrow(() -> new AdminException(AdminErrorCode.MATCH_NOT_FOUND));
 
@@ -56,7 +67,7 @@ public class MatchService {
                 request.status()
         );
 
-        return MatchAdminResponse.from(match);
+        return MatchUpdateAdminResponse.from(match);
     }
 
     @Transactional(readOnly = true)
@@ -85,24 +96,6 @@ public class MatchService {
         hotKeywordsService.incrementSearchScore(condition.keyword());
 
         return projections.map(MatchResponse::of);
-    }
-
-    @Transactional
-    public void fetchMatches(MatchScheduleDto dto) {
-        boolean isExist = matchRepository.existsByFetchId(dto.fetchId());
-        boolean isPending = dto.teamA().contains("TBD") || dto.teamB().contains("TBD");
-
-        if (!isExist && !isPending) {
-            Match match = Match.builder()
-                    .fetchId(dto.fetchId())
-                    .matchName(dto.matchName())
-                    .teamA(dto.teamA())
-                    .teamB(dto.teamB())
-                    .startTime(dto.startTime())
-                    .build();
-
-            matchRepository.save(match);
-        }
     }
 
     @Transactional
