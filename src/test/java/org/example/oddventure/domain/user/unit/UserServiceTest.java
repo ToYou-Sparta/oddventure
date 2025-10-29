@@ -1,4 +1,4 @@
-package org.example.oddventure.domain.user;
+package org.example.oddventure.domain.user.unit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -7,7 +7,11 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
+import java.math.BigDecimal;
 import java.util.Optional;
+import org.example.oddventure.common.exception.GlobalException;
+import org.example.oddventure.domain.admin.dto.request.PointAdjustRequest;
+import org.example.oddventure.domain.admin.dto.response.PointAdjustResponse;
 import org.example.oddventure.domain.user.dto.request.PasswordUpdateRequest;
 import org.example.oddventure.domain.user.dto.request.ProfileUpdateRequest;
 import org.example.oddventure.domain.user.dto.response.UserProfileResponse;
@@ -17,6 +21,7 @@ import org.example.oddventure.domain.user.exception.UserException;
 import org.example.oddventure.domain.user.repository.UserRepository;
 import org.example.oddventure.domain.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -156,4 +161,50 @@ class UserServiceTest {
             userService.updatePassword(userId, request);
         });
     }
+
+    @Nested
+    @DisplayName("사용자 포인트 지급")
+    class adjustUserPoint {
+        @Test
+        @DisplayName("사용자 포인트 지급 성공")
+        void adjustUserPoints_Success() {
+            // given
+            Long userId = 1L;
+            BigDecimal amountToAdd = new BigDecimal("5000");
+            PointAdjustRequest request = new PointAdjustRequest(amountToAdd, "베팅 승리 보상");
+
+            // User 엔티티 생성 시 Builder는 point를 1000으로 초기화(초기 지급 포인트)
+            User mockUser = User.builder()
+                    .email("test@test.com")
+                    .username("testuser")
+                    .password("password")
+                    .build();
+
+            given(userRepository.findById(userId)).willReturn(Optional.of(mockUser));
+
+            // when
+            PointAdjustResponse response = userService.adjustUserPoints(userId, request);
+
+            // then
+            assertThat(response.userId()).isEqualTo(mockUser.getId());
+            assertThat(response.adjustedAmount()).isEqualTo(amountToAdd);
+            assertThat(response.finalBalance()).isEqualTo(new BigDecimal("6000"));
+            assertThat(mockUser.getPoint()).isEqualTo(new BigDecimal("6000"));
+        }
+
+        @Test
+        @DisplayName("사용자 포인트 지급 실패 - 존재하지 않는 사용자")
+        void adjustUserPoints_Fail_UserNotFound() {
+            // given
+            Long userId = 999L;
+            PointAdjustRequest request = new PointAdjustRequest(new BigDecimal("5000"), "이벤트 보상");
+            given(userRepository.findById(userId)).willReturn(Optional.empty());
+
+            // when & then
+            assertThrows(GlobalException.class, () -> {
+                userService.adjustUserPoints(userId, request);
+            });
+        }
+    }
+
 }

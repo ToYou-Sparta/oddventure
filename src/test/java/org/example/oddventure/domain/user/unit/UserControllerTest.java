@@ -1,4 +1,4 @@
-package org.example.oddventure.domain.user;
+package org.example.oddventure.domain.user.unit;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -10,6 +10,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -38,14 +39,12 @@ import org.springframework.test.web.servlet.ResultActions;
 @WithMockAuthUser(userId = 1L, role = UserRole.ROLE_USER)
 public class UserControllerTest extends RestDocsTestSupport {
 
-    @MockitoBean
-    private UserService userService;
-
-    @MockitoBean
-    private JwtUtil jwtUtil;
-
     @Autowired
     protected ObjectMapper objectMapper;
+    @MockitoBean
+    private UserService userService;
+    @MockitoBean
+    private JwtUtil jwtUtil;
 
     @Test
     @DisplayName("GET /me - 내 프로필 조회 API")

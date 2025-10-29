@@ -60,11 +60,7 @@ public class AuthServiceTest {
         // given
         SignupRequest request = new SignupRequest("hello", "hello@naver.com", "hello123!@#");
         String encodedPassword = "$2a$10$eB9vYJzqZK8Zb3Q9gFZJ9uK0xE9gUuZzT1eYwKJvZzFzYxOqL9rP3O";
-        User savedUser = User.builder()
-                .username("hello")
-                .email("hello@naver.com")
-                .password("encodedPassword")
-                .build();
+        User savedUser = createMockUser("hello", "hello@naver.com");
 
         when(userRepository.existsByEmail(request.email())).thenReturn(false);
         when(passwordEncoder.encode(request.password())).thenReturn(encodedPassword);
@@ -95,11 +91,7 @@ public class AuthServiceTest {
     void login_success() {
         // given
         LoginRequest request = new LoginRequest("hello@naver.com", "hello123!@#");
-        User user = User.builder()
-                .username("hello")
-                .email("hello@naver.com")
-                .password("$2a$10$eB9vYJzqZK8Zb3Q9gFZJ9uK0xE9gUuZzT1eYwKJvZzFzYxOqL9rP3O")
-                .build();
+        User user = createMockUser("hello", "hello@naver.com");
 
         when(userRepository.findByEmail(request.email())).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(request.password(), user.getPassword())).thenReturn(true);
@@ -134,10 +126,8 @@ public class AuthServiceTest {
     void login_fail_invalid_password() {
         // given
         LoginRequest request = new LoginRequest("hello@naver.com", "wrongPassword");
-        User user = User.builder()
-                .email("hello@naver.com")
-                .password("$2a$10$eB9vYJzqZK8Zb3Q9gFZJ9uK0xE9gUuZzT1eYwKJvZzFzYxOqL9rP3O")
-                .build();
+        User user = createMockUser("hello", "hello@naver.com");
+
         when(userRepository.findByEmail(request.email())).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(request.password(), user.getPassword())).thenReturn(false);
 
@@ -164,11 +154,7 @@ public class AuthServiceTest {
         // given
         Long userId = 1L;
         WithdrawRequest request = new WithdrawRequest("correctPassword");
-        User user = User.builder()
-                .username("hello")
-                .email("hello@naver.com")
-                .password("$2a$10$eB9vYJzqZK8Zb3Q9gFZJ9uK0xE9gUuZzT1eYwKJvZzFzYxOqL9rP3O")
-                .build();
+        User user = createMockUser("hello", "hello@naver.com");
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(request.password(), user.getPassword())).thenReturn(true);
@@ -187,11 +173,7 @@ public class AuthServiceTest {
         // given
         Long userId = 1L;
         WithdrawRequest request = new WithdrawRequest("wrongPassword");
-        User user = User.builder()
-                .username("hello")
-                .email("hello@naver.com")
-                .password("$2a$10$eB9vYJzqZK8Zb3Q9gFZJ9uK0xE9gUuZzT1eYwKJvZzFzYxOqL9rP3O")
-                .build();
+        User user = createMockUser("hello", "hello@naver.com");
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(request.password(), user.getPassword())).thenReturn(false);
@@ -206,11 +188,7 @@ public class AuthServiceTest {
         // given
         Long userId = 1L;
         WithdrawRequest request = new WithdrawRequest("correctPassword");
-        User user = User.builder()
-                .username("hello")
-                .email("hello@naver.com")
-                .password("$2a$10$eB9vYJzqZK8Zb3Q9gFZJ9uK0xE9gUuZzT1eYwKJvZzFzYxOqL9rP3O")
-                .build();
+        User user = createMockUser("hello", "hello@naver.com");
         user.delete();
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
@@ -228,11 +206,13 @@ public class AuthServiceTest {
         Long userId = 1L;
         String newAccessToken = "newAccessToken";
 
+        User user = createMockUser("hello", "hello@naver.com");
+
         when(jwtUtil.validateToken(refreshToken)).thenReturn(true);
         when(jwtUtil.extractUserId(refreshToken)).thenReturn(userId);
-        when(jwtUtil.extractUserRole(refreshToken)).thenReturn(UserRole.ROLE_USER);
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
         when(valueOperations.get(REFRESH_TOKEN_PREFIX + userId)).thenReturn(refreshToken);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(jwtUtil.createAccessToken(userId, UserRole.ROLE_USER)).thenReturn(newAccessToken);
 
         // when
@@ -268,5 +248,13 @@ public class AuthServiceTest {
 
         // when & then
         assertThrows(AuthException.class, () -> authService.refresh(refreshToken));
+    }
+
+    private User createMockUser(String username, String email) {
+        return User.builder()
+                .username(username)
+                .email(email)
+                .password("$2a$10$eB9vYJzqZK8Zb3Q9gFZJ9uK0xE9gUuZzT1eYwKJvZzFzYxOqL9rP3O")
+                .build();
     }
 }

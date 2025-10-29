@@ -27,13 +27,15 @@ public class Match extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long fetchId;
+
     @Column(nullable = false)
     private String matchName;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "team_a")
     private String teamA;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "team_b")
     private String teamB;
 
     @Column(nullable = false)
@@ -59,7 +61,8 @@ public class Match extends BaseEntity {
     private Long viewCount = 0L;
 
     @Builder
-    public Match(String matchName, String teamA, String teamB, LocalDateTime startTime) {
+    public Match(Long fetchId, String matchName, String teamA, String teamB, LocalDateTime startTime) {
+        this.fetchId = fetchId;
         this.matchName = matchName;
         this.teamA = teamA;
         this.teamB = teamB;
@@ -104,5 +107,11 @@ public class Match extends BaseEntity {
 
     public void minusTeamB(BigDecimal amount) {
         this.totalAmountB = this.totalAmountB.subtract(amount);
+    }
+
+    public void finishMatch(String winner, String loser) {
+        this.winner = winner;
+        this.loser = loser;
+        this.status = MatchStatus.FINISHED;
     }
 }

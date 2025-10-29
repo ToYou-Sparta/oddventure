@@ -1,6 +1,9 @@
-package org.example.oddventure.domain.match.controller;
+package org.example.oddventure.domain.match.unit;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -10,8 +13,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.example.oddventure.base.restdocs.RestDocsTestSupport;
+import org.example.oddventure.base.restdocs.RestDocsUtils;
 import org.example.oddventure.domain.auth.config.SecurityConfig;
 import org.example.oddventure.domain.auth.jwt.JwtUtil;
+import org.example.oddventure.domain.match.controller.MatchController;
 import org.example.oddventure.domain.match.dto.request.MatchSearchCondition;
 import org.example.oddventure.domain.match.dto.response.MatchResponse;
 import org.example.oddventure.domain.match.enums.MatchStatus;
@@ -30,16 +36,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(MatchController.class)
 @Import({SecurityConfig.class, JwtUtil.class})
 @WithMockUser(roles = {"USER"})
-class MatchControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
+class MatchControllerTest extends RestDocsTestSupport {
 
     @MockitoBean
     private MatchService matchService;
@@ -69,7 +71,7 @@ class MatchControllerTest {
     }
 
     @Test
-    @DisplayName("GET /matches - 경기 목록 조회 성공")
+    @DisplayName("GET /matches - 매치 목록 조회 성공")
     void getMatches_success() throws Exception {
         // given
         Pageable pageable = PageRequest.of(0, 10, Sort.by("startTime").ascending());
@@ -85,11 +87,32 @@ class MatchControllerTest {
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.content[0].matchId").value(1))
                 .andExpect(jsonPath("$.data.content[0].teamB").value("GEN.G"))
-                .andExpect(jsonPath("$.data.content[0].status").value("SCHEDULED"));
+                .andExpect(jsonPath("$.data.content[0].status").value("SCHEDULED"))
+                .andDo(restDocs.document(
+                        RestDocsUtils.successWithDataFields(
+                                fieldWithPath("data.content[].matchId").description("매치 ID"),
+                                fieldWithPath("data.content[].matchName").description("매치명"),
+                                fieldWithPath("data.content[].teamA").description("팀 A"),
+                                fieldWithPath("data.content[].teamB").description("팀 B"),
+                                fieldWithPath("data.content[].totalAmountA").description("팀 A 베팅 총액"),
+                                fieldWithPath("data.content[].totalAmountB").description("팀 B 베팅 총액"),
+                                fieldWithPath("data.content[].startTime").description("매치 시작 시간"),
+                                fieldWithPath("data.content[].endTime").description("매치 종료 시간"),
+                                fieldWithPath("data.content[].status").description("매치 상태"),
+                                fieldWithPath("data.content[].winner").description("승리 팀").optional(),
+                                fieldWithPath("data.content[].loser").description("패배 팀").optional(),
+                                fieldWithPath("data.content[].viewCount").description("조회수"),
+                                fieldWithPath("data.content[].createdAt").description("생성일시"),
+                                fieldWithPath("data.totalElements").description("전체 데이터 개수"),
+                                fieldWithPath("data.totalPages").description("총 페이지 수"),
+                                fieldWithPath("data.size").description("페이지당 데이터 개수"),
+                                fieldWithPath("data.number").description("현재 페이지 번호")
+                        )
+                ));
     }
 
     @Test
-    @DisplayName("GET /matches/{matchId} - 경기 상세 조회 성공")
+    @DisplayName("GET /matches/{matchId} - 매치 상세 조회 성공")
     void getMatchDetail_success() throws Exception {
         // given
         Long matchId = 1L;
@@ -102,11 +125,31 @@ class MatchControllerTest {
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.matchId").value(matchId))
                 .andExpect(jsonPath("$.data.teamA").value("T1"))
-                .andExpect(jsonPath("$.data.viewCount").value(153L));
+                .andExpect(jsonPath("$.data.viewCount").value(153L))
+                .andDo(restDocs.document(
+                        pathParameters(
+                                parameterWithName("matchId").description("매치 ID")
+                        ),
+                        RestDocsUtils.successWithDataFields(
+                                fieldWithPath("data.matchId").description("매치 ID"),
+                                fieldWithPath("data.matchName").description("매치명"),
+                                fieldWithPath("data.teamA").description("팀 A"),
+                                fieldWithPath("data.teamB").description("팀 B"),
+                                fieldWithPath("data.totalAmountA").description("팀 A 베팅 총액"),
+                                fieldWithPath("data.totalAmountB").description("팀 B 베팅 총액"),
+                                fieldWithPath("data.startTime").description("매치 시작 시간"),
+                                fieldWithPath("data.endTime").description("매치 종료 시간"),
+                                fieldWithPath("data.status").description("매치 상태"),
+                                fieldWithPath("data.winner").description("승리 팀").optional(),
+                                fieldWithPath("data.loser").description("패배 팀").optional(),
+                                fieldWithPath("data.viewCount").description("조회수"),
+                                fieldWithPath("data.createdAt").description("생성일시")
+                        )
+                ));
     }
 
     @Test
-    @DisplayName("POST /matches/search - 경기 검색 성공")
+    @DisplayName("POST /matches/search - 매치 검색 성공")
     void searchMatches_success() throws Exception {
         // given
         MatchSearchCondition condition = new MatchSearchCondition("", null, null);
@@ -124,6 +167,27 @@ class MatchControllerTest {
         // then
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.content[0].matchId").value(1))
-                .andExpect(jsonPath("$.data.content[0].teamB").value("GEN.G"));
+                .andExpect(jsonPath("$.data.content[0].teamB").value("GEN.G"))
+                .andDo(restDocs.document(
+                        RestDocsUtils.successWithDataFields(
+                                fieldWithPath("data.content[].matchId").description("매치 ID"),
+                                fieldWithPath("data.content[].matchName").description("매치명"),
+                                fieldWithPath("data.content[].teamA").description("팀 A"),
+                                fieldWithPath("data.content[].teamB").description("팀 B"),
+                                fieldWithPath("data.content[].totalAmountA").description("팀 A 베팅 총액"),
+                                fieldWithPath("data.content[].totalAmountB").description("팀 B 베팅 총액"),
+                                fieldWithPath("data.content[].startTime").description("매치 시작 시간"),
+                                fieldWithPath("data.content[].endTime").description("매치 종료 시간"),
+                                fieldWithPath("data.content[].status").description("매치 상태"),
+                                fieldWithPath("data.content[].winner").description("승리 팀").optional(),
+                                fieldWithPath("data.content[].loser").description("패배 팀").optional(),
+                                fieldWithPath("data.content[].viewCount").description("조회수"),
+                                fieldWithPath("data.content[].createdAt").description("생성일시"),
+                                fieldWithPath("data.totalElements").description("전체 데이터 개수"),
+                                fieldWithPath("data.totalPages").description("총 페이지 수"),
+                                fieldWithPath("data.size").description("페이지당 데이터 개수"),
+                                fieldWithPath("data.number").description("현재 페이지 번호")
+                        )
+                ));
     }
 }
