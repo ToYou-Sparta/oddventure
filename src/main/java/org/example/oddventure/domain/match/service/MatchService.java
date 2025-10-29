@@ -6,7 +6,7 @@ import org.example.oddventure.domain.admin.dto.request.MatchUpdateRequest;
 import org.example.oddventure.domain.admin.dto.response.MatchAdminResponse;
 import org.example.oddventure.domain.admin.exception.AdminErrorCode;
 import org.example.oddventure.domain.admin.exception.AdminException;
-import org.example.oddventure.domain.grid.dto.response.MatchFetchResponse;
+import org.example.oddventure.domain.grid.dto.MatchScheduleDto;
 import org.example.oddventure.domain.hotKeywords.service.HotKeywordsService;
 import org.example.oddventure.domain.match.dto.projection.MatchProjection;
 import org.example.oddventure.domain.match.dto.request.MatchSearchCondition;
@@ -88,7 +88,7 @@ public class MatchService {
     }
 
     @Transactional
-    public void fetchMatches(MatchFetchResponse dto) {
+    public void fetchMatches(MatchScheduleDto dto) {
         boolean isExist = matchRepository.existsByFetchId(dto.fetchId());
         boolean isPending = dto.teamA().contains("TBD") || dto.teamB().contains("TBD");
 

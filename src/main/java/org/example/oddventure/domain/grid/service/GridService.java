@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.example.oddventure.common.config.WebClientConfig;
 import org.example.oddventure.domain.grid.dto.MatchResultDto;
-import org.example.oddventure.domain.grid.dto.response.MatchFetchResponse;
+import org.example.oddventure.domain.grid.dto.MatchScheduleDto;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
@@ -84,8 +84,8 @@ public class GridService {
     private final WebClientConfig webClientConfig;
     private final ObjectMapper objectMapper;
 
-    public List<MatchFetchResponse> fetchMatches() {
-        List<MatchFetchResponse> results = new ArrayList<>();
+    public List<MatchScheduleDto> fetchMatches() {
+        List<MatchScheduleDto> results = new ArrayList<>();
         Map<String, Object> variables = new HashMap<>();
 
         String cursor = null; // 페이지네이션 커서
@@ -124,7 +124,7 @@ public class GridService {
                         .atZone(ZoneId.of("Asia/Seoul"))
                         .toLocalDateTime();
 
-                results.add(MatchFetchResponse.builder()
+                results.add(MatchScheduleDto.builder()
                         .fetchId(fetchId)
                         .matchName(node.path("tournament").path("nameShortened").asText())
                         .teamA(teamA)

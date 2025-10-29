@@ -4,7 +4,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.oddventure.domain.grid.dto.MatchResultDto;
-import org.example.oddventure.domain.grid.dto.response.MatchFetchResponse;
+import org.example.oddventure.domain.grid.dto.MatchScheduleDto;
 import org.example.oddventure.domain.grid.service.GridService;
 import org.example.oddventure.domain.match.service.MatchService;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ public class AdminMatchService {
     // 매치 일정 연동
     @Transactional
     public void fetchMatches() {
-        List<MatchFetchResponse> fetchResponses = gridService.fetchMatches();
+        List<MatchScheduleDto> fetchResponses = gridService.fetchMatches();
 
         fetchResponses.forEach(matchService::fetchMatches);
     }
