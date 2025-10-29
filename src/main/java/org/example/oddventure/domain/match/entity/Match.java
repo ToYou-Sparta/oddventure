@@ -32,7 +32,7 @@ public class Match extends BaseEntity {
     @Column(nullable = false)
     private String matchName;
 
-    @Column(nullable = false, name = "tema_a")
+    @Column(nullable = false, name = "team_a")
     private String teamA;
 
     @Column(nullable = false, name = "team_b")
