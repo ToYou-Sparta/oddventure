@@ -20,15 +20,15 @@ public class AdminMatchService {
 
     // 매치 일정 연동
     @Transactional
-    public void fetchMatches() {
-        List<MatchScheduleDto> fetchResponses = gridService.fetchMatches();
+    public void createMatchSchedules() {
+        List<MatchScheduleDto> fetchResponses = gridService.fetchMatchSchedules();
 
         fetchResponses.forEach(matchService::fetchMatches);
     }
 
     // 매치 결과 연동
     @Transactional
-    public void fetchMatchResult(Long fetchId) {
+    public void createMatchResult(Long fetchId) {
         MatchResultDto dto = gridService.fetchMatchResult(fetchId);
 
         matchService.updateMatchResult(fetchId, dto.winner(), dto.looser());

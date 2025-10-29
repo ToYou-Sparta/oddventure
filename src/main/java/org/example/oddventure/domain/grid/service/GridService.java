@@ -84,7 +84,7 @@ public class GridService {
     private final WebClientConfig webClientConfig;
     private final ObjectMapper objectMapper;
 
-    public List<MatchScheduleDto> fetchMatches() {
+    public List<MatchScheduleDto> fetchMatchSchedules() {
         List<MatchScheduleDto> results = new ArrayList<>();
         Map<String, Object> variables = new HashMap<>();
 
