@@ -31,6 +31,6 @@ public class AdminMatchService {
     public void createMatchResult(Long fetchId) {
         MatchResultDto dto = gridService.fetchMatchResult(fetchId);
 
-        matchService.updateMatchResult(fetchId, dto.winner(), dto.looser());
+        matchService.updateMatchResult(fetchId, dto.winner(), dto.loser());
     }
 }

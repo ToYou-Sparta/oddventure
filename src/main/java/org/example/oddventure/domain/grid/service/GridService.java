@@ -1,7 +1,6 @@
 package org.example.oddventure.domain.grid.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -16,9 +15,11 @@ import org.example.oddventure.common.config.WebClientConfig;
 import org.example.oddventure.domain.grid.dto.MatchResultDto;
 import org.example.oddventure.domain.grid.dto.MatchScheduleDto;
 import org.example.oddventure.domain.grid.dto.response.AllSeriesResponse;
+import org.example.oddventure.domain.grid.dto.response.SeriesStateResponse;
 import org.example.oddventure.domain.grid.dto.response.field.Edge;
 import org.example.oddventure.domain.grid.dto.response.field.Node;
 import org.example.oddventure.domain.grid.dto.response.field.PageInfo;
+import org.example.oddventure.domain.grid.dto.response.field.SeriesState.Team;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
@@ -166,36 +167,38 @@ public class GridService {
             throw new IllegalStateException("Failed to serialize GraphQL request body.", e);
         }
 
-        JsonNode response = webClientConfig.gridLiveClient().post()
+        SeriesStateResponse response = webClientConfig.gridLiveClient().post()
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(request)
                 .retrieve()
-                .bodyToMono(JsonNode.class)
+                .bodyToMono(SeriesStateResponse.class)
                 .block();
 //        log.info(response.toString());
-        if (response == null || response.path("data").isMissingNode()) {
+        if (response == null
+                || response.data() == null
+                || response.data().seriesState() == null
+                || response.data().seriesState().teams() == null) {
             throw new IllegalStateException("Response body is empty.");
         }
 
-        JsonNode teams = response.path("data").path("seriesState").path("teams");
-        String winner = null;
-        String looser = null;
+        List<Team> teams = response.data().seriesState().teams();
 
-        for (JsonNode team : teams) {
-            String name = team.path("name").asText();
-            boolean won = team.path("won").asBoolean();
+        String winner = teams.stream()
+                .filter(Team::won)
+                .map(Team::name)
+                .findFirst()
+                .orElse(null);
 
-            if (won) {
-                winner = name;
-            } else {
-                looser = name;
-            }
-        }
+        String loser = teams.stream()
+                .filter(t -> !t.won())
+                .map(Team::name)
+                .findFirst()
+                .orElse(null);
 
         return MatchResultDto.builder()
                 .fetchId(fetchId)
                 .winner(winner)
-                .looser(looser)
+                .loser(loser)
                 .build();
     }
 }
