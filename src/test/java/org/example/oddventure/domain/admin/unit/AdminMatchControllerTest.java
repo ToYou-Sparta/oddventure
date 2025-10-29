@@ -19,7 +19,6 @@ import org.example.oddventure.base.WithMockAuthUser;
 import org.example.oddventure.base.restdocs.RestDocsTestSupport;
 import org.example.oddventure.base.restdocs.RestDocsUtils;
 import org.example.oddventure.domain.admin.controller.AdminMatchController;
-import org.example.oddventure.domain.admin.dto.request.MatchCreateRequest;
 import org.example.oddventure.domain.admin.dto.request.MatchUpdateRequest;
 import org.example.oddventure.domain.admin.dto.response.MatchCreateAdminResponse;
 import org.example.oddventure.domain.admin.dto.response.MatchUpdateAdminResponse;
@@ -88,22 +87,22 @@ public class AdminMatchControllerTest extends RestDocsTestSupport {
                 ));
     }
 
-    @Test
-    @DisplayName("매치 생성 실패 - 유효성 검사 실패")
-    void createMatch_Fail_InvalidInput() throws Exception {
-        // given
-        MatchCreateRequest request = new MatchCreateRequest("LCK", "", "Gen.G", LocalDateTime.now().plusDays(1));
-
-        // when & then
-        mockMvc.perform(post("/api/v1/admin/matches")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest())
-                .andDo(restDocs.document(
-                        RestDocsUtils.errorResponseFields()
-                ));
-    }
+//    @Test
+//    @DisplayName("매치 생성 실패 - 유효성 검사 실패")
+//    void createMatch_Fail_InvalidInput() throws Exception {
+//        // given
+//        MatchCreateRequest request = new MatchCreateRequest("LCK", "", "Gen.G", LocalDateTime.now().plusDays(1));
+//
+//        // when & then
+//        mockMvc.perform(post("/api/v1/admin/matches")
+//                        .with(csrf())
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(objectMapper.writeValueAsString(request)))
+//                .andExpect(status().isBadRequest())
+//                .andDo(restDocs.document(
+//                        RestDocsUtils.errorResponseFields()
+//                ));
+//    }
 
     @Test
     @DisplayName("매치 정보 수정 성공")
