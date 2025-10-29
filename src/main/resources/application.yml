@@ -32,10 +32,9 @@ spring:
 
 management:
   server:
-    port: 8090
+    port: 8080
   endpoints:
     web:
-      base-path: /api/v1/monitoring
       exposure:
         include: "health,info,metrics,env,prometheus"
 
