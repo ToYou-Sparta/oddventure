@@ -12,10 +12,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.example.oddventure.common.exception.GlobalException;
-import org.example.oddventure.domain.admin.dto.request.MatchCreateRequest;
 import org.example.oddventure.domain.admin.dto.request.MatchUpdateRequest;
-import org.example.oddventure.domain.admin.dto.response.MatchAdminResponse;
+import org.example.oddventure.domain.admin.dto.response.MatchUpdateAdminResponse;
+import org.example.oddventure.domain.grid.dto.MatchScheduleDto;
 import org.example.oddventure.domain.hotKeywords.service.HotKeywordsService;
+import org.example.oddventure.domain.match.dto.MatchCreateDto;
 import org.example.oddventure.domain.match.dto.projection.MatchProjection;
 import org.example.oddventure.domain.match.dto.request.MatchSearchCondition;
 import org.example.oddventure.domain.match.dto.response.MatchResponse;
@@ -55,18 +56,17 @@ class MatchServiceTest {
     void createMatch_Success() {
         // given
         LocalDateTime startTime = LocalDateTime.now().plusDays(1);
-        MatchCreateRequest request = new MatchCreateRequest("LCK", "T1", "Gen.G", startTime);
+        MatchScheduleDto request = new MatchScheduleDto(1L, "LCK", "T1", "Gen.G", startTime);
 
         Match match = Match.builder().teamA("T1").teamB("Gen.G").startTime(startTime).build();
 
         given(matchRepository.save(any(Match.class))).willReturn(match);
 
         // when
-        MatchAdminResponse response = matchService.createMatch(request);
+        MatchCreateDto response = matchService.createMatch(request);
 
         // then
-        assertThat(response.teamA()).isEqualTo("T1");
-        assertThat(response.teamB()).isEqualTo("Gen.G");
+        assertThat(response.fetchId()).isEqualTo(1L);
         verify(matchRepository).save(any(Match.class));
     }
 
@@ -163,7 +163,7 @@ class MatchServiceTest {
             given(matchRepository.findById(matchId)).willReturn(Optional.of(existingMatch));
 
             // when
-            MatchAdminResponse response = matchService.updateMatch(matchId, request);
+            MatchUpdateAdminResponse response = matchService.updateMatch(matchId, request);
 
             // then
             assertThat(response.teamA()).isEqualTo("DWG KIA");

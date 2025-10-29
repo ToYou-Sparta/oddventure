@@ -14,13 +14,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
+import java.util.List;
 import org.example.oddventure.base.WithMockAuthUser;
 import org.example.oddventure.base.restdocs.RestDocsTestSupport;
 import org.example.oddventure.base.restdocs.RestDocsUtils;
 import org.example.oddventure.domain.admin.controller.AdminMatchController;
-import org.example.oddventure.domain.admin.dto.request.MatchCreateRequest;
 import org.example.oddventure.domain.admin.dto.request.MatchUpdateRequest;
-import org.example.oddventure.domain.admin.dto.response.MatchAdminResponse;
+import org.example.oddventure.domain.admin.dto.response.MatchCreateAdminResponse;
+import org.example.oddventure.domain.admin.dto.response.MatchUpdateAdminResponse;
 import org.example.oddventure.domain.admin.service.AdminMatchService;
 import org.example.oddventure.domain.auth.config.SecurityConfig;
 import org.example.oddventure.domain.auth.jwt.JwtUtil;
@@ -57,55 +58,51 @@ public class AdminMatchControllerTest extends RestDocsTestSupport {
     @DisplayName("매치 생성 성공")
     void createMatch_Success() throws Exception {
         // given
-        LocalDateTime startTime = LocalDateTime.now().plusDays(1);
-        MatchCreateRequest request = new MatchCreateRequest("LCK", "T1", "Gen.G", startTime);
-        MatchAdminResponse response = new MatchAdminResponse(1L, "LCK", "T1", "Gen.G", startTime,
-                MatchStatus.SCHEDULED);
-        given(matchService.createMatch(any(MatchCreateRequest.class))).willReturn(response);
+//        LocalDateTime startTime = LocalDateTime.now().plusDays(1);
+//        MatchCreateRequest request = new MatchCreateRequest("LCK", "T1", "Gen.G", startTime);
+//        MatchCreateAdminResponse response = new MatchCreateAdminResponse(1L, "LCK", "T1", "Gen.G", startTime, MatchStatus.SCHEDULED);
+        MatchCreateAdminResponse response = MatchCreateAdminResponse.builder()
+                .totalMatches(1)
+                .fetchIds(List.of(1L))
+                .build();
+        given(adminMatchService.createMatch()).willReturn(response);
 
-        // when
-        ResultActions result = mockMvc.perform(post("/api/v1/admin/matches")
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)));
-
-        // then
-        result.andExpect(status().isCreated())
+        // when&then
+        mockMvc.perform(post("/api/v1/admin/matches")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.success").value(true))
                 .andDo(restDocs.document(
-                        requestFields(
-                                fieldWithPath("matchName").description("경기 이름 (예: LCK)"),
-                                fieldWithPath("teamA").description("A팀 이름"),
-                                fieldWithPath("teamB").description("B팀 이름"),
-                                fieldWithPath("startTime").description("경기 시작 시간")
-                        ),
+//                        requestFields(
+//                                fieldWithPath("matchName").description("경기 이름 (예: LCK)"),
+//                                fieldWithPath("teamA").description("A팀 이름"),
+//                                fieldWithPath("teamB").description("B팀 이름"),
+//                                fieldWithPath("startTime").description("경기 시작 시간")
+//                        ),
                         RestDocsUtils.successWithDataFields(
-                                fieldWithPath("data.matchId").description("생성된 경기 ID"),
-                                fieldWithPath("data.matchName").description("경기 이름"),
-                                fieldWithPath("data.teamA").description("A팀 이름"),
-                                fieldWithPath("data.teamB").description("B팀 이름"),
-                                fieldWithPath("data.startTime").description("경기 시작 시간"),
-                                fieldWithPath("data.status").description("경기 상태 (기본값: SCHEDULED)")
+                                fieldWithPath("data.totalMatches").description("생성된 매치 개수"),
+                                fieldWithPath("data.fetchIds").description("생성된 패치 ID 목록")
                         )
                 ));
     }
 
-    @Test
-    @DisplayName("매치 생성 실패 - 유효성 검사 실패")
-    void createMatch_Fail_InvalidInput() throws Exception {
-        // given
-        MatchCreateRequest request = new MatchCreateRequest("LCK", "", "Gen.G", LocalDateTime.now().plusDays(1));
-
-        // when & then
-        mockMvc.perform(post("/api/v1/admin/matches")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest())
-                .andDo(restDocs.document(
-                        RestDocsUtils.errorResponseFields()
-                ));
-    }
+//    @Test
+//    @DisplayName("매치 생성 실패 - 유효성 검사 실패")
+//    void createMatch_Fail_InvalidInput() throws Exception {
+//        // given
+//        MatchCreateRequest request = new MatchCreateRequest("LCK", "", "Gen.G", LocalDateTime.now().plusDays(1));
+//
+//        // when & then
+//        mockMvc.perform(post("/api/v1/admin/matches")
+//                        .with(csrf())
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(objectMapper.writeValueAsString(request)))
+//                .andExpect(status().isBadRequest())
+//                .andDo(restDocs.document(
+//                        RestDocsUtils.errorResponseFields()
+//                ));
+//    }
 
     @Test
     @DisplayName("매치 정보 수정 성공")
@@ -115,7 +112,8 @@ public class AdminMatchControllerTest extends RestDocsTestSupport {
         LocalDateTime newStartTime = LocalDateTime.now().plusDays(2).withNano(0);
         MatchUpdateRequest request = new MatchUpdateRequest("LCK", "New Team A", "New Team B", newStartTime,
                 MatchStatus.ONGOING);
-        MatchAdminResponse response = new MatchAdminResponse(matchId, "LCK", "New Team A", "New Team B", newStartTime,
+        MatchUpdateAdminResponse response = new MatchUpdateAdminResponse(matchId, "LCK", "New Team A", "New Team B",
+                newStartTime,
                 MatchStatus.ONGOING);
         given(matchService.updateMatch(any(Long.class), any(MatchUpdateRequest.class))).willReturn(response);
 
