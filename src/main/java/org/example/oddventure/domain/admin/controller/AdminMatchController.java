@@ -45,15 +45,15 @@ public class AdminMatchController {
 
     // 매치 일정 연동
     @PostMapping("/fetch")
-    public ResponseEntity<ApiResponse<Void>> fetchMatches() {
-        adminMatchService.fetchMatches();
+    public ResponseEntity<ApiResponse<Void>> createMatchSchedules() {
+        adminMatchService.createMatchSchedules();
         return ApiResponse.success("매치가 연동되었습니다.");
     }
 
     // 매치 결과 연동
     @PatchMapping("/fetch/{fetchId}")
-    public ResponseEntity<ApiResponse<Void>> syncMatchResult(@PathVariable Long fetchId) {
-        adminMatchService.fetchMatchResult(fetchId);
+    public ResponseEntity<ApiResponse<Void>> createMatchResult(@PathVariable Long fetchId) {
+        adminMatchService.createMatchResult(fetchId);
         return ApiResponse.success("매치 결과가 연동되었습니다.");
     }
 }

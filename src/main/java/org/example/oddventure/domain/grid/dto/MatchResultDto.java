@@ -6,6 +6,6 @@ import lombok.Builder;
 public record MatchResultDto(
         Long fetchId,
         String winner,
-        String looser
+        String loser
 ) {
 }
