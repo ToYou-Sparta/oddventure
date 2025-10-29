@@ -15,6 +15,10 @@ import lombok.extern.log4j.Log4j2;
 import org.example.oddventure.common.config.WebClientConfig;
 import org.example.oddventure.domain.grid.dto.MatchResultDto;
 import org.example.oddventure.domain.grid.dto.MatchScheduleDto;
+import org.example.oddventure.domain.grid.dto.response.AllSeriesResponse;
+import org.example.oddventure.domain.grid.dto.response.field.Edge;
+import org.example.oddventure.domain.grid.dto.response.field.Node;
+import org.example.oddventure.domain.grid.dto.response.field.PageInfo;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
@@ -102,41 +106,48 @@ public class GridService {
                 return results;
             }
 
-            JsonNode response = webClientConfig.gridCentralClient().post()
+            AllSeriesResponse response = webClientConfig.gridCentralClient().post()
                     .contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(request)
                     .retrieve()
-                    .bodyToMono(JsonNode.class)
+                    .bodyToMono(AllSeriesResponse.class)
                     .block();
 //            log.info("Got response from GRID central client: {}", response);
-            if (response == null || response.path("data").isMissingNode()) {
+            if (response == null
+                    || response.data() == null
+                    || response.data().allSeries() == null
+                    || response.data().allSeries().edges() == null) {
+                log.warn("가져온 매치 스케쥴 응답값이 비어있습니다.");
                 return results;
             }
 
-            JsonNode allSeries = response.path("data").path("allSeries");
+            List<Edge> edges = response.data().allSeries().edges();
 
-            for (JsonNode edge : allSeries.path("edges")) {
-                JsonNode node = edge.path("node");
-                Long fetchId = node.path("id").asLong();
-                String teamA = node.path("teams").get(0).path("baseInfo").path("name").asText();
-                String teamB = node.path("teams").get(1).path("baseInfo").path("name").asText();
-                LocalDateTime startTime = Instant.parse(node.path("startTimeScheduled").asText())
+            for (Edge edge : edges) {
+                Node node = edge.node();
+                String matchName = node.tournament().nameShortened();
+                Long fetchId = Long.parseLong(node.id());
+                String teamA = node.teams().get(0).baseInfo().name();
+                String teamB = node.teams().get(1).baseInfo().name();
+                LocalDateTime startTime = Instant.parse(node.startTimeScheduled())
                         .atZone(ZoneId.of("Asia/Seoul"))
                         .toLocalDateTime();
 
                 results.add(MatchScheduleDto.builder()
                         .fetchId(fetchId)
-                        .matchName(node.path("tournament").path("nameShortened").asText())
+                        .matchName(matchName)
                         .teamA(teamA)
                         .teamB(teamB)
                         .startTime(startTime)
                         .build());
             }
-            if (!allSeries.path("pageInfo").path("hasNextPage").asBoolean()) {
+
+            PageInfo pageInfo = response.data().allSeries().pageInfo();
+            if (!pageInfo.hasNextPage()) {
                 break;
             }
 
-            cursor = allSeries.path("pageInfo").path("endCursor").asText();
+            cursor = pageInfo.endCursor();
         }
 
         return results;
