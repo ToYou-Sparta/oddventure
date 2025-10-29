@@ -20,6 +20,8 @@ import org.example.oddventure.domain.grid.dto.response.field.Edge;
 import org.example.oddventure.domain.grid.dto.response.field.Node;
 import org.example.oddventure.domain.grid.dto.response.field.PageInfo;
 import org.example.oddventure.domain.grid.dto.response.field.SeriesState.Team;
+import org.example.oddventure.domain.grid.exception.GridErrorCode;
+import org.example.oddventure.domain.grid.exception.GridException;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
@@ -104,7 +106,7 @@ public class GridService {
                 );
 //                log.info("Fetching matches from GRID: {}", request);
             } catch (JsonProcessingException e) {
-                return results;
+                throw new GridException(GridErrorCode.FAIL_TO_SERIALIZE);
             }
 
             AllSeriesResponse response = webClientConfig.gridCentralClient().post()
@@ -164,7 +166,7 @@ public class GridService {
                             "variables", variables)
             );
         } catch (JsonProcessingException e) {
-            throw new IllegalStateException("Failed to serialize GraphQL request body.", e);
+            throw new GridException(GridErrorCode.FAIL_TO_SERIALIZE);
         }
 
         SeriesStateResponse response = webClientConfig.gridLiveClient().post()
@@ -178,7 +180,7 @@ public class GridService {
                 || response.data() == null
                 || response.data().seriesState() == null
                 || response.data().seriesState().teams() == null) {
-            throw new IllegalStateException("Response body is empty.");
+            throw new GridException(GridErrorCode.RESPONSE_NOT_FOUND);
         }
 
         List<Team> teams = response.data().seriesState().teams();
@@ -187,13 +189,13 @@ public class GridService {
                 .filter(Team::won)
                 .map(Team::name)
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new GridException(GridErrorCode.RESPONSE_NOT_FOUND));
 
         String loser = teams.stream()
                 .filter(t -> !t.won())
                 .map(Team::name)
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new GridException(GridErrorCode.RESPONSE_NOT_FOUND));
 
         return MatchResultDto.builder()
                 .fetchId(fetchId)
