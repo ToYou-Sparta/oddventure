@@ -180,7 +180,7 @@ class UserServiceTest {
                     .password("password")
                     .build();
 
-            given(userRepository.findById(userId)).willReturn(Optional.of(mockUser));
+            given(userRepository.findByIdForUpdate(userId)).willReturn(Optional.of(mockUser));
 
             // when
             PointAdjustResponse response = userService.adjustUserPoints(userId, request);
@@ -198,7 +198,7 @@ class UserServiceTest {
             // given
             Long userId = 999L;
             PointAdjustRequest request = new PointAdjustRequest(new BigDecimal("5000"), "이벤트 보상");
-            given(userRepository.findById(userId)).willReturn(Optional.empty());
+            given(userRepository.findByIdForUpdate(userId)).willReturn(Optional.empty());
 
             // when & then
             assertThrows(GlobalException.class, () -> {

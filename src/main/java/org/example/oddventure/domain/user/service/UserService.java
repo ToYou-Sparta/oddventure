@@ -62,7 +62,7 @@ public class UserService {
     // 포인트 지급
     @Transactional
     public PointAdjustResponse adjustUserPoints(Long userId, PointAdjustRequest request) {
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByIdForUpdate(userId)
                 .orElseThrow(() -> new AdminException(AdminErrorCode.USER_NOT_FOUND));
 
         user.plusPoint(request.amount());
