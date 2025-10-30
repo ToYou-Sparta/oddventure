@@ -49,7 +49,7 @@ public class BetService {
                 .orElseThrow(() -> new MatchException(MatchErrorCode.MATCH_NOT_FOUND));
 
         // 베팅 가능 여부 검증
-        validateBettable(match.getStatus());
+        validateBettable(match);
 
         // 유저 포인트 차감
         user.minusPoint(betAmount);
@@ -106,8 +106,12 @@ public class BetService {
                 .orElseThrow(() -> new UserException(UserErrorCode.INVALID_USER_ID));
     }
 
-    private void validateBettable(MatchStatus status) {
-        if (!status.equals(MatchStatus.SCHEDULED)) {
+    private void validateBettable(Match match) {
+        if (match.isDeleted()) {
+            throw new BetException(BetErrorCode.MATCH_NOT_EXIST);
+        }
+
+        if (!match.getStatus().equals(MatchStatus.SCHEDULED)) {
             throw new BetException(BetErrorCode.MATCH_NOT_BETTABLE);
         }
     }
