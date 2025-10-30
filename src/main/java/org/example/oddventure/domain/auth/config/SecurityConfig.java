@@ -48,7 +48,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/signup", "/api/v1/auth/login", "/api/v1/auth/refresh")
                         .permitAll()
                         .requestMatchers("/api/v1/admin/**").hasAuthority(UserRole.Authority.ADMIN)
-                        .requestMatchers("/actuator/**").hasAuthority(UserRole.Authority.ADMIN)
+                        .requestMatchers("/actuator/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .build();
