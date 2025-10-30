@@ -30,6 +30,9 @@ public class CachingConfig {
 
         Map<String, RedisCacheConfiguration> perCache = new HashMap<>();
         perCache.put("match:ranking", base.entryTtl(Duration.ofMinutes(30)));
+        perCache.put("matchDetails", base.entryTtl(Duration.ofMinutes(30)));
+        perCache.put("teams", base.entryTtl(Duration.ofMinutes(30)));
+        perCache.put("teamDetail", base.entryTtl(Duration.ofMinutes(30)));
 
         return RedisCacheManager.builder(cf)
                 .cacheDefaults(base)
