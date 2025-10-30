@@ -12,6 +12,8 @@ import org.example.oddventure.domain.bet.enums.SelectedTeam;
 import org.example.oddventure.domain.bet.exception.BetErrorCode;
 import org.example.oddventure.domain.bet.exception.BetException;
 import org.example.oddventure.domain.bet.repository.BetRepository;
+import org.example.oddventure.domain.event.RedisPublisher;
+import org.example.oddventure.domain.match.dto.event.MatchOddsUpdateDto;
 import org.example.oddventure.domain.match.entity.Match;
 import org.example.oddventure.domain.match.enums.MatchStatus;
 import org.example.oddventure.domain.match.exception.MatchErrorCode;
@@ -33,6 +35,7 @@ public class BetService {
     private final BetRepository betRepository;
     private final UserRepository userRepository;
     private final MatchRepository matchRepository;
+    private final RedisPublisher redisPublisher;
 
     @Transactional
     public BetCreateResponse createBet(Long userId, BetCreateRequest request) {
@@ -64,6 +67,10 @@ public class BetService {
         betRepository.save(bet);
 
         String selectedTeamName = selectedTeamName(match, request.selectedTeam());
+
+        // 배당률 변경 시 Redis Pub/Sub으로 실시간 알림 전송
+        MatchOddsUpdateDto dto = new MatchOddsUpdateDto(match.getId(), selectedTeamName, odds);
+        redisPublisher.publish("match:" + dto.matchId() + ":odds", dto);
 
         return BetCreateResponse.of(bet, selectedTeamName, user.getPoint());
     }

@@ -33,9 +33,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build and test with Gradle
-        run: ./gradlew clean test jacocoTestReport
-        env:
-          SPRING_DATA_REDIS_HOST: redis
+        run: ./gradlew clean test jacocoTestReport -Dspring.profiles.active=test -Dspring.data.redis.host=redis -Dspring.data.redis.port=6379
 
       - name: Upload JaCoCo coverage report
         uses: actions/upload-artifact@v4.6.2
