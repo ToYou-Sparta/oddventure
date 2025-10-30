@@ -18,6 +18,7 @@ import org.example.oddventure.domain.match.enums.MatchStatus;
 import org.example.oddventure.domain.match.exception.MatchErrorCode;
 import org.example.oddventure.domain.match.exception.MatchException;
 import org.example.oddventure.domain.match.repository.MatchRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -77,6 +78,7 @@ public class MatchService {
     }
 
     @Transactional
+    @Cacheable(value = "matchDetails", key = "#matchId", unless = "#result.status.name() != 'FINISHED'")
     public MatchResponse getMatch(Long matchId) {
         int updated = matchRepository.incrementViewCount(matchId);
         if (updated == 0) {
