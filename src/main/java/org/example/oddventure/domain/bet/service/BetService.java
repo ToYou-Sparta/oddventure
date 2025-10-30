@@ -39,7 +39,8 @@ public class BetService {
 
     @Transactional
     public BetCreateResponse createBet(Long userId, BetCreateRequest request) {
-        User user = findUserById(userId);
+        User user = userRepository.findByIdForUpdate(userId)
+                .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
 
         BigDecimal betAmount = BigDecimal.valueOf(request.betAmount());
 
@@ -99,7 +100,8 @@ public class BetService {
         bet.delete();
 
         // 환불
-        User user = bet.getUser();
+        User user = userRepository.findByIdForUpdate(userId)
+                .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
         user.plusPoint(bet.getBetAmount());
 
         // 총 베팅 금액 되돌리기

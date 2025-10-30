@@ -90,7 +90,7 @@ public class BetServiceTest {
         ReflectionTestUtils.setField(bet, "id", betId);
 
         given(betRepository.save(any(Bet.class))).willReturn(bet);
-        given(userRepository.findById(anyLong())).willReturn(Optional.of(user));
+        given(userRepository.findByIdForUpdate(anyLong())).willReturn(Optional.of(user));
         given(matchRepository.findByIdForUpdate(anyLong())).willReturn(Optional.of(match));
 
         //when
@@ -142,6 +142,7 @@ public class BetServiceTest {
 
         given(betRepository.findByIdForDelete(anyLong())).willReturn(Optional.of(bet));
         given(matchRepository.findByIdForUpdate(anyLong())).willReturn(Optional.of(match));
+        given(userRepository.findByIdForUpdate(anyLong())).willReturn(Optional.of(user));
 
         //when
         BetDeleteResponse response = betService.deleteBet(user.getId(), betId);
