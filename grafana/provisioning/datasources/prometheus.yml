@@ -1,0 +1,24 @@
+# Grafana Datasource 자동 프로비저닝 설정
+# Grafana 시작 시 Prometheus를 자동으로 데이터소스로 추가
+
+apiVersion: 1
+
+# 삭제 가능한 데이터소스 목록
+deleteDatasources:
+  - name: Prometheus
+    orgId: 1
+
+# 추가할 데이터소스 목록
+datasources:
+  # Prometheus 데이터소스
+  - name: Prometheus
+    type: prometheus
+    access: proxy # Grafana 서버가 대신 접속
+    url: http://oddventure-prometheus:9090 # Docker Compose 네트워크에서 Prometheus 서비스명 사용
+    isDefault: true # 기본 데이터소스로 설정
+    editable: true # UI에서 편집 가능
+    jsonData:
+      httpMethod: POST # HTTP 메소드 (POST 권장)
+      timeInterval: 5s # 최소 시간 간격
+      queryTimeout: 60s # 쿼리 타임아웃 (60초)
+      manageAlerts: false # 알림 관리 비활성화
