@@ -69,65 +69,12 @@ services:
     networks:
       - oddventure-network
 
-  # Prometheus 모니터링 서비스
-  prometheus:
-    image: prom/prometheus:latest # Prometheus 최신 이미지 사용
-    container_name: oddventure-prometheus # Prometheus 컨테이너 이름 설정
-    restart: unless-stopped # 컨테이너 자동 재시작
-    ports:
-      - "9090:9090" # Prometheus 기본 포트
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml # Prometheus 설정 파일
-      - prometheus_data:/prometheus # Prometheus 데이터 영속성
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml' # 설정 파일 경로
-      #- '--storage.tsdb.path=/prometheus' # 메트릭 저장소 기본 경로 (default = data/)
-      #- '--storage.tsdb.retention.time=15d' # 데이터 보관 기간 (15일)
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-    networks:
-      - oddventure-network
-
-  # Grafana 모니터링 서비스
-  grafana:
-    image: grafana/grafana:latest # Grafana 최신 이미지 사용
-    container_name: oddventure-grafana # Grafana 컨테이너 이름 설정
-    restart: unless-stopped # 컨테이너 자동 재시작
-    ports:
-      - "3000:3000" # Grafana 기본 포트
-    environment:
-      - GF_SECURITY_ADMIN_USER=admin # Grafana 관리자 로그인 ID
-      - GF_SECURITY_ADMIN_PASSWORD=admin # Grafana 관리자 로그인 비밀번호
-      - TZ=Asia/Seoul # 타임존 설정
-    depends_on:
-      prometheus:
-        condition: service_healthy # Prometheus가 healthy 상태일 때 시작
-    volumes:
-      - grafana-storage:/var/lib/grafana # Grafana 데이터 디렉토리
-      - ./grafana/provisioning:/etc/grafana/provisioning # Datasource 및 Dashboard 자동 프로비저닝
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-    networks:
-      - oddventure-network
-
 # 볼륨 정의 (데이터 영속성)
 volumes:
   mysql_data:
     driver: local  # 로컬 볼륨 드라이버 사용
   redis_data:
     driver: local
-  prometheus_data:
-    driver: local # Prometheus 메트릭 데이터 영속화
-  grafana-storage:
-    driver: local # Grafana 데이터 저장소 (대시보드/설정 영속화)
 
 # 네트워크 정의 (컨테이너 간 통신)
 networks:
