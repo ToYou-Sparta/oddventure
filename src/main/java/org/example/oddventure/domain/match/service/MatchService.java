@@ -3,6 +3,7 @@ package org.example.oddventure.domain.match.service;
 import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.oddventure.domain.admin.dto.request.MatchUpdateRequest;
 import org.example.oddventure.domain.admin.dto.response.MatchUpdateAdminResponse;
 import org.example.oddventure.domain.grid.dto.MatchScheduleDto;
@@ -23,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MatchService {
@@ -93,7 +95,7 @@ public class MatchService {
     }
 
     @Transactional
-    public void updateMatchResult(Long fetchId, String winner, String looser) {
+    public void updateMatchResult(Long fetchId, String winner, String loser) {
         Match match = matchRepository.findByFetchId(fetchId)
                 .orElseThrow(() -> new MatchException(MatchErrorCode.MATCH_NOT_FOUND));
 
@@ -101,7 +103,7 @@ public class MatchService {
             throw new MatchException(MatchErrorCode.MATCH_FINISHED);
         }
 
-        match.finishMatch(winner, looser);
+        match.finishMatch(winner, loser);
 
     }
 
