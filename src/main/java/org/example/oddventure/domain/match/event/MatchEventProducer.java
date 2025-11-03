@@ -15,7 +15,7 @@ public class MatchEventProducer {
     private final RabbitTemplate rabbitTemplate;
 
     public void produceMatchStartEvent(MatchStartEventDto dto) {
-        long rawDelay = Duration.between(LocalDateTime.now(), dto.StartTime()).toMillis();
+        long rawDelay = Duration.between(LocalDateTime.now(), dto.startTime()).toMillis();
         long delayMillis = Math.max(0, rawDelay); // 음수 방지 및 람다 적용을 위한 재할당
 
         rabbitTemplate.convertAndSend(

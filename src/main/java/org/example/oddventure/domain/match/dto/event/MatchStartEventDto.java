@@ -6,12 +6,12 @@ import lombok.Builder;
 @Builder
 public record MatchStartEventDto(
         Long matchId,
-        LocalDateTime StartTime
+        LocalDateTime startTime
 ) {
-    public static MatchStartEventDto from(Long matchId, LocalDateTime StartTime) {
+    public static MatchStartEventDto from(Long matchId, LocalDateTime startTime) {
         return MatchStartEventDto.builder()
                 .matchId(matchId)
-                .StartTime(StartTime)
+                .startTime(startTime)
                 .build();
     }
 }
