@@ -14,6 +14,8 @@ public class RabbitMQConfig {
     public static final String DELAY_QUEUE = "match.delay.queue";
     public static final String DLX_EXCHANGE = "match.dlx.exchange";
     public static final String REAL_QUEUE = "match.real.queue";
+    public static final String DELAY_ROUTING_KEY = "match.delay";
+    public static final String REAL_ROUTING_KEY = "match.real";
 
     @Bean
     public DirectExchange delayExchange() {

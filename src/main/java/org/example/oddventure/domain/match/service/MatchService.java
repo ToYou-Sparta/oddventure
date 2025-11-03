@@ -5,16 +5,16 @@ import static org.springframework.transaction.annotation.Propagation.REQUIRES_NE
 import lombok.RequiredArgsConstructor;
 import org.example.oddventure.domain.admin.dto.request.MatchUpdateRequest;
 import org.example.oddventure.domain.admin.dto.response.MatchUpdateAdminResponse;
-import org.example.oddventure.domain.admin.exception.AdminErrorCode;
-import org.example.oddventure.domain.admin.exception.AdminException;
 import org.example.oddventure.domain.grid.dto.MatchScheduleDto;
 import org.example.oddventure.domain.hotKeywords.service.HotKeywordsService;
 import org.example.oddventure.domain.match.dto.MatchCreateDto;
+import org.example.oddventure.domain.match.dto.event.MatchStartEventDto;
 import org.example.oddventure.domain.match.dto.projection.MatchProjection;
 import org.example.oddventure.domain.match.dto.request.MatchSearchCondition;
 import org.example.oddventure.domain.match.dto.response.MatchResponse;
 import org.example.oddventure.domain.match.entity.Match;
 import org.example.oddventure.domain.match.enums.MatchStatus;
+import org.example.oddventure.domain.match.event.MatchEventProducer;
 import org.example.oddventure.domain.match.exception.MatchErrorCode;
 import org.example.oddventure.domain.match.exception.MatchException;
 import org.example.oddventure.domain.match.repository.MatchRepository;
@@ -29,6 +29,7 @@ public class MatchService {
 
     private final MatchRepository matchRepository;
     private final HotKeywordsService hotKeywordsService;
+    private final MatchEventProducer matchEventProducer;
 
     // 매치 생성 (매치별로 독립적인 트랜잭션 보유)
     @Transactional(propagation = REQUIRES_NEW)
@@ -49,6 +50,7 @@ public class MatchService {
                 .build();
 
         matchRepository.save(match);
+        matchEventProducer.produceMatchStartEvent(MatchStartEventDto.from(match.getId(), match.getStartTime()));
 
         return MatchCreateDto.builder().fetchId(dto.fetchId()).build();
     }
@@ -56,16 +58,9 @@ public class MatchService {
     // 매치 정보 수정
     @Transactional
     public MatchUpdateAdminResponse updateMatch(Long matchId, MatchUpdateRequest request) {
-        Match match = matchRepository.findById(matchId)
-                .orElseThrow(() -> new AdminException(AdminErrorCode.MATCH_NOT_FOUND));
+        Match match = findMatchById(matchId);
 
-        match.update(
-                request.matchName(),
-                request.teamA(),
-                request.teamB(),
-                request.startTime(),
-                request.status()
-        );
+        match.update(request.matchName(), request.teamA(), request.teamB(), request.startTime(), request.status());
 
         return MatchUpdateAdminResponse.from(match);
     }
@@ -83,8 +78,7 @@ public class MatchService {
             throw new MatchException(MatchErrorCode.MATCH_NOT_FOUND);
         }
 
-        Match match = matchRepository.findById(matchId)
-                .orElseThrow(() -> new MatchException(MatchErrorCode.MATCH_NOT_FOUND));
+        Match match = findMatchById(matchId);
 
         return MatchResponse.from(match);
     }
@@ -109,5 +103,16 @@ public class MatchService {
 
         match.finishMatch(winner, looser);
 
+    }
+
+    @Transactional
+    public void updateStatus(Long matchId, MatchStatus status) {
+        Match match = findMatchById(matchId);
+        match.setStatus(status);
+    }
+
+    private Match findMatchById(Long matchId) {
+        return matchRepository.findById(matchId)
+                .orElseThrow(() -> new MatchException(MatchErrorCode.MATCH_NOT_FOUND));
     }
 }
