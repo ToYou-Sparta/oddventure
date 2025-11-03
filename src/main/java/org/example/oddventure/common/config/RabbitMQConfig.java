@@ -5,6 +5,10 @@ import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.QueueBuilder;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -28,15 +32,10 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public DirectExchange realExchange() {
-        return new DirectExchange(REAL_QUEUE);
-    }
-
-    @Bean
     public Queue delayQueue() {
         return QueueBuilder.durable(DELAY_QUEUE)
                 .withArgument("x-dead-letter-exchange", DLX_EXCHANGE)
-                .withArgument("x-dead-letter-routing-key", "match.real")
+                .withArgument("x-dead-letter-routing-key", REAL_ROUTING_KEY)
                 .build();
     }
 
@@ -48,5 +47,24 @@ public class RabbitMQConfig {
     @Bean
     public Binding delayBinding() {
         return BindingBuilder.bind(delayQueue()).to(delayExchange()).with("match.delay");
+    }
+
+    @Bean
+    public Binding realBinding() {
+        return BindingBuilder.bind(realQueue())
+                .to(dlxExchange())
+                .with(REAL_ROUTING_KEY);
+    }
+
+    @Bean
+    public MessageConverter jsonMessageConverter() {
+        return new Jackson2JsonMessageConverter();
+    }
+
+    @Bean
+    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
+        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+        rabbitTemplate.setMessageConverter(jsonMessageConverter());
+        return rabbitTemplate;
     }
 }
