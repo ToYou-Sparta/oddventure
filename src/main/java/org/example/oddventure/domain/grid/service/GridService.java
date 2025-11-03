@@ -19,6 +19,7 @@ import org.example.oddventure.domain.grid.dto.response.SeriesStateResponse;
 import org.example.oddventure.domain.grid.dto.response.field.Edge;
 import org.example.oddventure.domain.grid.dto.response.field.Node;
 import org.example.oddventure.domain.grid.dto.response.field.PageInfo;
+import org.example.oddventure.domain.grid.dto.response.field.SeriesState;
 import org.example.oddventure.domain.grid.dto.response.field.SeriesState.Team;
 import org.example.oddventure.domain.grid.exception.GridErrorCode;
 import org.example.oddventure.domain.grid.exception.GridException;
@@ -81,6 +82,8 @@ public class GridService {
     private static final String GRID_LIVE_DATA_QUERY = """
             query GetLiveCS2SeriesState ($id: ID!){
                seriesState(id: $id) {
+                 valid
+                 finished
                  teams {
                    name
                    won
@@ -183,7 +186,11 @@ public class GridService {
             throw new GridException(GridErrorCode.RESPONSE_NOT_FOUND);
         }
 
-        List<Team> teams = response.data().seriesState().teams();
+        SeriesState seriesState = response.data().seriesState();
+
+        boolean finished = seriesState.finished();
+
+        List<Team> teams = seriesState.teams();
 
         String winner = teams.stream()
                 .filter(Team::won)
@@ -199,6 +206,7 @@ public class GridService {
 
         return MatchResultDto.builder()
                 .fetchId(fetchId)
+                .finished(finished)
                 .winner(winner)
                 .loser(loser)
                 .build();
