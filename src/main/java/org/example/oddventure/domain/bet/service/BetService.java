@@ -2,13 +2,16 @@ package org.example.oddventure.domain.bet.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.example.oddventure.domain.bet.dto.PointEventDto;
 import org.example.oddventure.domain.bet.dto.request.BetCreateRequest;
 import org.example.oddventure.domain.bet.dto.response.BetCreateResponse;
 import org.example.oddventure.domain.bet.dto.response.BetDeleteResponse;
 import org.example.oddventure.domain.bet.dto.response.BetResponse;
 import org.example.oddventure.domain.bet.entity.Bet;
 import org.example.oddventure.domain.bet.enums.SelectedTeam;
+import org.example.oddventure.domain.bet.event.BetEventProducer;
 import org.example.oddventure.domain.bet.exception.BetErrorCode;
 import org.example.oddventure.domain.bet.exception.BetException;
 import org.example.oddventure.domain.bet.repository.BetRepository;
@@ -36,6 +39,7 @@ public class BetService {
     private final UserRepository userRepository;
     private final MatchRepository matchRepository;
     private final RedisPublisher redisPublisher;
+    private final BetEventProducer betEventProducer;
 
     @Transactional
     public BetCreateResponse createBet(Long userId, BetCreateRequest request) {
@@ -106,6 +110,20 @@ public class BetService {
         refundTotalAmount(match, bet.getBetAmount(), bet.getSelectedTeam());
 
         return BetDeleteResponse.of(bet, user);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Bet> findByMatchId(Long matchId) {
+        return betRepository.findByMatchId(matchId);
+    }
+
+    @Transactional
+    public void settleBet(Bet bet, SelectedTeam winner) {
+        if (bet.getSelectedTeam().equals(winner) && !bet.isDeleted()) {
+            bet.setWin(true);
+            BigDecimal point = bet.getBetAmount().multiply(bet.getOddsAtBetting());
+            betEventProducer.producePointEvent(PointEventDto.from(bet.getUser().getId(), point));
+        }
     }
 
     private User findUserById(Long userId) {
