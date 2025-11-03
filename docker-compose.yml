@@ -15,6 +15,8 @@ services:
       MYSQL_USER: ${MYSQL_USER}  # 추가 사용자 계정
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}  # 추가 사용자 비밀번호
       TZ: Asia/Seoul  # 타임존 설정
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USERNAME}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
 
     # 포트 매핑 (호스트:컨테이너)
     ports:
@@ -32,7 +34,7 @@ services:
 
     # 헬스체크 설정 (컨테이너 상태 모니터링)
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u${MYSQL_USER}", "-p${MYSQL_PASSWORD}"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u${MYSQL_USER}", "-p${MYSQL_PASSWORD}" ]
       interval: 10s  # 10초마다 체크
       timeout: 5s  # 5초 타임아웃
       retries: 5  # 5회 실패 시 unhealthy 상태로 전환
@@ -60,7 +62,7 @@ services:
 
     # 헬스체크 설정
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]  # PING 명령으로 응답 확인
+      test: [ "CMD", "redis-cli", "ping" ]  # PING 명령으로 응답 확인
       interval: 10s
       timeout: 5s
       retries: 5
@@ -93,6 +95,17 @@ services:
     volumes:
       - grafana-storage:/var/lib/grafana # Grafana 데이터 디렉토리
 
+  # RabbitMQ 지연 처리 서비스
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: oddventure-rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672" # GUI 웹 접속용 포트
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
 # 볼륨 정의 (데이터 영속성)
 volumes:
   mysql_data:
@@ -100,6 +113,8 @@ volumes:
   redis_data:
     driver: local
   grafana-storage: { } # Grafana 데이터 저장소 (대시보드/설정 영속화)
+  rabbitmq_data:
+    driver: local
 
 # 네트워크 정의 (컨테이너 간 통신)
 networks:
