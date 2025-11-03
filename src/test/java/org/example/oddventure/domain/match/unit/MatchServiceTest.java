@@ -17,11 +17,13 @@ import org.example.oddventure.domain.admin.dto.response.MatchUpdateAdminResponse
 import org.example.oddventure.domain.grid.dto.MatchScheduleDto;
 import org.example.oddventure.domain.hotKeywords.service.HotKeywordsService;
 import org.example.oddventure.domain.match.dto.MatchCreateDto;
+import org.example.oddventure.domain.match.dto.event.MatchStartEventDto;
 import org.example.oddventure.domain.match.dto.projection.MatchProjection;
 import org.example.oddventure.domain.match.dto.request.MatchSearchCondition;
 import org.example.oddventure.domain.match.dto.response.MatchResponse;
 import org.example.oddventure.domain.match.entity.Match;
 import org.example.oddventure.domain.match.enums.MatchStatus;
+import org.example.oddventure.domain.match.event.MatchEventProducer;
 import org.example.oddventure.domain.match.exception.MatchErrorCode;
 import org.example.oddventure.domain.match.exception.MatchException;
 import org.example.oddventure.domain.match.repository.MatchRepository;
@@ -49,6 +51,9 @@ class MatchServiceTest {
     private MatchRepository matchRepository;
 
     @Mock
+    private MatchEventProducer matchEventProducer;
+
+    @Mock
     private HotKeywordsService hotKeywordsService;
 
     @Test
@@ -61,6 +66,8 @@ class MatchServiceTest {
         Match match = Match.builder().teamA("T1").teamB("Gen.G").startTime(startTime).build();
 
         given(matchRepository.save(any(Match.class))).willReturn(match);
+        doNothing().when(matchEventProducer)
+                .produceMatchStartEvent(MatchStartEventDto.from(match.getId(), match.getStartTime()));
 
         // when
         MatchCreateDto response = matchService.createMatch(request);
