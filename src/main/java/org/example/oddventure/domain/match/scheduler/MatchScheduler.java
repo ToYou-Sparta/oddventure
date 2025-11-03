@@ -24,9 +24,7 @@ public class MatchScheduler {
 
     @Scheduled(cron = "0 0 13 * * *", zone = "Asia/Seoul")
     public void autoFinishMatches() {
-        List<Match> matches = matchRepository.findByMatchStatus(
-                MatchStatus.ONGOING,
-                LocalDateTime.of(2025, 10, 25, 13, 0, 0));
+        List<Match> matches = matchRepository.findByMatchStatus(MatchStatus.ONGOING, LocalDateTime.now().minusDays(2));
 
         matches.forEach(match -> {
             if (match.isDeleted()) {
