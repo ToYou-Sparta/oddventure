@@ -99,7 +99,7 @@ public class MatchService {
     }
 
     @Transactional
-    public void updateMatchResult(Long fetchId, String winner, String looser) {
+    public void updateMatchResult(Long fetchId, String winner, String loser) {
         Match match = matchRepository.findByFetchId(fetchId)
                 .orElseThrow(() -> new MatchException(MatchErrorCode.MATCH_NOT_FOUND));
 
@@ -107,7 +107,7 @@ public class MatchService {
             throw new MatchException(MatchErrorCode.MATCH_FINISHED);
         }
 
-        match.finishMatch(winner, looser);
+        match.finishMatch(winner, loser);
 
     }
 }
