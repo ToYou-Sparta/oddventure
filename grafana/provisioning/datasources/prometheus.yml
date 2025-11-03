@@ -15,6 +15,7 @@ datasources:
     type: prometheus
     access: proxy # Grafana 서버가 대신 접속
     url: http://oddventure-prometheus:9090 # Docker Compose 네트워크에서 Prometheus 서비스명 사용
+    uid: prometheus # 대시보드 JSON 파일과 일치하는 고정 UID
     isDefault: true # 기본 데이터소스로 설정
     editable: true # UI에서 편집 가능
     jsonData:
