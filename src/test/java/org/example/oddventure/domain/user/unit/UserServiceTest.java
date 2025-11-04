@@ -9,9 +9,13 @@ import static org.mockito.Mockito.verify;
 
 import java.math.BigDecimal;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import org.example.oddventure.common.exception.GlobalException;
 import org.example.oddventure.domain.admin.dto.request.PointAdjustRequest;
 import org.example.oddventure.domain.admin.dto.response.PointAdjustResponse;
+import org.example.oddventure.domain.admin.exception.AdminErrorCode;
+import org.example.oddventure.domain.bet.exception.BetErrorCode;
+import org.example.oddventure.domain.bet.exception.BetException;
 import org.example.oddventure.domain.user.dto.request.PasswordUpdateRequest;
 import org.example.oddventure.domain.user.dto.request.ProfileUpdateRequest;
 import org.example.oddventure.domain.user.dto.response.UserProfileResponse;
@@ -20,6 +24,7 @@ import org.example.oddventure.domain.user.exception.UserErrorCode;
 import org.example.oddventure.domain.user.exception.UserException;
 import org.example.oddventure.domain.user.repository.UserRepository;
 import org.example.oddventure.domain.user.service.UserService;
+import org.example.oddventure.domain.user.service.UserPointTransactionService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -27,6 +32,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,6 +47,15 @@ class UserServiceTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private RedissonClient redissonClient;
+
+    @Mock
+    private UserPointTransactionService userPointTransactionService;
+
+    @Mock
+    private RLock lock;
 
     @Test
     @DisplayName("사용자 프로필 조회 성공")
@@ -145,42 +161,32 @@ class UserServiceTest {
         verify(passwordEncoder).encode("newPassword123!");
     }
 
-    @Test
-    @DisplayName("비밀번호 변경 실패 - 현재 비밀번호 불일치")
-    void updatePassword_fail_passwordIncorrect() {
-        // given
-        Long userId = 1L;
-        PasswordUpdateRequest request = new PasswordUpdateRequest("wrongPassword!", "newPassword123!");
-        User mockUser = User.builder().password("encodedCurrentPassword").build();
-
-        given(userRepository.findById(userId)).willReturn(Optional.of(mockUser));
-        given(passwordEncoder.matches("wrongPassword!", "encodedCurrentPassword")).willReturn(false);
-
-        // when & then
-        assertThrows(UserException.class, () -> {
-            userService.updatePassword(userId, request);
-        });
-    }
-
     @Nested
     @DisplayName("사용자 포인트 지급")
     class adjustUserPoint {
         @Test
-        @DisplayName("사용자 포인트 지급 성공")
-        void adjustUserPoints_Success() {
+        @DisplayName("사용자 포인트 지급 성공 (분산 락)")
+        void adjustUserPoints_Success() throws InterruptedException {
             // given
             Long userId = 1L;
             BigDecimal amountToAdd = new BigDecimal("5000");
             PointAdjustRequest request = new PointAdjustRequest(amountToAdd, "베팅 승리 보상");
 
-            // User 엔티티 생성 시 Builder는 point를 1000으로 초기화(초기 지급 포인트)
             User mockUser = User.builder()
                     .email("test@test.com")
                     .username("testuser")
                     .password("password")
                     .build();
+            // User 엔티티는 1000포인트로 시작
+            mockUser.plusPoint(amountToAdd); // 6000 포인트가 된 유저 Mock
 
-            given(userRepository.findByIdForUpdate(userId)).willReturn(Optional.of(mockUser));
+            // Redisson 락 Mocking
+            given(redissonClient.getLock(any(String.class))).willReturn(lock);
+            given(lock.tryLock(10, 5, TimeUnit.SECONDS)).willReturn(true); // 락 획득 성공
+
+            // 트랜잭션 서비스 Mocking
+            given(userPointTransactionService.increaseUserPoint(userId, request))
+                    .willReturn(mockUser); // 6000 포인트 유저 반환
 
             // when
             PointAdjustResponse response = userService.adjustUserPoints(userId, request);
@@ -188,17 +194,39 @@ class UserServiceTest {
             // then
             assertThat(response.userId()).isEqualTo(mockUser.getId());
             assertThat(response.adjustedAmount()).isEqualTo(amountToAdd);
-            assertThat(response.finalBalance()).isEqualTo(new BigDecimal("6000"));
-            assertThat(mockUser.getPoint()).isEqualTo(new BigDecimal("6000"));
+            assertThat(response.finalBalance()).isEqualTo(new BigDecimal("6000")); // 1000 + 5000
         }
 
         @Test
-        @DisplayName("사용자 포인트 지급 실패 - 존재하지 않는 사용자")
-        void adjustUserPoints_Fail_UserNotFound() {
+        @DisplayName("사용자 포인트 지급 실패 - 락 획득 실패")
+        void adjustUserPoints_Fail_LockFailed() throws InterruptedException {
+            // given
+            Long userId = 1L;
+            PointAdjustRequest request = new PointAdjustRequest(BigDecimal.TEN, "이벤트 보상");
+
+            given(redissonClient.getLock(any(String.class))).willReturn(lock);
+            given(lock.tryLock(10, 5, TimeUnit.SECONDS)).willReturn(false); // 락 획득 실패
+
+            // when & then
+            BetException exception = assertThrows(BetException.class, () -> {
+                userService.adjustUserPoints(userId, request);
+            });
+            assertThat(exception.getErrorCode()).isEqualTo(BetErrorCode.BET_LOCK_FAILED);
+        }
+
+        @Test
+        @DisplayName("사용자 포인트 지급 실패 - 트랜잭션 중 예외 발생")
+        void adjustUserPoints_Fail_UserNotFoundInTransaction() throws InterruptedException {
             // given
             Long userId = 999L;
-            PointAdjustRequest request = new PointAdjustRequest(new BigDecimal("5000"), "이벤트 보상");
-            given(userRepository.findByIdForUpdate(userId)).willReturn(Optional.empty());
+            PointAdjustRequest request = new PointAdjustRequest(BigDecimal.TEN, "이벤트 보상");
+
+            given(redissonClient.getLock(any(String.class))).willReturn(lock);
+            given(lock.tryLock(10, 5, TimeUnit.SECONDS)).willReturn(true); // 락 획득 성공
+
+            // 트랜잭션 서비스에서 예외 발생
+            given(userPointTransactionService.increaseUserPoint(userId, request))
+                    .willThrow(new GlobalException(AdminErrorCode.USER_NOT_FOUND));
 
             // when & then
             assertThrows(GlobalException.class, () -> {

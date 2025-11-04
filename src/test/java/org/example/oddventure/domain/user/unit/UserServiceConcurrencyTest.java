@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import org.example.oddventure.base.RedisTestContainerConfig;
 import org.example.oddventure.domain.admin.dto.request.PointAdjustRequest;
 import org.example.oddventure.domain.user.entity.User;
 import org.example.oddventure.domain.user.repository.UserRepository;
@@ -15,13 +16,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
-/**
- * [동시성 테스트] UserService의 포인트 지급 로직 동시성 테스트
- * 비관적 락(@Lock(PESSIMISTIC_WRITE))이 데이터 정합성을 보장하는지 검증
- */
 @SpringBootTest
-public class UserServiceConcurrencyTest {
+@ActiveProfiles("test")
+public class UserServiceConcurrencyTest extends RedisTestContainerConfig {
 
     @Autowired
     private UserService userService;
@@ -64,7 +63,7 @@ public class UserServiceConcurrencyTest {
      * Lost Update 없이 총 1000 포인트가 정확히 적립되는지 테스트
      */
     @Test
-    @DisplayName("동시에 100명이 10포인트씩 지급 요청 시 1000포인트가 정확히 적립된다 (비관적 락)")
+    @DisplayName("동시에 100명이 10포인트씩 지급 요청 시 1000포인트가 정확히 적립된다 (분산 락)")
     void adjustUserPoints_ConcurrencyTest_Success() throws InterruptedException {
         // given
         int threadCount = 100;
@@ -89,10 +88,8 @@ public class UserServiceConcurrencyTest {
         executorService.shutdown();
 
         // then
-        // DB에서 최종 사용자 정보를 다시 조회
         User updatedUser = userRepository.findById(testUser.getId()).orElseThrow();
 
-        // 비관적 락으로 인해 "Lost Update"가 발생하지 않아 정확히 1000 포인트가 되어야 함
         assertThat(updatedUser.getPoint()).isEqualByComparingTo(expectedResult);
     }
 }
