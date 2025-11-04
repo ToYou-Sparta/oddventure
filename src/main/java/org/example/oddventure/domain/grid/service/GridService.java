@@ -19,6 +19,7 @@ import org.example.oddventure.domain.grid.dto.response.SeriesStateResponse;
 import org.example.oddventure.domain.grid.dto.response.field.Edge;
 import org.example.oddventure.domain.grid.dto.response.field.Node;
 import org.example.oddventure.domain.grid.dto.response.field.PageInfo;
+import org.example.oddventure.domain.grid.dto.response.field.SeriesState;
 import org.example.oddventure.domain.grid.dto.response.field.SeriesState.Team;
 import org.example.oddventure.domain.grid.exception.GridErrorCode;
 import org.example.oddventure.domain.grid.exception.GridException;
@@ -38,8 +39,8 @@ public class GridService {
                 filter:{
                   titleId: "28" # CS2
                   startTimeScheduled:{
-                    gte: "2025-10-24T15:00:07+02:00"
-                    lte: "2025-10-25T15:00:07+02:00"
+                    gte: "2025-11-03T15:00:07+02:00"
+                    lte: "2025-11-04T15:00:07+02:00"
                   }
                 }
                 orderBy: StartTimeScheduled
@@ -81,6 +82,8 @@ public class GridService {
     private static final String GRID_LIVE_DATA_QUERY = """
             query GetLiveCS2SeriesState ($id: ID!){
                seriesState(id: $id) {
+                 valid
+                 finished
                  teams {
                    name
                    won
@@ -183,7 +186,11 @@ public class GridService {
             throw new GridException(GridErrorCode.RESPONSE_NOT_FOUND);
         }
 
-        List<Team> teams = response.data().seriesState().teams();
+        SeriesState seriesState = response.data().seriesState();
+
+        boolean finished = seriesState.finished();
+
+        List<Team> teams = seriesState.teams();
 
         String winner = teams.stream()
                 .filter(Team::won)
@@ -199,6 +206,7 @@ public class GridService {
 
         return MatchResultDto.builder()
                 .fetchId(fetchId)
+                .finished(finished)
                 .winner(winner)
                 .loser(loser)
                 .build();

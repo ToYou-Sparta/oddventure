@@ -114,4 +114,8 @@ public class Match extends BaseEntity {
         this.loser = loser;
         this.status = MatchStatus.FINISHED;
     }
+
+    public void setStatus(MatchStatus status) {
+        this.status = status;
+    }
 }

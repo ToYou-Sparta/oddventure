@@ -1,9 +1,11 @@
 package org.example.oddventure.domain.match.repository;
 
 import jakarta.persistence.LockModeType;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.example.oddventure.domain.match.entity.Match;
+import org.example.oddventure.domain.match.enums.MatchStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
@@ -29,4 +31,14 @@ public interface MatchRepository extends JpaRepository<Match, Long>, MatchReposi
     boolean existsByFetchId(Long fetchId);
 
     Optional<Match> findByFetchId(Long fetchId);
+
+    @Query("""
+            select m
+            from Match m
+            where m.status = :status
+            and m.startTime < CURRENT_TIMESTAMP
+            and m.startTime >= :twoDaysAgo
+            """)
+    List<Match> findByMatchStatus(@Param("status") MatchStatus matchStatus,
+                                  @Param("twoDaysAgo") LocalDateTime twoDaysAgo);
 }
