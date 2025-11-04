@@ -81,6 +81,8 @@ services:
       - "15672:15672" # GUI 웹 접속용 포트
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - oddventure-network
 
 # 볼륨 정의 (데이터 영속성)
 volumes:

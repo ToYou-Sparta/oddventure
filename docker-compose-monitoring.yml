@@ -55,7 +55,8 @@ volumes:
   grafana-storage:
     driver: local
 
-# 네트워크 정의 (컨테이너 간 통신)
+# 네트워크 정의
 networks:
   oddventure-network:
-    driver: bridge  # 브리지 네트워크 드라이버 사용
+    name: oddventure_oddventure-network
+    external: true  # docker-compose.yml에서 생성된 네트워크 사용
