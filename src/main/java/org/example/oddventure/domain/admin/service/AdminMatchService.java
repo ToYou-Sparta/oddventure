@@ -28,12 +28,12 @@ public class AdminMatchService {
         List<MatchScheduleDto> fetchResponses = gridService.fetchMatchSchedules();
         List<Long> fetchIds = new ArrayList<>();
 
-        for (MatchScheduleDto respons : fetchResponses) {
+        for (MatchScheduleDto response : fetchResponses) {
             try {
-                MatchCreateDto matchCreateDto = matchService.createMatch(respons);
+                MatchCreateDto matchCreateDto = matchService.createMatch(response);
                 fetchIds.add(matchCreateDto.fetchId());
             } catch (MatchException e) {
-                log.info("fetchId={}: {}", respons.fetchId(), e.getMessage());
+                log.info("fetchId={}: {}", response.fetchId(), e.getMessage());
             }
         }
 
