@@ -9,13 +9,7 @@ import org.example.oddventure.domain.admin.dto.response.MatchUpdateAdminResponse
 import org.example.oddventure.domain.admin.service.AdminMatchService;
 import org.example.oddventure.domain.match.service.MatchService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -47,23 +41,5 @@ public class AdminMatchController {
     public ResponseEntity<ApiResponse<Void>> createMatchResult(@PathVariable Long fetchId) {
         adminMatchService.createMatchResult(fetchId);
         return ApiResponse.success("매치 결과가 연동되었습니다.");
-    }
-
-    /**
-     * 성능 테스트용 대량 더미 데이터 새성
-     * 개발 환경에서만 사용
-     */
-    @PostMapping("/test/data")
-    public ResponseEntity<ApiResponse<String>> generateTestData(
-            @RequestParam int count
-    ) {
-        long startTime = System.currentTimeMillis();
-        adminMatchService.generateTestData(count);
-        long duration = System.currentTimeMillis() - startTime;
-
-        return ApiResponse.success(
-                String.format("%d개의 테스트 데이터 생성 완료 (소요시간: %dms)", count, duration),
-                "테스트 데이터가 생성 되었습니다."
-        );
     }
 }
