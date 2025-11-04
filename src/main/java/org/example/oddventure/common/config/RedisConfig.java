@@ -3,6 +3,8 @@ package org.example.oddventure.common.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.example.oddventure.domain.ai.subscriber.ChatMessageOutputSubscriber;
+import org.example.oddventure.domain.ai.subscriber.ChatMessageSubscriber;
 import org.example.oddventure.domain.event.RedisSubscriber;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -56,7 +58,9 @@ public class RedisConfig {
     public RedisMessageListenerContainer redisMessageListenerContainer(
             RedisConnectionFactory connectionFactory,
             MessageListenerAdapter oddsListenerAdapter,
-            MessageListenerAdapter infoListenerAdapter
+            MessageListenerAdapter infoListenerAdapter,
+            MessageListenerAdapter chatMessageListenerAdapter,
+            MessageListenerAdapter chatOutputListenerAdapter
     ) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
@@ -64,6 +68,8 @@ public class RedisConfig {
         // Pub/Sub 채널 구독 설정
         container.addMessageListener(oddsListenerAdapter, new PatternTopic("match:*:odds"));
         container.addMessageListener(infoListenerAdapter, new PatternTopic("match:*:info"));
+        container.addMessageListener(chatMessageListenerAdapter, new PatternTopic("chat:*:input"));
+        container.addMessageListener(chatOutputListenerAdapter, new PatternTopic("chat:*:output"));
 
         return container;
     }
@@ -75,6 +81,16 @@ public class RedisConfig {
 
     @Bean
     public MessageListenerAdapter infoListenerAdapter(RedisSubscriber subscriber) {
+        return new MessageListenerAdapter(subscriber);
+    }
+
+    @Bean
+    public MessageListenerAdapter chatMessageListenerAdapter(ChatMessageSubscriber subscriber) {
+        return new MessageListenerAdapter(subscriber);
+    }
+
+    @Bean
+    public MessageListenerAdapter chatOutputListenerAdapter(ChatMessageOutputSubscriber subscriber) {
         return new MessageListenerAdapter(subscriber);
     }
 }
