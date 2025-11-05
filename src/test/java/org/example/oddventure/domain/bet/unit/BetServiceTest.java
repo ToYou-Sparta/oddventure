@@ -22,6 +22,7 @@ import org.example.oddventure.domain.bet.enums.SelectedTeam;
 import org.example.oddventure.domain.bet.event.BetEventProducer;
 import org.example.oddventure.domain.bet.repository.BetRepository;
 import org.example.oddventure.domain.bet.service.BetService;
+import org.example.oddventure.domain.event.RedisPublisher;
 import org.example.oddventure.domain.match.entity.Match;
 import org.example.oddventure.domain.match.repository.MatchRepository;
 import org.example.oddventure.domain.user.entity.User;
@@ -52,6 +53,9 @@ public class BetServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private RedisPublisher redisPublisher;
 
     @Mock
     private BetEventProducer betEventProducer;
