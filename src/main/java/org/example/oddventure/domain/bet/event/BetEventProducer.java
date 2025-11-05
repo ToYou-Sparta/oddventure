@@ -13,6 +13,6 @@ public class BetEventProducer {
     private final RabbitTemplate rabbitTemplate;
 
     public void producePointEvent(PointEventDto dto) {
-        rabbitTemplate.convertAndSend(RabbitMQConfig.POINT_EXCHANGE, RabbitMQConfig.DELAY_ROUTING_KEY, dto);
+        rabbitTemplate.convertAndSend(RabbitMQConfig.POINT_EXCHANGE, RabbitMQConfig.POINT_ROUTING_KEY, dto);
     }
 }
