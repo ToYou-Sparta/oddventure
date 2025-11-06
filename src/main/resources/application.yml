@@ -1,22 +1,27 @@
 spring:
   application:
     name: oddventure
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+
   cache:
     type: redis
+
   ai:
     openai:
       chat:
         options:
           model: llama-3.3-70b-versatile
           temperature: 0.0
+
   cloud:
     aws:
       region:
@@ -25,9 +30,26 @@ spring:
         instance-profile: false
 
 management:
-  server:
-    port: 8080
   endpoints:
     web:
       exposure:
-        include: "health,info,metrics,env,prometheus"
+        include: health,info,prometheus,metrics
+      base-path: /actuator
+
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true  # histogram 버킷 생성 (percentile 계산용)
+    tags:
+      application: ${spring.application.name} # 여러 서비스 운영서 어떤 메트릭인지 식별
+
+  # Tomcat 메트릭 활성화
+  server:
+    tomcat:
+      mbeanregistry:
+        enabled: true

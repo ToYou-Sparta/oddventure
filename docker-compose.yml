@@ -71,30 +71,6 @@ services:
     networks:
       - oddventure-network
 
-  # Prometheus 모니터링 서비스
-  prometheus:
-    image: prom/prometheus:latest # Prometheus 최신 이미지 사용
-    container_name: prometheus # Prometheus 컨테이너 이름 설정
-    ports:
-      - "9090:9090" # Prometheus 기본 포트
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml # Prometheus 데이터 설정 yml
-
-  # Grafana 모니터링 서비스
-  grafana:
-    image: grafana/grafana:latest # Grafana 최신 이미지 사용
-    container_name: grafana # Grafana 컨테이너 이름 설정
-    ports:
-      - "3000:3000" # Grafana 기본 포트
-    environment:
-      - GF_SECURITY_ADMIN_USER=admin # Grafana 관리자 로그인 ID
-      - GF_SECURITY_ADMIN_PASSWORD=admin # Grafana 관리자 로그인 비밀번호
-      - GF_PLUGINS_PREINSTALL=grafana-clock-panel # Grafana 실행 시 clock-panel 플러그인 자동 설치
-    depends_on:
-      - prometheus # Prometheus 실행 검증 후 동작
-    volumes:
-      - grafana-storage:/var/lib/grafana # Grafana 데이터 디렉토리
-
   # RabbitMQ 지연 처리 서비스
   rabbitmq:
     image: rabbitmq:4-management
@@ -105,14 +81,15 @@ services:
       - "15672:15672" # GUI 웹 접속용 포트
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - oddventure-network
 
 # 볼륨 정의 (데이터 영속성)
 volumes:
   mysql_data:
     driver: local  # 로컬 볼륨 드라이버 사용
   redis_data:
-    driver: local
-  grafana-storage: { } # Grafana 데이터 저장소 (대시보드/설정 영속화)
+    driver: local # Grafana 데이터 저장소 (대시보드/설정 영속화)
   rabbitmq_data:
     driver: local
 
