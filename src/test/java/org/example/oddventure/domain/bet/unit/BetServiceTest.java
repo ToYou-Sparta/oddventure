@@ -4,19 +4,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import org.example.oddventure.domain.bet.dto.PointEventDto;
 import org.example.oddventure.domain.bet.dto.request.BetCreateRequest;
 import org.example.oddventure.domain.bet.dto.response.BetCreateResponse;
 import org.example.oddventure.domain.bet.dto.response.BetDeleteResponse;
 import org.example.oddventure.domain.bet.dto.response.BetResponse;
 import org.example.oddventure.domain.bet.entity.Bet;
 import org.example.oddventure.domain.bet.enums.SelectedTeam;
+import org.example.oddventure.domain.bet.event.BetEventProducer;
 import org.example.oddventure.domain.bet.repository.BetRepository;
 import org.example.oddventure.domain.bet.service.BetService;
 import org.example.oddventure.domain.bet.service.BetTransactionService;
@@ -50,6 +52,9 @@ public class BetServiceTest {
     private RedisPublisher redisPublisher;
 
     @Mock
+    private BetEventProducer betEventProducer;
+
+    @Mock
     private RedissonClient redissonClient;
 
     @Mock
@@ -65,15 +70,15 @@ public class BetServiceTest {
     private RLock matchLock;
 
     @Test
-    @DisplayName("베팅을 생성 성공 (분산 락)")
+    @DisplayName("베팅을 생성 성공하면 유저 포인트가 차감되고 베팅 금액이 저장된다.")
     void createBet_success() throws InterruptedException {
         //given
         Long userId = 1L;
         Long matchId = 1L;
         Long betId = 1L;
 
-        User user = User.builder().build(); // 트랜잭션 서비스가 반환할 객체
-        Match match = Match.builder().teamA("T1").build(); // 트랜잭션 서비스가 반환할 객체
+        User user = User.builder().build();
+        Match match = Match.builder().teamA("T1").build();
         ReflectionTestUtils.setField(match, "id", matchId);
 
         BetCreateRequest request = new BetCreateRequest(matchId, SelectedTeam.Team_A, 1000L);
@@ -110,14 +115,14 @@ public class BetServiceTest {
     }
 
     @Test
-    @DisplayName("베팅 삭제에 성공 (분산 락)")
+    @DisplayName("베팅 삭제에 성공하면 포인트가 환불되고 베팅 금액이 감소된다.")
     void deleteBet_success() throws InterruptedException {
         //given
         Long userId = 1L;
         Long betId = 1L;
         Long matchId = 1L;
 
-        User user = User.builder().username("test").build(); // 트랜잭션 서비스가 반환할 객체
+        User user = User.builder().username("test").build();
         ReflectionTestUtils.setField(user, "id", userId);
         user.plusPoint(new BigDecimal("1000")); // 1000(기본)+1000(환불) = 2000
 
@@ -206,5 +211,40 @@ public class BetServiceTest {
                 () -> assertThat(response.matchBetResponse().teamB()).isEqualTo("GEN.G")
         );
         verify(betRepository).findByUserId(userId, pageable);
+    }
+
+    @Test
+    @DisplayName("베팅 정산에 성공한다.")
+    void settleBet_success() {
+        //given
+        Long userId = 1L;
+        User user = User.builder().build();
+        ReflectionTestUtils.setField(user, "id", userId);
+        Match match = Match.builder().build();
+        Long betId = 1L;
+        BigDecimal betAmount = BigDecimal.valueOf(1000);
+        BigDecimal oddsAtBetting = BigDecimal.valueOf(2);
+
+        Bet bet = Bet.builder()
+                .user(user)
+                .match(match)
+                .selectedTeam(SelectedTeam.Team_A)
+                .betAmount(betAmount)
+                .oddsAtBetting(oddsAtBetting)
+                .build();
+        ReflectionTestUtils.setField(bet, "id", betId);
+
+        SelectedTeam winner = SelectedTeam.Team_A;
+        BigDecimal point = betAmount.multiply(oddsAtBetting);
+        PointEventDto dto = PointEventDto.from(bet.getUser().getId(), point);
+
+        doNothing().when(betEventProducer).producePointEvent(dto);
+
+        //when
+        betService.settleBet(bet, winner);
+
+        //then
+        assertThat(bet.isWin()).isTrue();
+        verify(betEventProducer).producePointEvent(dto);
     }
 }

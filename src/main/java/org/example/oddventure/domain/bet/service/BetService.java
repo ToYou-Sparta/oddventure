@@ -1,14 +1,19 @@
 package org.example.oddventure.domain.bet.service;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import java.util.concurrent.TimeUnit;
 import org.example.oddventure.common.exception.CommonErrorCode;
+import org.example.oddventure.domain.bet.dto.PointEventDto;
 import org.example.oddventure.domain.bet.dto.request.BetCreateRequest;
 import org.example.oddventure.domain.bet.dto.response.BetCreateResponse;
 import org.example.oddventure.domain.bet.dto.response.BetDeleteResponse;
 import org.example.oddventure.domain.bet.dto.response.BetResponse;
 import org.example.oddventure.domain.bet.entity.Bet;
+import org.example.oddventure.domain.bet.enums.SelectedTeam;
+import org.example.oddventure.domain.bet.event.BetEventProducer;
 import org.example.oddventure.domain.bet.exception.BetErrorCode;
 import org.example.oddventure.domain.bet.exception.BetException;
 import org.example.oddventure.domain.bet.repository.BetRepository;
@@ -30,6 +35,7 @@ public class BetService {
 
     private final BetRepository betRepository;
     private final RedisPublisher redisPublisher;
+    private final BetEventProducer betEventProducer;
     private final RedissonClient redissonClient;
     private final BetTransactionService betTransactionService;
     private static final String USER_POINT_LOCK_PREFIX = "LOCK:USER_POINT:";
@@ -40,7 +46,6 @@ public class BetService {
         // 1. 락 2개 정의 (User, Match)
         String userLockKey = USER_POINT_LOCK_PREFIX + userId;
         String matchLockKey = MATCH_LOCK_PREFIX + request.matchId();
-
         RLock userLock = redissonClient.getLock(userLockKey);
         RLock matchLock = redissonClient.getLock(matchLockKey);
 
@@ -48,7 +53,7 @@ public class BetService {
         RLock multiLock = redissonClient.getMultiLock(userLock, matchLock);
 
         try {
-            // 3. 락 획득 시도 (데드락 방지를 위해 순서대로 락을 잡음)
+            // 3. 락 획득 시도 (10초 대기, 5초 점유)
             boolean isLocked = multiLock.tryLock(10, 5, TimeUnit.SECONDS);
 
             if (!isLocked) {
@@ -71,7 +76,9 @@ public class BetService {
             throw new BetException(CommonErrorCode.INTERNAL_SERVER_ERROR);
         } finally {
             // 6. 락 해제 (userLock, matchLock 모두 해제됨)
-            multiLock.unlock();
+            if (multiLock.isLocked() && multiLock.isHeldByCurrentThread()) {
+                multiLock.unlock();
+            }
         }
     }
 
@@ -83,15 +90,13 @@ public class BetService {
 
     public BetDeleteResponse deleteBet(Long userId, Long betId) {
 
-        // 베팅 취소는 락 대상이 많으므로 락 획득 전 Bet 정보가 필요
-        // 단, 이 조회는 락을 잡지 않으므로 데이터가 정확하지 않을 수 있음
+        // 락 획득 전 matchId를 알기 위해 Bet 정보 pre-fetch
         Bet preFetchedBet = betRepository.findById(betId)
                 .orElseThrow(() -> new BetException(BetErrorCode.BET_NOT_FOUND));
 
         // 1. 락 2개 정의 (User, Match)
         String userLockKey = USER_POINT_LOCK_PREFIX + userId;
         String matchLockKey = MATCH_LOCK_PREFIX + preFetchedBet.getMatch().getId();
-
         RLock userLock = redissonClient.getLock(userLockKey);
         RLock matchLock = redissonClient.getLock(matchLockKey);
 
@@ -106,7 +111,6 @@ public class BetService {
             }
 
             // 3. 락 획득 후 트랜잭션 호출
-            // (트랜잭션 내부에서 데이터를 다시 조회하므로 정합성 보장)
             DeleteBetData data = betTransactionService.deleteBetInternal(userId, betId);
 
             return BetDeleteResponse.of(data.bet(), data.user());
@@ -117,7 +121,23 @@ public class BetService {
             throw new BetException(CommonErrorCode.INTERNAL_SERVER_ERROR);
         } finally {
             // 4. 락 해제
-            multiLock.unlock();
+            if (multiLock.isLocked() && multiLock.isHeldByCurrentThread()) {
+                multiLock.unlock();
+            }
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public List<Bet> findByMatchId(Long matchId) {
+        return betRepository.findByMatchId(matchId);
+    }
+
+    @Transactional
+    public void settleBet(Bet bet, SelectedTeam winner) {
+        if (bet.getSelectedTeam().equals(winner) && !bet.isDeleted()) {
+            bet.setWin(true);
+            BigDecimal point = bet.getBetAmount().multiply(bet.getOddsAtBetting());
+            betEventProducer.producePointEvent(PointEventDto.from(bet.getUser().getId(), point));
         }
     }
 }
