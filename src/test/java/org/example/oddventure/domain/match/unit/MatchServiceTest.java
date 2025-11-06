@@ -251,5 +251,28 @@ class MatchServiceTest {
             // then
             assertThat(exception.getMessage()).isEqualTo(MatchErrorCode.MATCH_NOT_FOUND.getMessage());
         }
+
+        @Test
+        @DisplayName("매치 상태값 변경 성공")
+        void updateStatus_success() {
+            //given
+            Long matchId = 1L;
+            MatchStatus status = MatchStatus.ONGOING;
+
+            Match match = Match.builder()
+                    .matchName("LCK")
+                    .teamA("T1")
+                    .teamB("GEN.G")
+                    .startTime(LocalDateTime.now().plusDays(1))
+                    .build();
+
+            when(matchRepository.findById(matchId)).thenReturn(Optional.of(match));
+
+            //when
+            matchService.updateStatus(matchId, status);
+
+            //then
+            assertThat(match.getStatus()).isEqualTo(status);
+        }
     }
 }

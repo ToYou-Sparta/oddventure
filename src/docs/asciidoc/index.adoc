@@ -195,10 +195,10 @@ include::{snippets}/winning-rate-ai-controller-test/provide-winning-rate_success
 현재 로그인된 사용자의 프로필 정보를 조회합니다.
 
 ==== 응답 예시
-include::{snippets}/user-controller-test/get-my-profile_success/http-response.adoc[]
+include::{snippets}/user-controller-test/get-my-profile_-success/http-response.adoc[]
 
 ==== 응답 필드 설명
-include::{snippets}/user-controller-test/get-my-profile_success/response-fields.adoc[]
+include::{snippets}/user-controller-test/get-my-profile_-success/response-fields.adoc[]
 
 ---
 
@@ -207,16 +207,16 @@ include::{snippets}/user-controller-test/get-my-profile_success/response-fields.
 현재 로그인된 사용자의 프로필(사용자 이름, 이메일)을 수정합니다.
 
 ==== 요청 예시
-include::{snippets}/user-controller-test/update-my-profile_success/http-request.adoc[]
+include::{snippets}/user-controller-test/update-my-profile_-success/http-request.adoc[]
 
 ==== 응답 예시
-include::{snippets}/user-controller-test/update-my-profile_success/http-response.adoc[]
+include::{snippets}/user-controller-test/update-my-profile_-success/http-response.adoc[]
 
 ==== 요청 필드 설명
-include::{snippets}/user-controller-test/update-my-profile_success/request-fields.adoc[]
+include::{snippets}/user-controller-test/update-my-profile_-success/request-fields.adoc[]
 
 ==== 응답 필드 설명
-include::{snippets}/user-controller-test/update-my-profile_success/response-fields.adoc[]
+include::{snippets}/user-controller-test/update-my-profile_-success/response-fields.adoc[]
 
 ---
 
@@ -225,16 +225,16 @@ include::{snippets}/user-controller-test/update-my-profile_success/response-fiel
 현재 로그인된 사용자의 비밀번호를 변경합니다.
 
 ==== 요청 예시
-include::{snippets}/user-controller-test/update-password_success/http-request.adoc[]
+include::{snippets}/user-controller-test/update-password_-success/http-request.adoc[]
 
 ==== 응답 예시
-include::{snippets}/user-controller-test/update-password_success/http-response.adoc[]
+include::{snippets}/user-controller-test/update-password_-success/http-response.adoc[]
 
 ==== 요청 필드 설명
-include::{snippets}/user-controller-test/update-password_success/request-fields.adoc[]
+include::{snippets}/user-controller-test/update-password_-success/request-fields.adoc[]
 
 ==== 응답 필드 설명
-include::{snippets}/user-controller-test/update-password_success/response-fields.adoc[]
+include::{snippets}/user-controller-test/update-password_-success/response-fields.adoc[]
 
 ---
 
@@ -299,16 +299,13 @@ include::{snippets}/match-controller-test/search-matches_success/response-fields
 새로운 경기를 생성합니다.
 
 ==== 요청 예시
-include::{snippets}/admin-controller-test/create-match_success/http-request.adoc[]
+include::{snippets}/admin-match-controller-test/create-match_-success/http-request.adoc[]
 
 ==== 응답 예시
-include::{snippets}/admin-controller-test/create-match_success/http-response.adoc[]
-
-==== 요청 필드 설명
-include::{snippets}/admin-controller-test/create-match_success/request-fields.adoc[]
+include::{snippets}/admin-match-controller-test/create-match_-success/http-response.adoc[]
 
 ==== 응답 필드 설명
-include::{snippets}/admin-controller-test/create-match_success/response-fields.adoc[]
+include::{snippets}/admin-match-controller-test/create-match_-success/response-fields.adoc[]
 
 ---
 
@@ -317,19 +314,19 @@ include::{snippets}/admin-controller-test/create-match_success/response-fields.a
 기존 경기의 정보를 수정합니다.
 
 ==== 요청 예시
-include::{snippets}/admin-controller-test/update-match_success/http-request.adoc[]
+include::{snippets}/admin-match-controller-test/update-match_-success/http-request.adoc[]
 
 ==== 응답 예시
-include::{snippets}/admin-controller-test/update-match_success/http-response.adoc[]
+include::{snippets}/admin-match-controller-test/update-match_-success/http-response.adoc[]
 
 ==== 경로 파라미터 설명
-include::{snippets}/admin-controller-test/update-match_success/path-parameters.adoc[]
+include::{snippets}/admin-match-controller-test/update-match_-success/path-parameters.adoc[]
 
 ==== 요청 필드 설명
-include::{snippets}/admin-controller-test/update-match_success/request-fields.adoc[]
+include::{snippets}/admin-match-controller-test/update-match_-success/request-fields.adoc[]
 
 ==== 응답 필드 설명
-include::{snippets}/admin-controller-test/update-match_success/response-fields.adoc[]
+include::{snippets}/admin-match-controller-test/update-match_-success/response-fields.adoc[]
 
 ---
 
@@ -338,16 +335,16 @@ include::{snippets}/admin-controller-test/update-match_success/response-fields.a
 조건에 맞는 사용자 목록을 페이징하여 조회합니다.
 
 ==== 요청 예시
-include::{snippets}/admin-controller-test/get-all-users_success/http-request.adoc[]
+include::{snippets}/admin-user-controller-test/get-all-users_-success/http-request.adoc[]
 
 ==== 응답 예시
-include::{snippets}/admin-controller-test/get-all-users_success/http-response.adoc[]
+include::{snippets}/admin-user-controller-test/get-all-users_-success/http-response.adoc[]
 
 ==== 쿼리 파라미터 설명
-include::{snippets}/admin-controller-test/get-all-users_success/query-parameters.adoc[]
+include::{snippets}/admin-user-controller-test/get-all-users_-success/query-parameters.adoc[]
 
 ==== 응답 필드 설명
-include::{snippets}/admin-controller-test/get-all-users_success/response-fields.adoc[]
+include::{snippets}/admin-user-controller-test/get-all-users_-success/response-fields.adoc[]
 
 ---
 
@@ -356,16 +353,16 @@ include::{snippets}/admin-controller-test/get-all-users_success/response-fields.
 특정 사용자의 상세 정보를 조회합니다.
 
 ==== 요청 예시
-include::{snippets}/admin-controller-test/get-user-details_success/http-request.adoc[]
+include::{snippets}/admin-user-controller-test/get-user-details_-success/http-request.adoc[]
 
 ==== 응답 예시
-include::{snippets}/admin-controller-test/get-user-details_success/http-response.adoc[]
+include::{snippets}/admin-user-controller-test/get-user-details_-success/http-response.adoc[]
 
 ==== 경로 파라미터 설명
-include::{snippets}/admin-controller-test/get-user-details_success/path-parameters.adoc[]
+include::{snippets}/admin-user-controller-test/get-user-details_-success/path-parameters.adoc[]
 
 ==== 응답 필드 설명
-include::{snippets}/admin-controller-test/get-user-details_success/response-fields.adoc[]
+include::{snippets}/admin-user-controller-test/get-user-details_-success/response-fields.adoc[]
 
 ---
 
@@ -374,16 +371,16 @@ include::{snippets}/admin-controller-test/get-user-details_success/response-fiel
 특정 사용자의 포인트를 수동으로 조정합니다.
 
 ==== 요청 예시
-include::{snippets}/admin-controller-test/adjust-user-points_success/http-request.adoc[]
+include::{snippets}/admin-user-controller-test/adjust-user-points_-success/http-request.adoc[]
 
 ==== 응답 예시
-include::{snippets}/admin-controller-test/adjust-user-points_success/http-response.adoc[]
+include::{snippets}/admin-user-controller-test/adjust-user-points_-success/http-response.adoc[]
 
 ==== 경로 파라미터 설명
-include::{snippets}/admin-controller-test/adjust-user-points_success/path-parameters.adoc[]
+include::{snippets}/admin-user-controller-test/adjust-user-points_-success/path-parameters.adoc[]
 
 ==== 요청 필드 설명
-include::{snippets}/admin-controller-test/adjust-user-points_success/request-fields.adoc[]
+include::{snippets}/admin-user-controller-test/adjust-user-points_-success/request-fields.adoc[]
 
 ==== 응답 필드 설명
-include::{snippets}/admin-controller-test/adjust-user-points_success/response-fields.adoc[]
+include::{snippets}/admin-user-controller-test/adjust-user-points_-success/response-fields.adoc[]
