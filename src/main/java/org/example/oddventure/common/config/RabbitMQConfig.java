@@ -5,6 +5,7 @@ import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.QueueBuilder;
+import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -20,6 +21,27 @@ public class RabbitMQConfig {
     public static final String REAL_QUEUE = "match.real.queue";
     public static final String DELAY_ROUTING_KEY = "match.delay";
     public static final String REAL_ROUTING_KEY = "match.real";
+    public static final String POINT_EXCHANGE = "bet.point.exchange";
+    public static final String POINT_QUEUE = "bet.point.queue";
+    public static final String POINT_ROUTING_KEY = "bet.point.adjust";
+
+    @Bean
+    public TopicExchange pointExchange() {
+        return new TopicExchange(POINT_EXCHANGE);
+    }
+
+    @Bean
+    public Queue pointQueue() {
+        return new Queue(POINT_QUEUE, true);
+    }
+
+    @Bean
+    public Binding pointBinding() {
+        return BindingBuilder
+                .bind(pointQueue())
+                .to(pointExchange())
+                .with(POINT_ROUTING_KEY);
+    }
 
     @Bean
     public DirectExchange delayExchange() {

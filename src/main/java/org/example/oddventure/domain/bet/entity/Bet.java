@@ -59,4 +59,8 @@ public class Bet extends BaseEntity {
         this.oddsAtBetting = oddsAtBetting;
         this.isWin = false;
     }
+
+    public void setWin(boolean isWin) {
+        this.isWin = isWin;
+    }
 }

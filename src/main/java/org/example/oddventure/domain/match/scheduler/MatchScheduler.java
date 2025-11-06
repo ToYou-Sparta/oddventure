@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.oddventure.domain.bet.entity.Bet;
+import org.example.oddventure.domain.bet.enums.SelectedTeam;
+import org.example.oddventure.domain.bet.service.BetService;
 import org.example.oddventure.domain.grid.dto.MatchResultDto;
 import org.example.oddventure.domain.grid.service.GridService;
 import org.example.oddventure.domain.match.entity.Match;
@@ -21,6 +24,7 @@ public class MatchScheduler {
     private final MatchRepository matchRepository;
     private final MatchService matchService;
     private final GridService gridService;
+    private final BetService betService;
 
     @Scheduled(cron = "0 0 13 * * *", zone = "Asia/Seoul")
     public void autoFinishMatches() {
@@ -44,6 +48,19 @@ public class MatchScheduler {
                     result.winner(),
                     result.loser()
             );
+            /*
+              매치에 연관된 베팅 다 조회
+              이겼는지 업데이트
+              이긴 것들만 포인트 지급 이벤트 발행
+             */
+            SelectedTeam winnerTeam = result.winner().equals(match.getTeamA())
+                    ? SelectedTeam.Team_A
+                    : SelectedTeam.Team_B;
+
+            List<Bet> bets = betService.findByMatchId(match.getId());
+            for (Bet bet : bets) {
+                betService.settleBet(bet, winnerTeam);
+            }
         } else {
             log.info("끝나지 않은 경기입니다. matchId={}, fetchId={}", match.getId(), match.getFetchId());
         }
