@@ -474,20 +474,27 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_1️⃣_ai_승률_조회_post_apiv1aiwinningrate">4.1. 1️⃣ AI 승률 조회 (POST /api/v1/ai/winningrate)</a></li>
 </ul>
 </li>
-<li><a href="#_사용자_api_user_api">4. 사용자 API (User API)</a>
+<li><a href="#_사용자_api_user_api">5. 사용자 API (User API)</a>
 <ul class="sectlevel2">
-<li><a href="#_1️⃣_내_프로필_조회_get_apiv1usersme">4.1. 1️⃣ 내 프로필 조회 (GET /api/v1/users/me)</a></li>
-<li><a href="#_2️⃣_내_프로필_수정_patch_apiv1usersme">4.2. 2️⃣ 내 프로필 수정 (PATCH /api/v1/users/me)</a></li>
-<li><a href="#_3️⃣_비밀번호_변경_patch_apiv1userspassword">4.3. 3️⃣ 비밀번호 변경 (PATCH /api/v1/users/password)</a></li>
+<li><a href="#_1️⃣_내_프로필_조회_get_apiv1usersme">5.1. 1️⃣ 내 프로필 조회 (GET /api/v1/users/me)</a></li>
+<li><a href="#_2️⃣_내_프로필_수정_patch_apiv1usersme">5.2. 2️⃣ 내 프로필 수정 (PATCH /api/v1/users/me)</a></li>
+<li><a href="#_3️⃣_비밀번호_변경_patch_apiv1userspassword">5.3. 3️⃣ 비밀번호 변경 (PATCH /api/v1/users/password)</a></li>
 </ul>
 </li>
-<li><a href="#_관리자_api_admin_api">5. 관리자 API (Admin API)</a>
+<li><a href="#_경기_api_match_api">6. 경기 API (Match API)</a>
 <ul class="sectlevel2">
-<li><a href="#_1️⃣_매치_생성_post_apiv1adminmatches">5.1. 1️⃣ 매치 생성 (POST /api/v1/admin/matches)</a></li>
-<li><a href="#_2️⃣_매치_정보_수정_patch_apiv1adminmatchesmatchid">5.2. 2️⃣ 매치 정보 수정 (PATCH /api/v1/admin/matches/{matchId})</a></li>
-<li><a href="#_3️⃣_전체_사용자_목록_조회_get_apiv1adminusers">5.3. 3️⃣ 전체 사용자 목록 조회 (GET /api/v1/admin/users)</a></li>
-<li><a href="#_4️⃣_사용자_상세_조회_get_apiv1adminusersuserid">5.4. 4️⃣ 사용자 상세 조회 (GET /api/v1/admin/users/{userId})</a></li>
-<li><a href="#_5️⃣_사용자_포인트_지급_post_apiv1adminusersuseridpoints">5.5. 5️⃣ 사용자 포인트 지급 (POST /api/v1/admin/users/{userId}/points)</a></li>
+<li><a href="#_1️⃣_경기_목록_조회_get_apiv1matches">6.1. 1️⃣ 경기 목록 조회 (GET /api/v1/matches)</a></li>
+<li><a href="#_2️⃣_경기_상세_조회_get_apiv1matchesmatchid">6.2. 2️⃣ 경기 상세 조회 (GET /api/v1/matches/{matchId})</a></li>
+<li><a href="#_3️⃣_경기_검색_post_apiv1matchessearch">6.3. 3️⃣ 경기 검색 (POST /api/v1/matches/search)</a></li>
+</ul>
+</li>
+<li><a href="#_관리자_api_admin_api">7. 관리자 API (Admin API)</a>
+<ul class="sectlevel2">
+<li><a href="#_1️⃣_매치_생성_post_apiv1adminmatches">7.1. 1️⃣ 매치 생성 (POST /api/v1/admin/matches)</a></li>
+<li><a href="#_2️⃣_매치_정보_수정_patch_apiv1adminmatchesmatchid">7.2. 2️⃣ 매치 정보 수정 (PATCH /api/v1/admin/matches/{matchId})</a></li>
+<li><a href="#_3️⃣_전체_사용자_목록_조회_get_apiv1adminusers">7.3. 3️⃣ 전체 사용자 목록 조회 (GET /api/v1/admin/users)</a></li>
+<li><a href="#_4️⃣_사용자_상세_조회_get_apiv1adminusersuserid">7.4. 4️⃣ 사용자 상세 조회 (GET /api/v1/admin/users/{userId})</a></li>
+<li><a href="#_5️⃣_사용자_포인트_지급_post_apiv1adminusersuseridpoints">7.5. 5️⃣ 사용자 포인트 지급 (POST /api/v1/admin/users/{userId}/points)</a></li>
 </ul>
 </li>
 </ul>
@@ -509,7 +516,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/v1/auth/signup HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Content-Length: 91
+Content-Length: 87
 Host: localhost:8080
 
 {
@@ -532,7 +539,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 372
+Content-Length: 356
 
 {
   "httpStatus" : "CREATED",
@@ -545,9 +552,9 @@ Content-Length: 372
     "email" : "hello@naver.com",
     "role" : "ROLE_USER",
     "point" : 1000,
-    "createdAt" : "2025-10-24T11:54:22.2703367"
+    "createdAt" : "2025-11-06T11:22:05.213254"
   },
-  "timestamp" : "2025-10-24T11:54:22.2977739"
+  "timestamp" : "2025-11-06T11:22:05.232036"
 }</code></pre>
 </div>
 </div>
@@ -678,7 +685,7 @@ Content-Length: 372
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/v1/auth/signup HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Content-Length: 91
+Content-Length: 87
 Host: localhost:8080
 
 {
@@ -701,7 +708,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 238
+Content-Length: 229
 
 {
   "httpStatus" : "CONFLICT",
@@ -709,7 +716,7 @@ Content-Length: 238
   "success" : false,
   "message" : "이미 존재하는 이메일 입니다.",
   "data" : null,
-  "timestamp" : "2025-10-24T11:54:22.3909765",
+  "timestamp" : "2025-11-06T11:22:05.328635",
   "requestUrl" : "/api/v1/auth/signup"
 }</code></pre>
 </div>
@@ -817,7 +824,7 @@ Content-Length: 238
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/v1/auth/login HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Content-Length: 66
+Content-Length: 63
 Host: localhost:8080
 
 {
@@ -832,7 +839,7 @@ Host: localhost:8080
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
-Set-Cookie: refreshToken=refreshToken; Path=/; Max-Age=604800; Expires=Fri, 31 Oct 2025 02:54:22 GMT; Secure; HttpOnly; SameSite=Strict
+Set-Cookie: refreshToken=refreshToken; Path=/; Max-Age=604800; Expires=Thu, 13 Nov 2025 02:22:05 GMT; Secure; HttpOnly; SameSite=Strict
 Content-Type: application/json;charset=UTF-8
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -840,7 +847,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 251
+Content-Length: 240
 
 {
   "httpStatus" : "OK",
@@ -851,7 +858,7 @@ Content-Length: 251
     "accessToken" : "accessToken",
     "refreshToken" : "refreshToken"
   },
-  "timestamp" : "2025-10-24T11:54:22.3411955"
+  "timestamp" : "2025-11-06T11:22:05.283283"
 }</code></pre>
 </div>
 </div>
@@ -975,7 +982,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 179
+Content-Length: 171
 
 {
   "httpStatus" : "OK",
@@ -983,7 +990,7 @@ Content-Length: 179
   "success" : true,
   "message" : "로그아웃 되었습니다.",
   "data" : null,
-  "timestamp" : "2025-10-24T11:54:22.1991836"
+  "timestamp" : "2025-11-06T11:22:05.169395"
 }</code></pre>
 </div>
 </div>
@@ -1051,7 +1058,7 @@ Content-Length: 179
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">DELETE /api/v1/auth/withdraw HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Content-Length: 34
+Content-Length: 32
 Host: localhost:8080
 
 {
@@ -1072,7 +1079,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 179
+Content-Length: 171
 
 {
   "httpStatus" : "OK",
@@ -1080,7 +1087,7 @@ Content-Length: 179
   "success" : true,
   "message" : "회원탈퇴 되었습니다.",
   "data" : null,
-  "timestamp" : "2025-10-24T11:54:22.2391713"
+  "timestamp" : "2025-11-06T11:22:05.194482"
 }</code></pre>
 </div>
 </div>
@@ -1189,7 +1196,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 225
+Content-Length: 215
 
 {
   "httpStatus" : "OK",
@@ -1199,7 +1206,7 @@ Content-Length: 225
   "data" : {
     "accessToken" : "newAccessToken"
   },
-  "timestamp" : "2025-10-24T11:54:22.4300624"
+  "timestamp" : "2025-11-06T11:22:05.363074"
 }</code></pre>
 </div>
 </div>
@@ -1273,7 +1280,7 @@ Content-Length: 225
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/v1/bets HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Content-Length: 74
+Content-Length: 70
 Host: localhost:8080
 
 {
@@ -1296,7 +1303,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 369
+Content-Length: 353
 
 {
   "httpStatus" : "CREATED",
@@ -1312,7 +1319,7 @@ Content-Length: 369
     "oddsAtBetting" : 1.5,
     "userPointAfter" : 0
   },
-  "timestamp" : "2025-10-24T11:54:23.8947392"
+  "timestamp" : "2025-11-06T11:22:06.385542"
 }</code></pre>
 </div>
 </div>
@@ -1461,7 +1468,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 256
+Content-Length: 244
 
 {
   "httpStatus" : "OK",
@@ -1473,7 +1480,7 @@ Content-Length: 256
     "refundAmount" : 1000,
     "userPointAfter" : 0
   },
-  "timestamp" : "2025-10-24T11:54:23.8486072"
+  "timestamp" : "2025-11-06T11:22:06.349288"
 }</code></pre>
 </div>
 </div>
@@ -1568,7 +1575,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 622
+Content-Length: 634
 
 {
   "httpStatus" : "OK",
@@ -1582,20 +1589,20 @@ Content-Length: 622
         "matchId" : 1,
         "teamA" : "T1",
         "teamB" : "GEN.G",
-        "startTime" : "2025-10-25T11:54:23.7925075"
+        "startTime" : "2025-11-07T11:22:06.311694"
       },
       "selectedTeam" : "Team_A",
       "betAmount" : 1000,
       "oddsAtBetting" : 1.5,
       "isWin" : false,
-      "createdAt" : "2025-10-24T11:54:23.7935077"
+      "createdAt" : "2025-11-06T11:22:06.312264"
     } ],
     "totalElements" : 1,
     "totalPages" : 1,
     "size" : 10,
     "number" : 0
   },
-  "timestamp" : "2025-10-24T11:54:23.7970193"
+  "timestamp" : "2025-11-06T11:22:06.316248"
 }</code></pre>
 </div>
 </div>
@@ -1749,7 +1756,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 278
+Content-Length: 266
 
 {
   "httpStatus" : "OK",
@@ -1757,9 +1764,9 @@ Content-Length: 278
   "success" : true,
   "message" : "인기 검색어 top5를 조회했습니다.",
   "data" : {
-    "hotKeywords" : [ "india", "china", "korea", "america", "england", "japan" ]
+    "hotKeywords" : [ "korea", "america", "england", "japan", "india", "china" ]
   },
-  "timestamp" : "2025-10-24T11:54:24.6747602"
+  "timestamp" : "2025-11-06T11:22:07.4458"
 }</code></pre>
 </div>
 </div>
@@ -1833,7 +1840,7 @@ Content-Length: 278
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/v1/ai/winningrate HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Content-Length: 61
+Content-Length: 59
 Host: localhost:8080
 
 {
@@ -1854,7 +1861,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 596
+Content-Length: 580
 
 {
   "httpStatus" : "OK",
@@ -1870,7 +1877,7 @@ Content-Length: 596
     "winningRate" : [ 0, 0 ],
     "content" : "팀의 이름은 t1과 GEN.G입니다. 경기 요약이 제공되지 않았으므로\n승리 횟수와 패배 횟수를 계산할 수 없습니다. 따라서 승률도 계산할 수 없습니다.\n"
   },
-  "timestamp" : "2025-10-24T11:54:21.3191493"
+  "timestamp" : "2025-11-06T11:22:04.480326"
 }</code></pre>
 </div>
 </div>
@@ -1964,258 +1971,1826 @@ Content-Length: 596
 </div>
 </div>
 <div class="sect1">
-<h2 id="_사용자_api_user_api">4. 사용자 API (User API)</h2>
+<h2 id="_사용자_api_user_api">5. 사용자 API (User API)</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_1️⃣_내_프로필_조회_get_apiv1usersme">4.1. 1️⃣ 내 프로필 조회 (GET /api/v1/users/me)</h3>
+<h3 id="_1️⃣_내_프로필_조회_get_apiv1usersme">5.1. 1️⃣ 내 프로필 조회 (GET /api/v1/users/me)</h3>
 <div class="paragraph">
 <p>현재 로그인된 사용자의 프로필 정보를 조회합니다.</p>
 </div>
 <div class="sect3">
-<h4 id="_응답_예시_11">4.1.1. 응답 예시</h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/user-controller-test/get-my-profile_success/http-response.adoc[]</p>
+<h4 id="_응답_예시_12">5.1.1. 응답 예시</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+Content-Length: 353
+
+{
+  "httpStatus" : "OK",
+  "code" : 200,
+  "success" : true,
+  "message" : "프로필 조회에 성공했습니다.",
+  "data" : {
+    "userId" : 1,
+    "username" : "testuser",
+    "email" : "test@test.com",
+    "point" : 1000,
+    "role" : "ROLE_USER",
+    "createdAt" : "2025-11-06T11:22:14.009888"
+  },
+  "timestamp" : "2025-11-06T11:22:14.013585"
+}</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_설명_11">4.1.2. 응답 필드 설명</h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/user-controller-test/get-my-profile_success/response-fields.adoc[]</p>
-</div>
+<h4 id="_응답_필드_설명_12">5.1.2. 응답 필드 설명</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>httpStatus</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HTTP 상태 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>success</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">성공 여부</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>timestamp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 시간</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.userId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사용자 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.username</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사용자 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.email</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사용자 이메일</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.point</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">보유 포인트</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.role</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사용자 역할</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.createdAt</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">가입 일시</p></td>
+</tr>
+</tbody>
+</table>
 <hr>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_2️⃣_내_프로필_수정_patch_apiv1usersme">4.2. 2️⃣ 내 프로필 수정 (PATCH /api/v1/users/me)</h3>
+<h3 id="_2️⃣_내_프로필_수정_patch_apiv1usersme">5.2. 2️⃣ 내 프로필 수정 (PATCH /api/v1/users/me)</h3>
 <div class="paragraph">
 <p>현재 로그인된 사용자의 프로필(사용자 이름, 이메일)을 수정합니다.</p>
 </div>
 <div class="sect3">
-<h4 id="_요청_예시_11">4.2.1. 요청 예시</h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/user-controller-test/update-my-profile_success/http-request.adoc[]</p>
+<h4 id="_요청_예시_12">5.2.1. 요청 예시</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">PATCH /api/v1/users/me?_csrf=sCLKFyBcWDE1p0Jsc7utrJTDnXmWRa6Avj_dwVE7MNAjmlcZghT8LhhvaAcYwSZUQpaZnaGgsBiidcutjVnq8TBeVrRAqzYr HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Content-Length: 57
+Host: localhost:8080
+
+{
+  "username" : "newName",
+  "email" : "new@email.com"
+}</code></pre>
 </div>
-</div>
-<div class="sect3">
-<h4 id="_응답_예시_12">4.2.2. 응답 예시</h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/user-controller-test/update-my-profile_success/http-response.adoc[]</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_요청_필드_설명_6">4.2.3. 요청 필드 설명</h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/user-controller-test/update-my-profile_success/request-fields.adoc[]</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_설명_12">4.2.4. 응답 필드 설명</h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/user-controller-test/update-my-profile_success/response-fields.adoc[]</p>
+<h4 id="_응답_예시_13">5.2.2. 응답 예시</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+Content-Length: 352
+
+{
+  "httpStatus" : "OK",
+  "code" : 200,
+  "success" : true,
+  "message" : "프로필 수정에 성공했습니다.",
+  "data" : {
+    "userId" : 1,
+    "username" : "newName",
+    "email" : "new@email.com",
+    "point" : 1000,
+    "role" : "ROLE_USER",
+    "createdAt" : "2025-11-06T11:22:14.042207"
+  },
+  "timestamp" : "2025-11-06T11:22:14.045962"
+}</code></pre>
 </div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_요청_필드_설명_6">5.2.3. 요청 필드 설명</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>username</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">변경할 사용자 이름 (2~10자, 선택적)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>email</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">변경할 이메일 (형식 준수, 선택적)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_설명_13">5.2.4. 응답 필드 설명</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>httpStatus</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HTTP 상태 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>success</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">성공 여부</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>timestamp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 시간</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.userId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사용자 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.username</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정된 사용자 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.email</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정된 이메일</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.point</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">보유 포인트</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.role</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사용자 역할</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.createdAt</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">가입 일시</p></td>
+</tr>
+</tbody>
+</table>
 <hr>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_3️⃣_비밀번호_변경_patch_apiv1userspassword">4.3. 3️⃣ 비밀번호 변경 (PATCH /api/v1/users/password)</h3>
+<h3 id="_3️⃣_비밀번호_변경_patch_apiv1userspassword">5.3. 3️⃣ 비밀번호 변경 (PATCH /api/v1/users/password)</h3>
 <div class="paragraph">
 <p>현재 로그인된 사용자의 비밀번호를 변경합니다.</p>
 </div>
 <div class="sect3">
-<h4 id="_요청_예시_12">4.3.1. 요청 예시</h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/user-controller-test/update-password_success/http-request.adoc[]</p>
+<h4 id="_요청_예시_13">5.3.1. 요청 예시</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">PATCH /api/v1/users/password?_csrf=cq-vKVToSc9sUjHrsYaFqlkRcY8rmIlAx6D64mwP2ZM-hX_IFJ6WG23YL65BagOIgquxnGxyXO4Z-bFt8JTOhF05uPBa4B74 HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Content-Length: 84
+Host: localhost:8080
+
+{
+  "currentPassword" : "currentPassword123!",
+  "newPassword" : "newPassword123!"
+}</code></pre>
 </div>
-</div>
-<div class="sect3">
-<h4 id="_응답_예시_13">4.3.2. 응답 예시</h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/user-controller-test/update-password_success/http-response.adoc[]</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_요청_필드_설명_7">4.3.3. 요청 필드 설명</h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/user-controller-test/update-password_success/request-fields.adoc[]</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_설명_13">4.3.4. 응답 필드 설명</h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/user-controller-test/update-password_success/response-fields.adoc[]</p>
+<h4 id="_응답_예시_14">5.3.2. 응답 예시</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+Content-Length: 184
+
+{
+  "httpStatus" : "OK",
+  "code" : 200,
+  "success" : true,
+  "message" : "비밀번호 변경에 성공했습니다.",
+  "data" : null,
+  "timestamp" : "2025-11-06T11:22:14.031955"
+}</code></pre>
 </div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_요청_필드_설명_7">5.3.3. 요청 필드 설명</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>currentPassword</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 비밀번호</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>newPassword</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">새 비밀번호 (영문, 숫자, 특수문자 포함 8~20자)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_설명_14">5.3.4. 응답 필드 설명</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>httpStatus</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HTTP 상태 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>success</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">성공 여부</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>timestamp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 시간</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터 (null일 수 있음)</p></td>
+</tr>
+</tbody>
+</table>
 <hr>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_관리자_api_admin_api">5. 관리자 API (Admin API)</h2>
+<h2 id="_경기_api_match_api">6. 경기 API (Match API)</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_1️⃣_매치_생성_post_apiv1adminmatches">5.1. 1️⃣ 매치 생성 (POST /api/v1/admin/matches)</h3>
+<h3 id="_1️⃣_경기_목록_조회_get_apiv1matches">6.1. 1️⃣ 경기 목록 조회 (GET /api/v1/matches)</h3>
+<div class="paragraph">
+<p>등록된 경기의 전체 목록을 페이지 형태로 조회합니다.
+요청 시 페이지 번호(<code>page</code>)와 크기(<code>size</code>)를 전달할 수 있습니다.
+경기는 기본적으로 <code>startTime</code> 기준 오름차순으로 정렬됩니다.</p>
+</div>
+<div class="sect3">
+<h4 id="_요청_예시_14">6.1.1. 요청 예시</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/matches?page=0&amp;size=10 HTTP/1.1
+Host: localhost:8080</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_15">6.1.2. 응답 예시</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+Content-Length: 676
+
+{
+  "httpStatus" : "OK",
+  "code" : 200,
+  "success" : true,
+  "message" : "매치 목록 조회에 성공했습니다.",
+  "data" : {
+    "content" : [ {
+      "matchId" : 1,
+      "matchName" : "LCK",
+      "teamA" : "T1",
+      "teamB" : "GEN.G",
+      "totalAmountA" : 10000,
+      "totalAmountB" : 8000,
+      "startTime" : "2025-10-16T18:00:00",
+      "endTime" : "2025-10-16T20:00:00",
+      "status" : "SCHEDULED",
+      "winner" : null,
+      "loser" : null,
+      "viewCount" : 153,
+      "createdAt" : "2025-10-10T20:00:00"
+    } ],
+    "totalElements" : 1,
+    "totalPages" : 1,
+    "size" : 10,
+    "number" : 0
+  },
+  "timestamp" : "2025-11-06T11:22:11.629147"
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_설명_15">6.1.3. 응답 필드 설명</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>httpStatus</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HTTP 상태 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>success</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">성공 여부</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>timestamp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 시간</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].matchId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">매치 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].matchName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">매치명</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].teamA</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">팀 A</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].teamB</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">팀 B</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].totalAmountA</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">팀 A 베팅 총액</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].totalAmountB</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">팀 B 베팅 총액</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].startTime</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">매치 시작 시간</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].endTime</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">매치 종료 시간</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].status</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">매치 상태</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].winner</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">승리 팀</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].loser</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">패배 팀</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].viewCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">조회수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].createdAt</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">생성일시</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.totalElements</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">전체 데이터 개수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.totalPages</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">총 페이지 수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.size</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지당 데이터 개수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 페이지 번호</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_2️⃣_경기_상세_조회_get_apiv1matchesmatchid">6.2. 2️⃣ 경기 상세 조회 (GET /api/v1/matches/{matchId})</h3>
+<div class="paragraph">
+<p>특정 경기의 상세 정보를 조회합니다.
+경기 ID(<code>matchId</code>)를 경로 변수로 전달해야 합니다.</p>
+</div>
+<div class="sect3">
+<h4 id="_요청_예시_15">6.2.1. 요청 예시</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/matches/1 HTTP/1.1
+Host: localhost:8080</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_16">6.2.2. 응답 예시</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+Content-Length: 540
+
+{
+  "httpStatus" : "OK",
+  "code" : 200,
+  "success" : true,
+  "message" : "매치 상세 조회에 성공했습니다.",
+  "data" : {
+    "matchId" : 1,
+    "matchName" : "LCK",
+    "teamA" : "T1",
+    "teamB" : "GEN.G",
+    "totalAmountA" : 10000,
+    "totalAmountB" : 8000,
+    "startTime" : "2025-10-16T18:00:00",
+    "endTime" : "2025-10-16T20:00:00",
+    "status" : "SCHEDULED",
+    "winner" : null,
+    "loser" : null,
+    "viewCount" : 153,
+    "createdAt" : "2025-10-10T20:00:00"
+  },
+  "timestamp" : "2025-11-06T11:22:11.589794"
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_설명_16">6.2.3. 응답 필드 설명</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>httpStatus</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HTTP 상태 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>success</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">성공 여부</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>timestamp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 시간</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.matchId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">매치 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.matchName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">매치명</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.teamA</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">팀 A</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.teamB</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">팀 B</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.totalAmountA</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">팀 A 베팅 총액</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.totalAmountB</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">팀 B 베팅 총액</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.startTime</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">매치 시작 시간</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.endTime</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">매치 종료 시간</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.status</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">매치 상태</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.winner</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">승리 팀</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.loser</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">패배 팀</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.viewCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">조회수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.createdAt</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">생성일시</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_3️⃣_경기_검색_post_apiv1matchessearch">6.3. 3️⃣ 경기 검색 (POST /api/v1/matches/search)</h3>
+<div class="paragraph">
+<p>경기 이름, 상태, 날짜 등 검색 조건을 바탕으로 경기를 조회합니다.
+검색 조건은 JSON Body로 전달하며, 페이징 처리와 함께 결과를 반환합니다.</p>
+</div>
+<div class="sect3">
+<h4 id="_요청_예시_16">6.3.1. 요청 예시</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/v1/matches/search?page=0&amp;size=10 HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Content-Length: 60
+Host: localhost:8080
+
+{
+  "keyword" : "",
+  "fromDate" : null,
+  "toDate" : null
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_예시_17">6.3.2. 응답 예시</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+Content-Length: 693
+
+{
+  "httpStatus" : "OK",
+  "code" : 200,
+  "success" : true,
+  "message" : "검색 조건에 맞는 매치 목록을 조회했습니다.",
+  "data" : {
+    "content" : [ {
+      "matchId" : 1,
+      "matchName" : "LCK",
+      "teamA" : "T1",
+      "teamB" : "GEN.G",
+      "totalAmountA" : 10000,
+      "totalAmountB" : 8000,
+      "startTime" : "2025-10-16T18:00:00",
+      "endTime" : "2025-10-16T20:00:00",
+      "status" : "SCHEDULED",
+      "winner" : null,
+      "loser" : null,
+      "viewCount" : 153,
+      "createdAt" : "2025-10-10T20:00:00"
+    } ],
+    "totalElements" : 1,
+    "totalPages" : 1,
+    "size" : 10,
+    "number" : 0
+  },
+  "timestamp" : "2025-11-06T11:22:11.611271"
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_요청_필드_설명_8">6.3.3. 요청 필드 설명</h4>
+<div class="paragraph">
+<p>Unresolved directive in index.adoc - include::/Users/t2023-m0117/Sparta/oddventure/build/generated-snippets/match-controller-test/search-matches_success/request-fields.adoc[]</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_설명_17">6.3.4. 응답 필드 설명</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>httpStatus</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HTTP 상태 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>success</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">성공 여부</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>timestamp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 시간</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].matchId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">매치 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].matchName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">매치명</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].teamA</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">팀 A</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].teamB</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">팀 B</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].totalAmountA</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">팀 A 베팅 총액</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].totalAmountB</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">팀 B 베팅 총액</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].startTime</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">매치 시작 시간</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].endTime</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">매치 종료 시간</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].status</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">매치 상태</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].winner</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">승리 팀</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].loser</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">패배 팀</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].viewCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">조회수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].createdAt</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">생성일시</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.totalElements</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">전체 데이터 개수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.totalPages</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">총 페이지 수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.size</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지당 데이터 개수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 페이지 번호</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_관리자_api_admin_api">7. 관리자 API (Admin API)</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_1️⃣_매치_생성_post_apiv1adminmatches">7.1. 1️⃣ 매치 생성 (POST /api/v1/admin/matches)</h3>
 <div class="paragraph">
 <p>새로운 경기를 생성합니다.</p>
 </div>
 <div class="sect3">
-<h4 id="_요청_예시_13">5.1.1. 요청 예시</h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/create-match_success/http-request.adoc[]</p>
+<h4 id="_요청_예시_17">7.1.1. 요청 예시</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/v1/admin/matches HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Host: localhost:8080</code></pre>
 </div>
-</div>
-<div class="sect3">
-<h4 id="_응답_예시_14">5.1.2. 응답 예시</h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/create-match_success/http-response.adoc[]</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_요청_필드_설명_8">5.1.3. 요청 필드 설명</h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/create-match_success/request-fields.adoc[]</p>
+<h4 id="_응답_예시_18">7.1.2. 응답 예시</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 201 Created
+Content-Type: application/json;charset=UTF-8
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+Content-Length: 227
+
+{
+  "httpStatus" : "CREATED",
+  "code" : 201,
+  "success" : true,
+  "message" : "매치가 생성되었습니다.",
+  "data" : {
+    "totalMatches" : 1,
+    "fetchIds" : [ 1 ]
+  },
+  "timestamp" : "2025-11-06T11:22:01.153155"
+}</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_설명_14">5.1.4. 응답 필드 설명</h4>
+<h4 id="_요청_필드_설명_9">7.1.3. 요청 필드 설명</h4>
 <div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/create-match_success/response-fields.adoc[]</p>
+<p>Unresolved directive in index.adoc - include::/Users/t2023-m0117/Sparta/oddventure/build/generated-snippets/admin-match-controller-test/create-match_-success/request-fields.adoc[]</p>
 </div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_설명_18">7.1.4. 응답 필드 설명</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>httpStatus</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HTTP 상태 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>success</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">성공 여부</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>timestamp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 시간</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.totalMatches</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">생성된 매치 개수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.fetchIds</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">생성된 패치 ID 목록</p></td>
+</tr>
+</tbody>
+</table>
 <hr>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_2️⃣_매치_정보_수정_patch_apiv1adminmatchesmatchid">5.2. 2️⃣ 매치 정보 수정 (PATCH /api/v1/admin/matches/{matchId})</h3>
+<h3 id="_2️⃣_매치_정보_수정_patch_apiv1adminmatchesmatchid">7.2. 2️⃣ 매치 정보 수정 (PATCH /api/v1/admin/matches/{matchId})</h3>
 <div class="paragraph">
 <p>기존 경기의 정보를 수정합니다.</p>
 </div>
 <div class="sect3">
-<h4 id="_요청_예시_14">5.2.1. 요청 예시</h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/update-match_success/http-request.adoc[]</p>
+<h4 id="_요청_예시_18">7.2.1. 요청 예시</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">PATCH /api/v1/admin/matches/1?_csrf=-IP5TjyCeH-12npS518xUNHvFnJapJgniG7wzjDyzKPVARyCmrXLKlqySUeY6h5mg3IFZLKJOxNtxq4K7FqS_gfA_5HmM321 HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Content-Length: 140
+Host: localhost:8080
+
+{
+  "matchName" : "LCK",
+  "teamA" : "New Team A",
+  "teamB" : "New Team B",
+  "startTime" : "2025-11-08T11:22:01",
+  "status" : "ONGOING"
+}</code></pre>
 </div>
-</div>
-<div class="sect3">
-<h4 id="_응답_예시_15">5.2.2. 응답 예시</h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/update-match_success/http-response.adoc[]</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_경로_파라미터_설명">5.2.3. 경로 파라미터 설명</h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/update-match_success/path-parameters.adoc[]</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_요청_필드_설명_9">5.2.4. 요청 필드 설명</h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/update-match_success/request-fields.adoc[]</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_설명_15">5.2.5. 응답 필드 설명</h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/update-match_success/response-fields.adoc[]</p>
+<h4 id="_응답_예시_19">7.2.2. 응답 예시</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+Content-Length: 348
+
+{
+  "httpStatus" : "OK",
+  "code" : 200,
+  "success" : true,
+  "message" : "매치 정보가 수정되었습니다.",
+  "data" : {
+    "matchId" : 1,
+    "matchName" : "LCK",
+    "teamA" : "New Team A",
+    "teamB" : "New Team B",
+    "startTime" : "2025-11-08T11:22:01",
+    "status" : "ONGOING"
+  },
+  "timestamp" : "2025-11-06T11:22:01.786809"
+}</code></pre>
 </div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_경로_파라미터_설명">7.2.3. 경로 파라미터 설명</h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. /api/v1/admin/matches/{matchId}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>matchId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정할 경기 ID</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_요청_필드_설명_10">7.2.4. 요청 필드 설명</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>matchName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">변경할 경기 이름 (선택적)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>teamA</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">변경할 A팀 이름 (선택적)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>teamB</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">변경할 B팀 이름 (선택적)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>startTime</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">변경할 경기 시작 시간 (선택적)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>status</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">변경할 경기 상태 (선택적)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_설명_19">7.2.5. 응답 필드 설명</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>httpStatus</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HTTP 상태 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>success</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">성공 여부</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>timestamp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 시간</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.matchId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정된 경기 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.matchName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정된 경기 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.teamA</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정된 A팀 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.teamB</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정된 B팀 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.startTime</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정된 경기 시작 시간</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.status</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정된 경기 상태 (SCHEDULED, ONGOING, FINISHED)</p></td>
+</tr>
+</tbody>
+</table>
 <hr>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_3️⃣_전체_사용자_목록_조회_get_apiv1adminusers">5.3. 3️⃣ 전체 사용자 목록 조회 (GET /api/v1/admin/users)</h3>
+<h3 id="_3️⃣_전체_사용자_목록_조회_get_apiv1adminusers">7.3. 3️⃣ 전체 사용자 목록 조회 (GET /api/v1/admin/users)</h3>
 <div class="paragraph">
 <p>조건에 맞는 사용자 목록을 페이징하여 조회합니다.</p>
 </div>
 <div class="sect3">
-<h4 id="_요청_예시_15">5.3.1. 요청 예시</h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/get-all-users_success/http-request.adoc[]</p>
+<h4 id="_요청_예시_19">7.3.1. 요청 예시</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/admin/users?email=test&amp;username=user&amp;page=0&amp;size=5 HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Host: localhost:8080</code></pre>
 </div>
-</div>
-<div class="sect3">
-<h4 id="_응답_예시_16">5.3.2. 응답 예시</h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/get-all-users_success/http-response.adoc[]</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_쿼리_파라미터_설명">5.3.3. 쿼리 파라미터 설명</h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/get-all-users_success/query-parameters.adoc[]</p>
+<h4 id="_응답_예시_20">7.3.2. 응답 예시</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+Content-Length: 484
+
+{
+  "httpStatus" : "OK",
+  "code" : 200,
+  "success" : true,
+  "message" : "사용자 목록 조회에 성공했습니다.",
+  "data" : {
+    "content" : [ {
+      "userId" : 1,
+      "username" : "testuser1",
+      "email" : "test1@email.com",
+      "point" : 1000,
+      "role" : "ROLE_USER",
+      "createdAt" : "2025-11-06T11:22:03.089762"
+    } ],
+    "totalElements" : 1,
+    "totalPages" : 1,
+    "size" : 5,
+    "number" : 0
+  },
+  "timestamp" : "2025-11-06T11:22:03.112511"
+}</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_설명_16">5.3.4. 응답 필드 설명</h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/get-all-users_success/response-fields.adoc[]</p>
+<h4 id="_쿼리_파라미터_설명">7.3.3. 쿼리 파라미터 설명</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>email</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">검색할 이메일 (선택적)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>username</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">검색할 사용자 이름 (선택적)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 번호 (0부터 시작)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>size</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 당 항목 수</p></td>
+</tr>
+</tbody>
+</table>
 </div>
+<div class="sect3">
+<h4 id="_응답_필드_설명_20">7.3.4. 응답 필드 설명</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>httpStatus</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HTTP 상태 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>success</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">성공 여부</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>timestamp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 시간</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사용자 정보 목록</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].userId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사용자 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].username</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사용자 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].email</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사용자 이메일</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].point</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">보유 포인트</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].role</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사용자 역할</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content[].createdAt</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">가입 일시</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.totalElements</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">전체 항목 수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.totalPages</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">전체 페이지 수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.size</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지 크기</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 페이지 번호 (0부터 시작)</p></td>
+</tr>
+</tbody>
+</table>
 <hr>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_4️⃣_사용자_상세_조회_get_apiv1adminusersuserid">5.4. 4️⃣ 사용자 상세 조회 (GET /api/v1/admin/users/{userId})</h3>
+<h3 id="_4️⃣_사용자_상세_조회_get_apiv1adminusersuserid">7.4. 4️⃣ 사용자 상세 조회 (GET /api/v1/admin/users/{userId})</h3>
 <div class="paragraph">
 <p>특정 사용자의 상세 정보를 조회합니다.</p>
 </div>
 <div class="sect3">
-<h4 id="_요청_예시_16">5.4.1. 요청 예시</h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/get-user-details_success/http-request.adoc[]</p>
+<h4 id="_요청_예시_20">7.4.1. 요청 예시</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/admin/users/1 HTTP/1.1
+Host: localhost:8080</code></pre>
 </div>
-</div>
-<div class="sect3">
-<h4 id="_응답_예시_17">5.4.2. 응답 예시</h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/get-user-details_success/http-response.adoc[]</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_경로_파라미터_설명_2">5.4.3. 경로 파라미터 설명</h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/get-user-details_success/path-parameters.adoc[]</p>
+<h4 id="_응답_예시_21">7.4.2. 응답 예시</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+Content-Length: 367
+
+{
+  "httpStatus" : "OK",
+  "code" : 200,
+  "success" : true,
+  "message" : "사용자 상세 정보 조회에 성공했습니다.",
+  "data" : {
+    "userId" : 1,
+    "username" : "testuser",
+    "email" : "test@test.com",
+    "point" : 1000,
+    "role" : "ROLE_USER",
+    "createdAt" : "2025-11-06T11:22:03.322913"
+  },
+  "timestamp" : "2025-11-06T11:22:03.325754"
+}</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_설명_17">5.4.4. 응답 필드 설명</h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/get-user-details_success/response-fields.adoc[]</p>
+<h4 id="_경로_파라미터_설명_2">7.4.3. 경로 파라미터 설명</h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. /api/v1/admin/users/{userId}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>userId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">조회할 사용자 ID</p></td>
+</tr>
+</tbody>
+</table>
 </div>
+<div class="sect3">
+<h4 id="_응답_필드_설명_21">7.4.4. 응답 필드 설명</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>httpStatus</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HTTP 상태 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>success</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">성공 여부</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>timestamp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 시간</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.userId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사용자 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.username</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사용자 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.email</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사용자 이메일</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.point</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">보유 포인트</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.role</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사용자 역할</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.createdAt</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">가입 일시</p></td>
+</tr>
+</tbody>
+</table>
 <hr>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_5️⃣_사용자_포인트_지급_post_apiv1adminusersuseridpoints">5.5. 5️⃣ 사용자 포인트 지급 (POST /api/v1/admin/users/{userId}/points)</h3>
+<h3 id="_5️⃣_사용자_포인트_지급_post_apiv1adminusersuseridpoints">7.5. 5️⃣ 사용자 포인트 지급 (POST /api/v1/admin/users/{userId}/points)</h3>
 <div class="paragraph">
 <p>특정 사용자의 포인트를 수동으로 조정합니다.</p>
 </div>
 <div class="sect3">
-<h4 id="_요청_예시_17">5.5.1. 요청 예시</h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/adjust-user-points_success/http-request.adoc[]</p>
+<h4 id="_요청_예시_21">7.5.1. 요청 예시</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/v1/admin/users/1/points?_csrf=GMhiG51poKBCQBankHCGGwUt3sHW4gNiQ-PTwawMEzjDtYYbIapRL_8LlZJveXLCp12yLjVI86Pmg2BPJ4LgoJttdw_1g-Ii HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Content-Length: 58
+Host: localhost:8080
+
+{
+  "amount" : 5000,
+  "reason" : "베팅 승리 보상"
+}</code></pre>
 </div>
-</div>
-<div class="sect3">
-<h4 id="_응답_예시_18">5.5.2. 응답 예시</h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/adjust-user-points_success/http-response.adoc[]</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_경로_파라미터_설명_3">5.5.3. 경로 파라미터 설명</h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/adjust-user-points_success/path-parameters.adoc[]</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_요청_필드_설명_10">5.5.4. 요청 필드 설명</h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/adjust-user-points_success/request-fields.adoc[]</p>
+<h4 id="_응답_예시_22">7.5.2. 응답 예시</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+Content-Length: 283
+
+{
+  "httpStatus" : "OK",
+  "code" : 200,
+  "success" : true,
+  "message" : "포인트 지급에 성공했습니다.",
+  "data" : {
+    "userId" : 1,
+    "username" : "testuser",
+    "adjustedAmount" : 5000,
+    "finalBalance" : 6000
+  },
+  "timestamp" : "2025-11-06T11:22:03.21125"
+}</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_응답_필드_설명_18">5.5.5. 응답 필드 설명</h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::C:\Users\pyh54\IdeaProjects\oddventure\build\generated-snippets/admin-controller-test/adjust-user-points_success/response-fields.adoc[]</p>
+<h4 id="_경로_파라미터_설명_3">7.5.3. 경로 파라미터 설명</h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 3. /api/v1/admin/users/{userId}/points</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>userId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">포인트를 조정할 사용자 ID</p></td>
+</tr>
+</tbody>
+</table>
 </div>
+<div class="sect3">
+<h4 id="_요청_필드_설명_11">7.5.4. 요청 필드 설명</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>amount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">조정할 포인트 (양수: 지급)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>reason</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">조정 사유 (로그 기록용)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_설명_22">7.5.5. 응답 필드 설명</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>httpStatus</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HTTP 상태 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>success</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">성공 여부</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>timestamp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 시간</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.userId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사용자 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.username</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사용자 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.adjustedAmount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">조정된 포인트</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.finalBalance</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">조정 후 최종 포인트</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
@@ -2224,7 +3799,7 @@ Content-Length: 596
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2025-10-24 11:53:32 +0900
+Last updated 2025-11-06 11:21:33 +0900
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
