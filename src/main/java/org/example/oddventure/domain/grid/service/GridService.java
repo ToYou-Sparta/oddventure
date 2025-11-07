@@ -4,7 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,15 +34,15 @@ import org.springframework.stereotype.Service;
 public class GridService {
 
     private static final String GRID_CENTRAL_DATA_QUERY = """
-            query GetAllSeriesInNext24Hours($after: Cursor) {
+            query GetAllSeriesInNext24Hours($after: Cursor, $gte: String, $lte: String) {
               allSeries(
                 first: 50
                 after: $after
                 filter:{
                   titleId: "28" # CS2
                   startTimeScheduled:{
-                    gte: "2025-11-03T15:00:07+02:00"
-                    lte: "2025-11-04T15:00:07+02:00"
+                    gte: $gte
+                    lte: $lte
                   }
                 }
                 orderBy: StartTimeScheduled
@@ -97,6 +99,14 @@ public class GridService {
     public List<MatchScheduleDto> fetchMatchSchedules() {
         List<MatchScheduleDto> results = new ArrayList<>();
         Map<String, Object> variables = new HashMap<>();
+
+        String gte = OffsetDateTime.now(ZoneId.of("Asia/Seoul"))
+                .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        String lte = OffsetDateTime.now(ZoneId.of("Asia/Seoul"))
+                .plusDays(1)
+                .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        variables.put("gte", gte);
+        variables.put("lte", lte);
 
         String cursor = null; // 페이지네이션 커서
         while (true) {
