@@ -78,6 +78,32 @@ const keywords = [
   '',
 ];
 
+// 로그인 토큰 획득
+function getAuthToken() {
+  const loginResponse = http.post(`${BASE_URL}/api/v1/auth/login`,
+      JSON.stringify({
+        email: 'hello@naver.com',
+        password: 'hello123!@#'
+      }),
+      { headers: { 'Content-Type': 'application/json' } }
+  );
+
+  if (loginResponse.status !== 200) {
+    console.error(`로그인 실패: 상태 코드 ${loginResponse.status}`);
+    console.error(`응답 내용: ${loginResponse.body}`);
+    throw new Error(`로그인 실패: ${loginResponse.status}`);
+  }
+
+  const body = JSON.parse(loginResponse.body);
+
+  if (!body.data || !body.data.accessToken) {
+    console.error(`토큰이 응답에 없습니다: ${JSON.stringify(body)}`);
+    throw new Error('accessToken을 찾을 수 없습니다');
+  }
+
+  return body.data.accessToken;
+}
+
 function generateSearchCondition() {
   const keyword = keywords[Math.floor(Math.random() * keywords.length)];
 
@@ -92,12 +118,13 @@ function generateSearchCondition() {
   };
 }
 
-export default function () {
+export default function (data) {
   const searchCondition = generateSearchCondition();
 
   const params = {
     headers: {
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${data.token}`
     },
     tags: {
       name: 'ConcurrentUsersTest',
@@ -161,9 +188,13 @@ export function setup() {
   console.log(`목표 가상 사용자 수: ${TARGET_VUS}`);
   console.log(`대상 API: ${BASE_URL}`);
   console.log('이 테스트는 동시 부하 상황에서 확장성과 성능 저하를 측정합니다');
+
+  const token = getAuthToken();
+
   return {
     startTime: new Date().toISOString(),
     targetVUs: TARGET_VUS,
+    token: token
   };
 }
 
