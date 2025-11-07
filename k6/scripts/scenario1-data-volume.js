@@ -96,7 +96,6 @@ export default function () {
         },
         tags: {
             name: 'DataVolumeTest',
-            keyword_length: searchCondition.keyword.length.toString(),
         },
     };
 
