@@ -32,7 +32,7 @@ public class MatchScheduler {
     private final JobLauncher jobLauncher;
     private final Job matchScheduleJob;
 
-    @Scheduled(cron = "0 0 4 * * *")
+    @Scheduled(cron = "0 0 4 * * *", zone = "Asia/Seoul")
     public void runMatchSyncJob() throws Exception {
         JobParameters params = new JobParametersBuilder()
                 .addLong("timestamp", System.currentTimeMillis())
