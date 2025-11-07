@@ -13,6 +13,10 @@ import org.example.oddventure.domain.match.entity.Match;
 import org.example.oddventure.domain.match.enums.MatchStatus;
 import org.example.oddventure.domain.match.repository.MatchRepository;
 import org.example.oddventure.domain.match.service.MatchService;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +29,17 @@ public class MatchScheduler {
     private final MatchService matchService;
     private final GridService gridService;
     private final BetService betService;
+    private final JobLauncher jobLauncher;
+    private final Job matchScheduleJob;
+
+    @Scheduled(cron = "0 0 4 * * *")
+    public void runMatchSyncJob() throws Exception {
+        JobParameters params = new JobParametersBuilder()
+                .addLong("timestamp", System.currentTimeMillis())
+                .toJobParameters();
+
+        jobLauncher.run(matchScheduleJob, params);
+    }
 
     @Scheduled(cron = "0 0 13 * * *", zone = "Asia/Seoul")
     public void autoFinishMatches() {

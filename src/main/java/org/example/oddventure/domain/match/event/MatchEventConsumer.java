@@ -18,6 +18,6 @@ public class MatchEventConsumer {
     @Transactional
     @RabbitListener(queues = RabbitMQConfig.REAL_QUEUE)
     public void consumeMatchStartEvent(MatchStartEventDto dto) {
-        matchService.updateStatus(dto.matchId(), MatchStatus.ONGOING);
+        matchService.updateStatus(dto.fetchId(), MatchStatus.ONGOING);
     }
 }

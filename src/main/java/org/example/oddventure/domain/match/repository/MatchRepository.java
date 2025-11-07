@@ -41,4 +41,7 @@ public interface MatchRepository extends JpaRepository<Match, Long>, MatchReposi
             """)
     List<Match> findByMatchStatus(@Param("status") MatchStatus matchStatus,
                                   @Param("twoDaysAgo") LocalDateTime twoDaysAgo);
+    
+    @Query("select m.fetchId from Match m where m.fetchId in :fetchIds")
+    List<Long> findExistingFetchIds(@Param("fetchIds") List<Long> allFetchIds);
 }
