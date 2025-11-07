@@ -20,6 +20,7 @@ import org.example.oddventure.domain.match.enums.MatchStatus;
 import org.example.oddventure.domain.match.event.MatchEventProducer;
 import org.example.oddventure.domain.match.exception.MatchErrorCode;
 import org.example.oddventure.domain.match.exception.MatchException;
+import org.example.oddventure.domain.match.repository.MatchJdbcRepository;
 import org.example.oddventure.domain.match.repository.MatchRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +35,7 @@ public class MatchService {
     private final MatchRepository matchRepository;
     private final HotKeywordsService hotKeywordsService;
     private final MatchEventProducer matchEventProducer;
+    private final MatchJdbcRepository matchJdbcRepository;
 
     // 매치 생성 (배치 적용)
     @Transactional
@@ -54,7 +56,7 @@ public class MatchService {
                 log.info("미정된 매치입니다. fetchId: {}", dto.fetchId());
                 continue;
             }
-            
+
             toSave.add(Match.builder()
                     .fetchId(dto.fetchId())
                     .matchName(dto.matchName())
@@ -64,7 +66,7 @@ public class MatchService {
                     .build());
         }
 
-        matchRepository.saveAll(toSave);
+        matchJdbcRepository.saveAllMatches(toSave);
 
         toSave.stream().map(match -> MatchStartEventDto.from(match.getFetchId(), match.getStartTime()))
                 .forEach(matchEventProducer::produceMatchStartEvent);
