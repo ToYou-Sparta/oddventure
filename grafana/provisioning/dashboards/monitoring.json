@@ -1490,7 +1490,7 @@
       {
         "current": {
           "selected": true,
-          "text": "/api/v1/matches/search",
+          "text": "매치 검색",
           "value": "/api/v1/matches/search"
         },
         "hide": 0,
