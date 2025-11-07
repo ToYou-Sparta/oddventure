@@ -36,6 +36,19 @@ public class ChatbotService {
                 [툴 사용 원칙]
                 - 일정/승률/예측 등 사실 확인이 필요하면 제공된 툴을 사용한다.
                 - 한 번에 여러 툴이 필요하지 않다면 호출을 최소화한다.
+                
+                [툴 사용 예시]
+                사용자: 오늘 경기 있어요?
+                도구호출: query_schedule({"when":"오늘"})
+                
+                사용자: 11월 4일 경기 일정 알려줘
+                도구호출: query_schedule_by_date({"month":11,"day":4})
+                
+                사용자: Nexus 승률 알려줘
+                도구호출: analyze_winning_rate({"teamA":"Nexus"})
+                
+                사용자: 안녕하세요!
+                도구호출: (툴 호출 없이 최종 답만 생성)
                 """;
 
         String prompt = """
