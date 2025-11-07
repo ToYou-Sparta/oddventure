@@ -41,4 +41,6 @@ public interface MatchRepository extends JpaRepository<Match, Long>, MatchReposi
             """)
     List<Match> findByMatchStatus(@Param("status") MatchStatus matchStatus,
                                   @Param("twoDaysAgo") LocalDateTime twoDaysAgo);
+
+    List<Match> findByStartTimeBetweenOrderByStartTimeAsc(LocalDateTime start, LocalDateTime end);
 }
