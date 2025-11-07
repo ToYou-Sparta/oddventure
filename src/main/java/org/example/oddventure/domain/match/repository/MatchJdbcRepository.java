@@ -18,8 +18,8 @@ public class MatchJdbcRepository {
 
     public void saveAllMatches(List<Match> matches) {
         String sql =
-                "INSERT INTO `match`(fetch_id, match_name, team_a, team_b, start_time, status) "
-                        + "VALUES (?, ?, ?, ?, ?, 'SCHEDULED')";
+                "INSERT INTO `match`(fetch_id, match_name, team_a, team_b, start_time, status, total_amounta, total_amountb) "
+                        + "VALUES (?, ?, ?, ?, ?, 'SCHEDULED', 1000, 1000)";
         jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
             @Override
