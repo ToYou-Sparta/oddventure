@@ -28,7 +28,7 @@ public class AdminMatchService {
         List<MatchCreateDto> matchCreateDtoList = matchService.createMatch(fetchResponses);
 
         List<Long> fetchIds = matchCreateDtoList.stream().map(MatchCreateDto::fetchId).toList();
-
+        log.info("total count: {}, fetchIds: {}", fetchIds.size(), fetchIds);
         return MatchCreateAdminResponse.of(fetchIds);
     }
 
