@@ -18,6 +18,9 @@ spring:
     openai:
       api-key: ${API_KEY}
       base-url: ${BASE_URL}
+  batch:
+    jdbc:
+      initialize-schema: always
 
 jwt:
   secret:

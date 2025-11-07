@@ -34,7 +34,7 @@ public class GridService {
     private static final String GRID_CENTRAL_DATA_QUERY = """
             query GetAllSeriesInNext24Hours($after: Cursor) {
               allSeries(
-                first: 10
+                first: 50
                 after: $after
                 filter:{
                   titleId: "28" # CS2
