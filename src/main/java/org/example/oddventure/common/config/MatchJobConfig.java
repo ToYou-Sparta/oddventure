@@ -1,7 +1,7 @@
 package org.example.oddventure.common.config;
 
 import lombok.RequiredArgsConstructor;
-import org.example.oddventure.domain.grid.service.GridService;
+import org.example.oddventure.domain.admin.service.AdminMatchService;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -18,7 +18,7 @@ public class MatchJobConfig {
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
-    private final GridService gridService;
+    private final AdminMatchService adminMatchService;
 
     @Bean
     public Job matchScheduleJob() {
@@ -31,7 +31,7 @@ public class MatchJobConfig {
     public Step matchScheduleStep() {
         return new StepBuilder("matchScheduleStep", jobRepository)
                 .tasklet((contribution, chunkContext) -> {
-                    gridService.fetchMatchSchedules();
+                    adminMatchService.createMatch();
                     return RepeatStatus.FINISHED;
                 }, transactionManager)
                 .build();
