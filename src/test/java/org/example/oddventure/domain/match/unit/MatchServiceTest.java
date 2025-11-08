@@ -26,6 +26,7 @@ import org.example.oddventure.domain.match.enums.MatchStatus;
 import org.example.oddventure.domain.match.event.MatchEventProducer;
 import org.example.oddventure.domain.match.exception.MatchErrorCode;
 import org.example.oddventure.domain.match.exception.MatchException;
+import org.example.oddventure.domain.match.repository.MatchJdbcRepository;
 import org.example.oddventure.domain.match.repository.MatchRepository;
 import org.example.oddventure.domain.match.service.MatchService;
 import org.junit.jupiter.api.DisplayName;
@@ -56,6 +57,9 @@ class MatchServiceTest {
     @Mock
     private HotKeywordsService hotKeywordsService;
 
+    @Mock
+    private MatchJdbcRepository matchJdbcRepository;
+
     @Test
     @DisplayName("매치 생성 성공")
     void createMatch_Success() {
@@ -68,14 +72,14 @@ class MatchServiceTest {
         matches.add(Match.builder().teamA("T1").teamB("Gen.G").startTime(startTime).build());
 
         given(matchRepository.findExistingFetchIds(anyList())).willReturn(List.of());
-        given(matchRepository.saveAll(anyList())).willReturn(matches);
+        doNothing().when(matchJdbcRepository).saveAllMatches(anyList());
 
         // when
         List<MatchCreateDto> response = matchService.createMatch(request);
 
         // then
         assertThat(response.get(0).fetchId()).isEqualTo(1L);
-        verify(matchRepository).saveAll(anyList());
+        verify(matchJdbcRepository).saveAllMatches(anyList());
     }
 
     @Test

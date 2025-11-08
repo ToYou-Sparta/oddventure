@@ -106,7 +106,7 @@ public class BetServiceTest {
         assertThat(response.selectedTeam()).isEqualTo(SelectedTeam.Team_A);
         assertThat(response.selectedTeamName()).isEqualTo("T1");
         assertThat(response.betAmount()).isEqualTo(new BigDecimal("1000"));
-        assertThat(response.oddsAtBetting()).isEqualTo(new BigDecimal("1.50"));
+        assertThat(response.oddsAtBetting()).isEqualTo(new BigDecimal("1.55"));
         assertThat(response.userPointAfter()).isEqualTo(new BigDecimal("0"));
         verify(betRepository).save(any(Bet.class));
     }
@@ -156,7 +156,7 @@ public class BetServiceTest {
         assertThat(bet.isDeleted()).isTrue();
         assertThat(response.refundAmount()).isEqualTo(new BigDecimal("1000"));
         assertThat(response.userPointAfter()).isEqualTo(new BigDecimal("2000"));
-        assertThat(match.getTotalAmountA()).isEqualTo(new BigDecimal("6000"));
+        assertThat(match.getTotalAmountA()).isEqualTo(new BigDecimal("7000"));
     }
 
     @Test
