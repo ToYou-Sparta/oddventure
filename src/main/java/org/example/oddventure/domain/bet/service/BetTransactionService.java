@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
+ * [신규 클래스]
  * 베팅 관련 DB 트랜잭션만을 전담하는 서비스
  * 분산 락이 획득된 상태에서만 호출되어야 함
  */
@@ -29,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class BetTransactionService {
 
+    // dev BetService에 있던 DB Repository 의존성을 이곳으로 이동
     private final BetRepository betRepository;
     private final UserRepository userRepository;
     private final MatchRepository matchRepository;
@@ -75,8 +77,7 @@ public class BetTransactionService {
 
         bet.delete();
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
+        User user = bet.getUser();
         user.plusPoint(bet.getBetAmount());
 
         refundTotalAmount(match, bet.getBetAmount(), bet.getSelectedTeam());
@@ -138,7 +139,6 @@ public class BetTransactionService {
         }
     }
 
-    // 트랜잭션 외부로 데이터를 전달하기 위한 내부 DTO
     public record CreateBetData(Bet bet, String selectedTeamName, BigDecimal userPointAfter, BigDecimal odds) {}
     public record DeleteBetData(Bet bet, User user) {}
 }
