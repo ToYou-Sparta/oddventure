@@ -33,7 +33,7 @@ public class MatchScheduler {
     private final Job matchScheduleJob;
 
     @Scheduled(cron = "0 0 4 * * *", zone = "Asia/Seoul")
-    public void runMatchSyncJob() throws Exception {
+    public void runMatchScheduleJob() throws Exception {
         JobParameters params = new JobParametersBuilder()
                 .addLong("timestamp", System.currentTimeMillis())
                 .toJobParameters();
@@ -73,9 +73,7 @@ public class MatchScheduler {
                     : SelectedTeam.Team_B;
 
             List<Bet> bets = betService.findByMatchId(match.getId());
-            for (Bet bet : bets) {
-                betService.settleBet(bet, winnerTeam);
-            }
+            bets.forEach(bet -> betService.settleBet(bet, winnerTeam));
         } else {
             log.info("끝나지 않은 경기입니다. matchId={}, fetchId={}", match.getId(), match.getFetchId());
         }
