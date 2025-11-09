@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManagerFactory;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.example.oddventure.domain.admin.dto.request.PointAdjustRequest;
 import org.example.oddventure.domain.bet.entity.Bet;
@@ -68,8 +69,9 @@ public class PointJobConfig {
                                 "JOIN FETCH b.user " +
                                 "JOIN FETCH b.match " +
                                 "WHERE b.match.id IN :matchIds " +
-                                "AND b.isDeleted = false " +
+                                "AND b.deleted = false " +
                                 "ORDER BY b.id")
+                .parameterValues(Map.of("matchIds", matchIds))
                 .pageSize(CHUNK_SIZE)
                 .build();
     }
