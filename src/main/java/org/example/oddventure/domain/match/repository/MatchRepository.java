@@ -13,10 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface MatchRepository extends JpaRepository<Match, Long>, MatchRepositoryCustom {
 
-    @Modifying
-    @Query("UPDATE Match m SET m.viewCount = m.viewCount + 1 WHERE m.id = :id")
-    int incrementViewCount(@Param("id") Long matchId);
-
     // 스케줄러가 Redis의 조회수 총합을 DB에 덮어쓰기(동기화)하기 위한 쿼리
     @Transactional
     @Modifying
