@@ -15,10 +15,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/api/v1/matches")
 @RequiredArgsConstructor
 public class MatchController {
 
@@ -34,7 +36,7 @@ public class MatchController {
         return ApiPageResponse.success(matches, "매치 목록 조회에 성공했습니다.");
     }
 
-    @GetMapping("/api/v1/matches/{matchId}")
+    @GetMapping("/{matchId}")
     public ResponseEntity<ApiResponse<MatchResponse>> getMatch(
             @PathVariable Long matchId
     ) {
@@ -42,7 +44,7 @@ public class MatchController {
         return ApiResponse.success(match, "매치 상세 조회에 성공했습니다.");
     }
 
-    @PostMapping("/api/v1/matches/search")
+    @PostMapping("/search")
     public ResponseEntity<ApiPageResponse<MatchResponse>> searchMatches(
             @RequestBody MatchSearchCondition condition,
             @RequestParam(defaultValue = "0") int page,
@@ -54,7 +56,7 @@ public class MatchController {
     }
 
     // ElasticSearch 적용
-    @PostMapping("/api/v2/matches/search")
+    @PostMapping("/v2/search")
     public ResponseEntity<ApiPageResponse<MatchResponse>> elasticSearchMatches(
             @RequestBody MatchSearchCondition condition,
             @RequestParam(defaultValue = "0") int page,
