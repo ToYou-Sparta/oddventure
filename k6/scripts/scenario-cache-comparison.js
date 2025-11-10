@@ -136,7 +136,7 @@ export function setup() {
     console.log('');
     console.log('📌 테스트 단계:');
     console.log('1. 워밍업 (30초): 캐시 채우기');
-    console.log('2. 부하 테스트 (6분 30초): 캐시 효과 측정');
+    console.log('2. 부하 테스트 (5분): 캐시 효과 측정');
     console.log('');
 
     return { startTime: new Date().toISOString() };
