@@ -28,7 +28,7 @@ import org.springframework.test.web.servlet.ResultActions;
 @WebMvcTest(ChatController.class)
 @Import({SecurityConfig.class, JwtUtil.class})
 @WithMockAuthUser(userId = 1, role = UserRole.ROLE_USER)
-@ActiveProfiles("local")
+@ActiveProfiles({"local", "test"})
 public class ChatbotControllerTest extends RestDocsTestSupport {
 
     @Autowired
