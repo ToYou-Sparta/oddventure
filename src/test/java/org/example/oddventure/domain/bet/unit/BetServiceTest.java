@@ -97,8 +97,6 @@ public class BetServiceTest {
         given(redissonClient.getLock("LOCK:MATCH:" + matchId)).willReturn(matchLock);
         given(redissonClient.getMultiLock(userLock, matchLock)).willReturn(multiLock);
         given(multiLock.tryLock(10, 5, TimeUnit.SECONDS)).willReturn(true); // 락 획득 성공
-        given(multiLock.isLocked()).willReturn(true);
-        given(multiLock.isHeldByCurrentThread()).willReturn(true);
 
         // 트랜잭션 서비스 호출 Mocking
         given(betTransactionService.createBetInternal(userId, request)).willReturn(createBetData);
@@ -145,8 +143,6 @@ public class BetServiceTest {
         given(redissonClient.getLock("LOCK:MATCH:" + matchId)).willReturn(matchLock);
         given(redissonClient.getMultiLock(userLock, matchLock)).willReturn(multiLock);
         given(multiLock.tryLock(10, 5, TimeUnit.SECONDS)).willReturn(true); // 락 획득 성공
-        given(multiLock.isLocked()).willReturn(true);
-        given(multiLock.isHeldByCurrentThread()).willReturn(true);
 
         // 트랜잭션 서비스 호출 Mocking
         given(betTransactionService.deleteBetInternal(userId, betId)).willReturn(deleteBetData);
