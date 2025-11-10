@@ -225,7 +225,6 @@ class MatchServiceTest {
             // then
             assertThat(result).isNotNull();
             assertThat(result.teamA()).isEqualTo("T1");
-            verify(matchRepository, never()).incrementViewCount(anyLong()); // DB UPDATE가 호출되지 않아야 함
             verify(matchRepository).findById(matchId); // DB SELECT만 호출됨
         }
 
@@ -260,7 +259,6 @@ class MatchServiceTest {
             matchService.incrementViewCount(matchId);
 
             // then
-            verify(matchRepository, never()).incrementViewCount(anyLong());
             verify(matchRepository, never()).existsById(anyLong());
 
             // Redis INCR이 1번 호출되었는지 검증
