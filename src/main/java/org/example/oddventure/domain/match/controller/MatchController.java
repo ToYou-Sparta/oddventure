@@ -15,13 +15,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/matches")
 public class MatchController {
 
     private final MatchService matchService;
@@ -36,7 +34,7 @@ public class MatchController {
         return ApiPageResponse.success(matches, "매치 목록 조회에 성공했습니다.");
     }
 
-    @GetMapping("/{matchId}")
+    @GetMapping("/api/v1/matches/{matchId}")
     public ResponseEntity<ApiResponse<MatchResponse>> getMatch(
             @PathVariable Long matchId
     ) {
@@ -44,8 +42,20 @@ public class MatchController {
         return ApiResponse.success(match, "매치 상세 조회에 성공했습니다.");
     }
 
-    @PostMapping("/search")
+    @PostMapping("/api/v1/matches/search")
     public ResponseEntity<ApiPageResponse<MatchResponse>> searchMatches(
+            @RequestBody MatchSearchCondition condition,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<MatchResponse> matches = matchService.searchMatches(condition, pageable);
+        return ApiPageResponse.success(matches, "검색 조건에 맞는 매치 목록을 조회했습니다.");
+    }
+
+    // ElasticSearch 적용
+    @PostMapping("/api/v2/matches/search")
+    public ResponseEntity<ApiPageResponse<MatchResponse>> elasticSearchMatches(
             @RequestBody MatchSearchCondition condition,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
