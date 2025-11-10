@@ -134,7 +134,7 @@ export function setup() {
     console.log(`테스트 대상 API: ${BASE_URL}`);
     console.log(`종료된 경기 수: ${FINISHED_MATCH_IDS.length}개`);
     console.log('');
-    console.log('📌 테스트 단계:');
+    console.log('테스트 단계:');
     console.log('1. 워밍업 (30초): 캐시 채우기');
     console.log('2. 부하 테스트 (5분): 캐시 효과 측정');
     console.log('');
@@ -149,7 +149,7 @@ export function teardown(data) {
     console.log(`시작 시간: ${data.startTime}`);
     console.log(`종료 시간: ${new Date().toISOString()}`);
     console.log('');
-    console.log('📊 결과 요약:');
+    console.log('결과 요약:');
     console.log('- Grafana 대시보드에서 상세 메트릭 확인');
     console.log('- 캐시 적용 전후 응답 시간 비교');
     console.log('- DB 커넥션 풀 사용량 비교');
