@@ -75,10 +75,8 @@ public class BetService {
             Thread.currentThread().interrupt();
             throw new BetException(CommonErrorCode.INTERNAL_SERVER_ERROR);
         } finally {
-            // 6. 락 해제 (userLock, matchLock 모두 해제됨)
-            if (multiLock.isLocked() && multiLock.isHeldByCurrentThread()) {
-                multiLock.unlock();
-            }
+            // 6. 락 해제
+            multiLock.unlock();
         }
     }
 
@@ -121,9 +119,7 @@ public class BetService {
             throw new BetException(CommonErrorCode.INTERNAL_SERVER_ERROR);
         } finally {
             // 4. 락 해제
-            if (multiLock.isLocked() && multiLock.isHeldByCurrentThread()) {
-                multiLock.unlock();
-            }
+            multiLock.unlock();
         }
     }
 
