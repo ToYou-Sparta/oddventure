@@ -21,9 +21,9 @@ jobs:
       elasticsearch:
         image: elasticsearch:9.2.0
         env:
-          - discovery.type=single-node
-          - xpack.security.enabled=false
-          - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+          discovery.type: single-node
+          xpack.security.enabled: false
+          ES_JAVA_OPTS: "-Xms512m -Xmx512m"
         ports:
           - 9200:9200
         options: >-
@@ -46,7 +46,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build and test with Gradle
-        run: ./gradlew clean test jacocoTestReport -Dspring.profiles.active=test -Dspring.data.redis.host=redis -Dspring.data.redis.port=6379
+        run: ./gradlew clean test jacocoTestReport -Dspring.profiles.active=test -Dspring.data.redis.host=redis -Dspring.data.redis.port=6379 -Dspring.elasticsearch.uris=http://elasticsearch:9200
 
       - name: Upload JaCoCo coverage report
         uses: actions/upload-artifact@v4.6.2
