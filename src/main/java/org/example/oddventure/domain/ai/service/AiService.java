@@ -1,117 +1,93 @@
 package org.example.oddventure.domain.ai.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.example.oddventure.domain.match.repository.MatchRepository;
-import org.example.oddventure.domain.ai.dto.AiRequest;
-import org.example.oddventure.domain.ai.dto.AiResponse;
-import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.messages.AssistantMessage;
-import org.springframework.ai.chat.model.ChatResponse;
-import org.springframework.ai.chat.model.Generation;
+import org.example.oddventure.domain.ai.MatchConfigProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.stereotype.Service;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import org.springframework.web.client.RestClient;
+import java.time.LocalDateTime;
+import java.util.function.Function;
 
 @Getter
 @Service
-@RequiredArgsConstructor
-public class AiService {
+public class AiService implements Function<AiService.Request, AiService.Response> {
 
-    private final MatchRepository matchRepository;
-    private final ChatClient chatClient;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private static final Logger log = LoggerFactory.getLogger(AiService.class);
+    private final RestClient restClient;
+    private final MatchConfigProperties props;
 
-    public AiResponse calculateWinningRateWithAi(AiRequest request) {
-        List<String> winMatches = matchRepository.findByWinnerIsNotNull();
-        List<String> loseMatches = matchRepository.findByLoserIsNotNull();
+    /**
+     * Constructor for initializing the AiService with configuration properties.
+     *
+     * @param props WeatherConfigProperties containing API URL and API key.
+     */
+    public AiService(MatchConfigProperties props) {
+        this.props = props;
+        this.restClient = RestClient.create(props.apiUrl());
+    }
 
-        // 데이터 요약 문자열 생성
-        String summary = buildSummary(winMatches, loseMatches);
-        String prompt = generatePrompt(request);
-
-        // Groq 프롬프트 생성
-        ChatResponse chatResponse = chatClient.prompt(prompt)
-                .system("경기 요약:\n"+summary)
-                .call()
-                .chatResponse();
-
-        if (chatResponse == null) {
-            throw new RuntimeException("Chat response is null");
-        }
-        Generation result = chatResponse.getResult();
-
-        AssistantMessage output = result.getOutput();
-        String text = output.getText();
-
+    /**
+     * Fetches Betting information for a given city using the Betting API.
+     *
+     * @param bettingRequest Request object containing the city name.
+     * @return Response object containing the current betting details.
+     */
+    @Override
+    @Tool(name = "bettingAi", description = "경기 승률 및 배당 정보를 조회하는 툴입니다.")
+    public Response apply(Request bettingRequest) {
         try {
-            return parseResult(text);
+            log.info("Betting Request: {}", bettingRequest);
+
+            Response response = restClient.get()
+                    .uri("/current.json?key={key}&q={q}", props.apiKey(), bettingRequest.match())
+                    .retrieve() //요청을 서버에 보내고 응답을 가져옴
+                    .body(Response.class); //json 응답을 response 클래스에 매핑
+
+            log.info("Betting API Response: {}", response);
+            return response;
         } catch (Exception e) {
-            // 오류 로깅
-            System.err.println("Groq API 호출 중 오류 발생: " + e.getMessage());
-            // 대체 메시지 반환 또는 사용자 지정 예외 다시 던지기
-            throw new RuntimeException(e);
+            log.error("데이터 로딩 실패: {}", bettingRequest.match(), e);
+            throw new RuntimeException("데이터 로딩에 실패했습니다. 나중에 다시 시도하세요.", e);
         }
     }
 
-    public String buildSummary(List<String> winMatches, List<String> loseMatches) {
-        Map<String, Long> teamWinningCount = winMatches.stream()
-                .collect(Collectors.groupingBy((String winner) -> winner, Collectors.counting()));
 
-        Map<String, Long> teamLosingCount = loseMatches.stream()
-                .collect(Collectors.groupingBy((String loser) -> loser, Collectors.counting()));
+    //url이 제공하는 정보와 동일하게 이름 적기!!!!!!!!!
 
+    /**
+     * 요청 사항에서 필요한 정보들을 취합
+     *
+     * @param match 경기 정보
+     */
+    public record Request(String match) {}
 
-        StringBuilder sb = new StringBuilder();
+    /**
+     * Betting API에서 반환한 정보들을 취합해 반환
+     *
+     * @param matchInfo 경기 정보
+     * @param betInfo 베팅 정보
+     */
+    public record Response(MatchInfo matchInfo, BetInfo betInfo) {}
 
-        sb.append("팀별 승리 횟수:\n");
-        teamWinningCount.forEach((team, count) -> sb.append("- ").append(team).append(": ").append(count).append("번\n"));
+    /**
+     * @param match 경기 정보
+     * @param OpposingTeam 상대팀
+     * @param time 경기 시간
+     */
+    public record MatchInfo(String match, String OpposingTeam, LocalDateTime time) {}
 
-        sb.append("\n팀별 패배 횟수:\n");
-        teamLosingCount.forEach((team, count) -> sb.append("- ").append(team).append(": ").append(count).append("번\n"));
-        return sb.toString();
-    }
+    /**
+     * @param odd 배당률
+     * @param status 경기 진행 상태
+     * @param winningRate 승률
+     * @param description 설명
+     */
+    public record BetInfo(Long odd, String status, Long winningRate, Description description) {}
 
-    public String generatePrompt(AiRequest request) {
-        return String.format("""
-                Task: Extract teamName from the text and return a JSON response.
-               
-                - Identify teamName and find the team at summary and extract winningCount,losingCount.
-                - Based on the game summary provided below, calculate each team's winning percentage
-                  and explain the exact analytical factors for the conclusion becomes `content`.
-                - If no teamName is found, return:
-                  {"result": true, "hasTeamName": false}
-                - In korean.
-               
-                Respond in JSON format only, with the following fields:
-                - result
-                - hasTeamName
-                - teamName (array of strings)
-                - winningCount (array of longs)
-                - losingCount (array of longs)
-                - winningRate (array of longs)
-                - content
-               
-                ===
-               
-                input:
-                {
-                    "content": "%s"
-                }
-               """, request.content());
-    }
-
-    public AiResponse parseResult(String text) {
-        String jsonText = text.lines()
-                .filter(line -> !line.startsWith("```"))
-                .reduce("", (a, b) -> a + b);
-        try {
-            return objectMapper.readValue(jsonText, AiResponse.class); //역직렬화
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    /**
+     * @param text 경기에 대한 분석을 서술
+     */
+    public record Description(String text) {}
 }
