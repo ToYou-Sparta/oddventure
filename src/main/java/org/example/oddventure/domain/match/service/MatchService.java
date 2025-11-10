@@ -18,7 +18,7 @@ import org.example.oddventure.domain.match.enums.MatchStatus;
 import org.example.oddventure.domain.match.event.MatchEventProducer;
 import org.example.oddventure.domain.match.exception.MatchErrorCode;
 import org.example.oddventure.domain.match.exception.MatchException;
-import org.example.oddventure.domain.match.messaging.MatchEsSyncPublisher;
+//import org.example.oddventure.domain.match.messaging.MatchEsSyncPublisher;
 import org.example.oddventure.domain.match.repository.MatchRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,7 +34,7 @@ public class MatchService {
     private final HotKeywordsService hotKeywordsService;
     private final MatchEventProducer matchEventProducer;
     private final MatchSearchService matchSearchService;
-    private final MatchEsSyncPublisher matchEsSyncPublisher;
+    //private final MatchEsSyncPublisher matchEsSyncPublisher;
 
     // 매치 생성 (매치별로 독립적인 트랜잭션 보유)
     @Transactional(propagation = REQUIRES_NEW)
