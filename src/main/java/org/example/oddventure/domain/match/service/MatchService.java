@@ -55,7 +55,7 @@ public class MatchService {
                 .build();
 
         Match savedMatch = matchRepository.save(match);
-        matchEsSyncPublisher.publishMatchCreated(savedMatch.getId());
+       //matchEsSyncPublisher.publishMatchCreated(savedMatch.getId());
         matchEventProducer.produceMatchStartEvent(MatchStartEventDto.from(match.getId(), match.getStartTime()));
 
         return MatchCreateDto.builder().fetchId(dto.fetchId()).build();
@@ -68,7 +68,7 @@ public class MatchService {
 
         match.update(request.matchName(), request.teamA(), request.teamB(), request.startTime(), request.status());
 
-        matchEsSyncPublisher.publishMatchUpdated(matchId);
+        //matchEsSyncPublisher.publishMatchUpdated(matchId);
 
         return MatchUpdateAdminResponse.from(match);
     }
