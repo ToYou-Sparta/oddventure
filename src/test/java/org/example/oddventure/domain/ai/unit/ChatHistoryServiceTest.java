@@ -17,6 +17,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -24,8 +25,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 @ExtendWith(MockitoExtension.class)
 public class ChatHistoryServiceTest {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
     String key = "chat:history:";
+    @Spy
+    private ObjectMapper objectMapper = new ObjectMapper();
     @Mock
     private RedisTemplate<String, String> redisTemplate;
     @Mock

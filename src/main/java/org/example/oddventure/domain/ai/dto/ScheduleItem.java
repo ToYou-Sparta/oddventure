@@ -12,8 +12,6 @@ public record ScheduleItem(
         String teamA,
         String teamB
 ) {
-
-
     public static ScheduleItem of(Match match) {
         ZonedDateTime kst = ZonedDateTime.of(match.getStartTime(), ZoneOffset.UTC)
                 .withZoneSameInstant(ZoneId.of("Asia/Seoul"));

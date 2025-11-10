@@ -106,7 +106,7 @@ public class ScheduleTools {
         return ScheduleResponse.of(items, label, startKst, endKst);
     }
 
-    public List<Match> findMatchesByKstRange(LocalDateTime startKst, LocalDateTime endKst) {
+    private List<Match> findMatchesByKstRange(LocalDateTime startKst, LocalDateTime endKst) {
         ZoneId UTC = ZoneOffset.UTC;
         LocalDateTime startUtc = startKst.atZone(KST).withZoneSameInstant(UTC).toLocalDateTime();
         LocalDateTime endUtc = endKst.atZone(KST).withZoneSameInstant(UTC).toLocalDateTime();

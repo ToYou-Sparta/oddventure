@@ -1,6 +1,7 @@
 package org.example.oddventure.domain.ai.unit;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
@@ -11,7 +12,6 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import org.example.oddventure.domain.ai.service.ChatHistoryService;
 import org.example.oddventure.domain.ai.service.ChatbotService;
-import org.example.oddventure.domain.match.repository.MatchRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,9 +19,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.messages.AssistantMessage;
-import org.springframework.ai.chat.model.ChatResponse;
-import org.springframework.ai.chat.model.Generation;
 
 @ExtendWith(MockitoExtension.class)
 public class ChatbotServiceTest {
@@ -31,9 +28,6 @@ public class ChatbotServiceTest {
 
     @Mock
     private ChatClient chatClient;
-
-    @Mock
-    private MatchRepository matchRepository;
 
     @InjectMocks
     private ChatbotService chatbotService;
@@ -58,45 +52,21 @@ public class ChatbotServiceTest {
         verify(chatHistoryService, times(2)).addMessage(eq(userId), anyString(), anyString());
     }
 
-    @Test
-    @DisplayName("'승률' 키워드가 있으면 승률 분기 로직을 탄다")
-    void reply_winningRateBranch() {
-        // given
-        Long userId = 1L;
-        when(matchRepository.findByWinnerIsNotNull()).thenReturn(List.of("FaZe Clan", "FaZe Clan", "Team Vitality"));
-        when(matchRepository.findByLoserIsNotNull()).thenReturn(List.of("Team Vitality", "G2 Esports", "FaZe Clan"));
-        mockChatClientContent("FaZe Clan의 최근 승률은 68% 입니다.");
-
-        // when
-        String reply = chatbotService.reply(userId, "FaZe Clan 승률 알려줘");
-
-        // then
-        assertThat(reply).isNotNull();
-        assertThat(reply).contains("FaZe Clan").contains("승률");
-        verify(matchRepository).findByWinnerIsNotNull();
-        verify(matchRepository).findByLoserIsNotNull();
-    }
-
     /**
      * ChatClient의 응답 체인을 간소화하여 content()만 mock 처리하는 헬퍼 메서드
      * <p>
-     * 호출 흐름: chatClient.prompt() → system() → call() → chatResponse() → getResult() → getOutput() → getText()
+     * 호출 흐름: chatClient.prompt() → system() → tools() → call() → content()
      *
      * @param content AI 모델이 생성했다고 가정한 응답 텍스트
      */
     private void mockChatClientContent(String content) {
         ChatClient.ChatClientRequestSpec requestSpec = mock(ChatClient.ChatClientRequestSpec.class);
         ChatClient.CallResponseSpec call = mock(ChatClient.CallResponseSpec.class);
-        ChatResponse chatResponse = mock(ChatResponse.class);
-        Generation generation = mock(Generation.class);
-        AssistantMessage output = mock(AssistantMessage.class);
 
         when(chatClient.prompt(anyString())).thenReturn(requestSpec);
         when(requestSpec.system(anyString())).thenReturn(requestSpec);
+        when(requestSpec.tools(any(), any(), any(), any())).thenReturn(requestSpec); // tool 개수만큼
         when(requestSpec.call()).thenReturn(call);
-        when(call.chatResponse()).thenReturn(chatResponse);
-        when(chatResponse.getResult()).thenReturn(generation);
-        when(generation.getOutput()).thenReturn(output);
-        when(output.getText()).thenReturn(content);
+        when(call.content()).thenReturn(content);
     }
 }
