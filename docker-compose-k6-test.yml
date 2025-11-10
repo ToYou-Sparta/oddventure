@@ -1,74 +1,58 @@
 services:
-  # K6 성능 테스트 서비스
-  # Scenario 1: 데이터 볼륨 테스트
-  # 사용법: docker-compose -f docker-compose-k6-test.yml run --rm k6-scenario1
-  k6-scenario1:
+  k6:
+    # k6 공식 이미지 사용 (최신 버전)
     image: grafana/k6:latest
-    container_name: oddventure-k6-scenario1
-    profiles:
-      - performance-test
+
+    # 컨테이너 이름 (환경변수에 따라 자동으로 생성됨)
+    # 예: oddventure-k6-scenario2-concurrent-users-50vus
+    container_name: oddventure-k6-${SCENARIO:-scenario1-data-volume}-${TARGET_VUS:-10}vus
+
+    # 볼륨 마운트 (로컬 파일 <-> 컨테이너 공유)
     volumes:
+      # k6 스크립트 파일들 (scenario1-data-volume.js, scenario2-concurrent-users.js)
       - ./k6/scripts:/scripts
+
+      # 테스트 결과 저장 폴더 (JSON, 요약 파일)
       - ./k6/results:/results
+
+    # 환경변수 설정
     environment:
+      # Spring Boot 애플리케이션 주소
+      # host.docker.internal = Docker 컨테이너에서 호스트 PC를 가리킴
       - API_URL=http://host.docker.internal:8080
-    command: run --out json=/results/scenario1-result.json --summary-export=/results/scenario1-summary.json /scripts/scenario1-data-volume.js
+
+      # TARGET_VUS = Virtual Users (가상 사용자 수, 동시 접속자)
+      # 기본값: 10명 / 명령어에서 변경 가능 (예: TARGET_VUS=50)
+      - TARGET_VUS=${TARGET_VUS:-10}
+
+      # Prometheus에 테스트 결과 전송 (실시간 모니터링)
+      - K6_PROMETHEUS_RW_SERVER_URL=http://host.docker.internal:9090/api/v1/write
+
+      # 히스토그램 형식 설정 (false = k6가 직접 p95, p99 계산해서 보냄)
+      - K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=false
+
+      # Prometheus로 메트릭 보내는 주기 (5초마다 한 번)
+      - K6_PROMETHEUS_RW_PUSH_INTERVAL=5s
+
+      # SCENARIO = 실행할 스크립트 파일 이름 (확장자 제외)
+      # 기본값: scenario1-data-volume / 변경 가능 (예: SCENARIO=scenario2-concurrent-users)
+      - SCENARIO=${SCENARIO:-scenario1-data-volume}
+
+    # k6 실행 명령어
+    # (여러 줄로 나눠서 가독성 향상)
+    command: >
+      run
+      -e TARGET_VUS=${TARGET_VUS:-10}
+      --out json=/results/${SCENARIO:-scenario1-data-volume}-${TARGET_VUS:-10}vus-result.json
+      --out experimental-prometheus-rw
+      --summary-export=/results/${SCENARIO:-scenario1-data-volume}-${TARGET_VUS:-10}vus-summary.json
+      /scripts/${SCENARIO:-scenario1-data-volume}.js
+    # Docker 네트워크 (Spring Boot, Prometheus와 같은 네트워크)
     networks:
       - oddventure-network
 
-  # Scenario 2: 동시 사용자 테스트 (10명)
-  # 사용법: docker-compose -f docker-compose-k6-test.yml run --rm k6-scenario2-10
-  k6-scenario2-10:
-    image: grafana/k6:latest
-    container_name: oddventure-k6-scenario2-10
-    profiles:
-      - performance-test
-    volumes:
-      - ./k6/scripts:/scripts
-      - ./k6/results:/results
-    environment:
-      - API_URL=http://host.docker.internal:8080
-      - TARGET_VUS=10
-    command: run -e TARGET_VUS=10 --out json=/results/scenario2-10vus-result.json --summary-export=/results/scenario2-10vus-summary.json /scripts/scenario2-concurrent-users.js
-    networks:
-      - oddventure-network
-
-  # Scenario 2: 동시 사용자 테스트 (50명)
-  # 사용법: docker-compose -f docker-compose-k6-test.yml run --rm k6-scenario2-50
-  k6-scenario2-50:
-    image: grafana/k6:latest
-    container_name: oddventure-k6-scenario2-50
-    profiles:
-      - performance-test
-    volumes:
-      - ./k6/scripts:/scripts
-      - ./k6/results:/results
-    environment:
-      - API_URL=http://host.docker.internal:8080
-      - TARGET_VUS=50
-    command: run -e TARGET_VUS=50 --out json=/results/scenario2-50vus-result.json --summary-export=/results/scenario2-50vus-summary.json /scripts/scenario2-concurrent-users.js
-    networks:
-      - oddventure-network
-
-  # Scenario 2: 동시 사용자 테스트 (100명)
-  # 사용법: docker-compose -f docker-compose-k6-test.yml run --rm k6-scenario2-100
-  k6-scenario2-100:
-    image: grafana/k6:latest
-    container_name: oddventure-k6-scenario2-100
-    profiles:
-      - performance-test
-    volumes:
-      - ./k6/scripts:/scripts
-      - ./k6/results:/results
-    environment:
-      - API_URL=http://host.docker.internal:8080
-      - TARGET_VUS=100
-    command: run -e TARGET_VUS=100 --out json=/results/scenario2-100vus-result.json --summary-export=/results/scenario2-100vus-summary.json /scripts/scenario2-concurrent-users.js
-    networks:
-      - oddventure-network
-
-# 네트워크 정의
 networks:
   oddventure-network:
+    # docker-compose.yml에서 이미 생성된 네트워크 사용
     name: oddventure_oddventure-network
-    external: true  # docker-compose.yml에서 생성된 네트워크 사용
+    external: true  # 외부에서 생성된 네트워크를 참조
