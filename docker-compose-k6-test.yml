@@ -1,0 +1,74 @@
+services:
+  # K6 성능 테스트 서비스
+  # Scenario 1: 데이터 볼륨 테스트
+  # 사용법: docker-compose -f docker-compose-k6-test.yml run --rm k6-scenario1
+  k6-scenario1:
+    image: grafana/k6:latest
+    container_name: oddventure-k6-scenario1
+    profiles:
+      - performance-test
+    volumes:
+      - ./k6/scripts:/scripts
+      - ./k6/results:/results
+    environment:
+      - API_URL=http://host.docker.internal:8080
+    command: run --out json=/results/scenario1-result.json --summary-export=/results/scenario1-summary.json /scripts/scenario1-data-volume.js
+    networks:
+      - oddventure-network
+
+  # Scenario 2: 동시 사용자 테스트 (10명)
+  # 사용법: docker-compose -f docker-compose-k6-test.yml run --rm k6-scenario2-10
+  k6-scenario2-10:
+    image: grafana/k6:latest
+    container_name: oddventure-k6-scenario2-10
+    profiles:
+      - performance-test
+    volumes:
+      - ./k6/scripts:/scripts
+      - ./k6/results:/results
+    environment:
+      - API_URL=http://host.docker.internal:8080
+      - TARGET_VUS=10
+    command: run -e TARGET_VUS=10 --out json=/results/scenario2-10vus-result.json --summary-export=/results/scenario2-10vus-summary.json /scripts/scenario2-concurrent-users.js
+    networks:
+      - oddventure-network
+
+  # Scenario 2: 동시 사용자 테스트 (50명)
+  # 사용법: docker-compose -f docker-compose-k6-test.yml run --rm k6-scenario2-50
+  k6-scenario2-50:
+    image: grafana/k6:latest
+    container_name: oddventure-k6-scenario2-50
+    profiles:
+      - performance-test
+    volumes:
+      - ./k6/scripts:/scripts
+      - ./k6/results:/results
+    environment:
+      - API_URL=http://host.docker.internal:8080
+      - TARGET_VUS=50
+    command: run -e TARGET_VUS=50 --out json=/results/scenario2-50vus-result.json --summary-export=/results/scenario2-50vus-summary.json /scripts/scenario2-concurrent-users.js
+    networks:
+      - oddventure-network
+
+  # Scenario 2: 동시 사용자 테스트 (100명)
+  # 사용법: docker-compose -f docker-compose-k6-test.yml run --rm k6-scenario2-100
+  k6-scenario2-100:
+    image: grafana/k6:latest
+    container_name: oddventure-k6-scenario2-100
+    profiles:
+      - performance-test
+    volumes:
+      - ./k6/scripts:/scripts
+      - ./k6/results:/results
+    environment:
+      - API_URL=http://host.docker.internal:8080
+      - TARGET_VUS=100
+    command: run -e TARGET_VUS=100 --out json=/results/scenario2-100vus-result.json --summary-export=/results/scenario2-100vus-summary.json /scripts/scenario2-concurrent-users.js
+    networks:
+      - oddventure-network
+
+# 네트워크 정의
+networks:
+  oddventure-network:
+    name: oddventure_oddventure-network
+    external: true  # docker-compose.yml에서 생성된 네트워크 사용

@@ -5,18 +5,21 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import org.example.oddventure.domain.bet.dto.PointEventDto;
 import org.example.oddventure.domain.bet.dto.request.BetCreateRequest;
 import org.example.oddventure.domain.bet.dto.response.BetCreateResponse;
 import org.example.oddventure.domain.bet.dto.response.BetDeleteResponse;
 import org.example.oddventure.domain.bet.dto.response.BetResponse;
 import org.example.oddventure.domain.bet.entity.Bet;
 import org.example.oddventure.domain.bet.enums.SelectedTeam;
+import org.example.oddventure.domain.bet.event.BetEventProducer;
 import org.example.oddventure.domain.bet.repository.BetRepository;
 import org.example.oddventure.domain.bet.service.BetService;
 import org.example.oddventure.domain.event.RedisPublisher;
@@ -53,6 +56,9 @@ public class BetServiceTest {
 
     @Mock
     private RedisPublisher redisPublisher;
+
+    @Mock
+    private BetEventProducer betEventProducer;
 
     @Test
     @DisplayName("베팅을 생성 성공하면 유저 포인트가 차감되고 베팅 금액이 저장된다.")
@@ -208,5 +214,51 @@ public class BetServiceTest {
                 () -> assertThat(response.matchBetResponse().teamB()).isEqualTo("GEN.G")
         );
         verify(betRepository).findByUserId(userId, pageable);
+    }
+
+    @Test
+    @DisplayName("베팅 정산에 성공한다.")
+    void settleBet_success() {
+        //given
+        Long userId = 1L;
+        User user = User.builder()
+                .username("test")
+                .email("test1234@test.com")
+                .password("test1234!")
+                .build();
+        ReflectionTestUtils.setField(user, "id", userId);
+
+        Long matchId = 1L;
+        Match match = Match.builder()
+                .teamA("T1")
+                .teamB("GEN.G")
+                .startTime(LocalDateTime.now().plusDays(1))
+                .build();
+        ReflectionTestUtils.setField(match, "id", matchId);
+
+        Long betId = 1L;
+        BigDecimal betAmount = BigDecimal.valueOf(1000);
+        BigDecimal oddsAtBetting = BigDecimal.valueOf(2);
+
+        Bet bet = Bet.builder()
+                .user(user)
+                .match(match)
+                .selectedTeam(SelectedTeam.Team_A)
+                .betAmount(betAmount)
+                .oddsAtBetting(oddsAtBetting)
+                .build();
+        ReflectionTestUtils.setField(bet, "id", betId);
+
+        SelectedTeam winner = SelectedTeam.Team_A;
+        BigDecimal point = betAmount.multiply(oddsAtBetting);
+        PointEventDto dto = PointEventDto.from(bet.getUser().getId(), point);
+
+        doNothing().when(betEventProducer).producePointEvent(dto);
+
+        //when
+        betService.settleBet(bet, winner);
+
+        //then
+        verify(betEventProducer).producePointEvent(dto);
     }
 }

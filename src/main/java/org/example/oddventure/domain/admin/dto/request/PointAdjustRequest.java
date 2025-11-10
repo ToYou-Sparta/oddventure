@@ -4,7 +4,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
+import lombok.Builder;
 
+@Builder
 public record PointAdjustRequest(
 
         @NotNull(message = "조정 금액은 필수 입력 값입니다.")
@@ -14,4 +16,10 @@ public record PointAdjustRequest(
         @NotBlank(message = "포인트 조정 사유는 필수 입력 값입니다.")
         String reason
 ) {
+    public static PointAdjustRequest of(BigDecimal amount, String reason) {
+        return PointAdjustRequest.builder()
+                .amount(amount)
+                .reason(reason)
+                .build();
+    }
 }

@@ -39,3 +39,8 @@ out/
 
 ### Claude ##
 CLAUDE.md
+.claude
+
+### MAC OS ###
+.DS_Store
+/k6/results
