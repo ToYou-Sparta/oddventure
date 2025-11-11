@@ -17,12 +17,14 @@ export const options = {
 
     thresholds: {
         'http_req_duration': [
-            'p(95)<1000',  // 95% 요청이 1초 미만
-            'p(99)<2000',  // 99% 요청이 2초 미만
-            'max<5000'     // 최대 응답 시간 5초 미만
+            'p(50)<300',   // 50% 요청이 0.3초 미만 (낮은 부하, 더 엄격)
+            'p(95)<800',   // 95% 요청이 0.8초 미만 (데이터 볼륨 최적화 필수)
+            'p(99)<1500',  // 99% 요청이 1.5초 미만
+            'max<3000'     // 최대 응답 시간 3초 미만 (5초→3초 강화)
         ],
-        'http_req_failed': ['rate<0.01'],  // 실패율 1% 미만
-        'errors': ['rate<0.01'],            // 에러율 1% 미만
+        'http_req_failed': ['rate<0.005'],  // 실패율 0.5% 미만 (1%→0.5% 강화)
+        'errors': ['rate<0.005'],            // 에러율 0.5% 미만
+        'search_response_time': ['p(95)<800'],  // 커스텀 메트릭 임계값
     },
 };
 
@@ -72,6 +74,32 @@ const keywords = [
     '',
 ];
 
+// 로그인 토큰 획득
+function getAuthToken() {
+    const loginResponse = http.post(`${BASE_URL}/api/v1/auth/login`,
+        JSON.stringify({
+            email: 'hello@naver.com',
+            password: 'hello123!@#'
+        }),
+        { headers: { 'Content-Type': 'application/json' } }
+    );
+
+    if (loginResponse.status !== 200) {
+        console.error(`로그인 실패: 상태 코드 ${loginResponse.status}`);
+        console.error(`응답 내용: ${loginResponse.body}`);
+        throw new Error(`로그인 실패: ${loginResponse.status}`);
+    }
+
+    const body = JSON.parse(loginResponse.body);
+
+    if (!body.data || !body.data.accessToken) {
+        console.error(`토큰이 응답에 없습니다: ${JSON.stringify(body)}`);
+        throw new Error('accessToken을 찾을 수 없습니다');
+    }
+
+    return body.data.accessToken;
+}
+
 // 랜덤 검색 생성
 function generateSearchCondition() {
     const keyword = keywords[Math.floor(Math.random() * keywords.length)];
@@ -87,16 +115,16 @@ function generateSearchCondition() {
     };
 }
 
-export default function () {
+export default function (data) {
     const searchCondition = generateSearchCondition();
 
     const params = {
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${data.token}`
         },
         tags: {
             name: 'DataVolumeTest',
-            keyword_length: searchCondition.keyword.length.toString(),
         },
     };
 
@@ -111,8 +139,8 @@ export default function () {
 
     // 응답 검증
     const checkRes = check(response, {
-        'status is 200': (r) => r.status === 200,
-        'has data': (r) => {
+        '상태 코드 200': (r) => r.status === 200,
+        '데이터 존재': (r) => {
             try {
                 const body = JSON.parse(r.body);
                 return body.data !== undefined;
@@ -120,7 +148,7 @@ export default function () {
                 return false;
             }
         },
-        'response is valid JSON': (r) => {
+        '유효한 JSON 응답': (r) => {
             try {
                 JSON.parse(r.body);
                 return true;
@@ -134,9 +162,14 @@ export default function () {
     errorRate.add(!checkRes);
     searchResponseTime.add(duration);
 
-// 응답 시간 로깅 (느린 쿼리 식별)
+    // 느린 쿼리 로깅 (1초 이상)
     if (duration > 1000) {
-        console.log(`⚠️ 느린 쿼리 감지: ${duration}ms, 검색어: "${searchCondition.keyword}", 페이지: ${page}번`);
+        console.log(`경고: 느린 쿼리 감지 ${duration}ms (키워드: "${searchCondition.keyword}", 페이지: ${page})`);
+    }
+
+    // 에러 로깅
+    if (response.status !== 200) {
+        console.log(`에러: 상태 코드 ${response.status} (키워드: "${searchCondition.keyword}", 페이지: ${page})`);
     }
 
     sleep(Math.random() * 2 + 1);
@@ -146,13 +179,16 @@ export function setup() {
     console.log('=== 시나리오 1: 데이터 볼륨 영향도 테스트 ===');
     console.log(`테스트 대상 API: ${BASE_URL}`);
     console.log('이 테스트는 데이터 양이 증가할 때 성능 저하를 측정합니다');
-    console.log('다양한 데이터 볼륨으로 실행하세요: 1천, 1만, 5만, 10만 건');
-    return {startTime: new Date().toISOString()};
+
+    const token = getAuthToken();
+    return {
+        startTime: new Date().toISOString(),
+        token: token
+    };
 }
 
 export function teardown(data) {
     console.log('=== 테스트 완료 ===');
     console.log(`시작 시간: ${data.startTime}`);
     console.log(`종료 시간: ${new Date().toISOString()}`);
-    console.log('서로 다른 데이터 볼륨의 결과를 비교하여 O(n) 복잡도를 증명하세요');
 }

@@ -17,10 +17,219 @@
   },
   "editable": true,
   "fiscalYearStartMonth": 0,
-  "graphTooltip": 0,
+  "graphTooltip": 1,
   "id": null,
   "links": [],
+  "liveNow": true,
   "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 50
+              },
+              {
+                "color": "orange",
+                "value": 100
+              },
+              {
+                "color": "red",
+                "value": 200
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 0
+      },
+      "id": 20,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "values": false,
+          "calcs": ["lastNotNull"],
+          "fields": ""
+        },
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "value_and_name",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "k6_vus",
+          "refId": "A"
+        }
+      ],
+      "title": "k6 부하 - 현재 VUs",
+      "type": "stat",
+      "description": "현재 실행 중인 k6 Virtual Users 수 (부하 테스트 실행 중에만 표시)"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 1000
+              },
+              {
+                "color": "red",
+                "value": 2000
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 0
+      },
+      "id": 21,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "values": false,
+          "calcs": ["lastNotNull"],
+          "fields": ""
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "max(k6_http_req_duration_p99 * 1000)",
+          "refId": "A"
+        }
+      ],
+      "title": "k6 부하 - p99 응답시간",
+      "type": "gauge",
+      "description": "k6에서 측정한 클라이언트 관점의 p99 응답 시간 "
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 0.1
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 8,
+        "y": 0
+      },
+      "id": 22,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "values": false,
+          "calcs": ["lastNotNull"],
+          "fields": ""
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "max(k6_http_req_failed_rate) * 100",
+          "refId": "A"
+        }
+      ],
+      "title": "k6 부하 - 에러율",
+      "type": "gauge",
+      "description": "k6에서 측정한 HTTP 에러율 "
+    },
     {
       "datasource": {
         "type": "prometheus",
@@ -84,22 +293,19 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 0,
+        "x": 12,
         "y": 0
       },
       "id": 1,
       "options": {
         "legend": {
-          "calcs": [
-            "mean",
-            "max"
-          ],
+          "calcs": ["mean", "max"],
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -111,11 +317,119 @@
           },
           "expr": "rate(http_server_requests_seconds_count{uri=\"$api_endpoint\"}[1m])",
           "refId": "A",
-          "legendFormat": "RPS"
+          "legendFormat": "서버 RPS"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum(rate(k6_http_reqs_total[1m]))",
+          "refId": "B",
+          "legendFormat": "k6 RPS"
         }
       ],
-      "title": "초당 API 요청 수 (RPS)",
+      "title": "초당 API 요청 수 (RPS) - 서버 vs k6",
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Virtual Users",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 4
+      },
+      "id": 23,
+      "options": {
+        "legend": {
+          "calcs": ["last", "max"],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "k6_vus",
+          "legendFormat": "활성 VUs",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "k6_vus_max",
+          "legendFormat": "최대 VUs",
+          "refId": "B"
+        }
+      ],
+      "title": "k6 Virtual Users (부하 수준)",
+      "type": "timeseries",
+      "description": "현재 실행 중인 부하 테스트의 동시 사용자 수"
     },
     {
       "datasource": {
@@ -179,28 +493,85 @@
           },
           "unit": "s"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "서버 p95"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "green"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "서버 p99"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "dark-green"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "서버 p50"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "light-green"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "k6.*"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "blue"
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 0
+        "y": 8
       },
       "id": 2,
       "options": {
         "legend": {
-          "calcs": [
-            "mean",
-            "max",
-            "last"
-          ],
+          "calcs": ["mean", "max", "last"],
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -212,7 +583,7 @@
           },
           "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{uri=\"$api_endpoint\"}[1m])) by (le))",
           "refId": "A",
-          "legendFormat": "p95"
+          "legendFormat": "서버 p95"
         },
         {
           "datasource": {
@@ -221,7 +592,7 @@
           },
           "expr": "histogram_quantile(0.99, sum(rate(http_server_requests_seconds_bucket{uri=\"$api_endpoint\"}[1m])) by (le))",
           "refId": "B",
-          "legendFormat": "p99"
+          "legendFormat": "서버 p99"
         },
         {
           "datasource": {
@@ -230,11 +601,21 @@
           },
           "expr": "histogram_quantile(0.50, sum(rate(http_server_requests_seconds_bucket{uri=\"$api_endpoint\"}[1m])) by (le))",
           "refId": "C",
-          "legendFormat": "p50"
+          "legendFormat": "서버 p50"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "max(k6_http_req_duration_p99)",
+          "refId": "D",
+          "legendFormat": "k6 p99"
         }
       ],
-      "title": "API 응답 시간 (백분위수)",
-      "type": "timeseries"
+      "title": "API 응답 시간 (백분위수) - 서버 vs k6",
+      "type": "timeseries",
+      "description": "서버 측정(녹색)과 클라이언트 측정(파란색) 응답 시간 비교"
     },
     {
       "datasource": {
@@ -268,7 +649,7 @@
         "h": 4,
         "w": 6,
         "x": 0,
-        "y": 8
+        "y": 12
       },
       "id": 3,
       "options": {
@@ -277,9 +658,7 @@
         "orientation": "auto",
         "reduceOptions": {
           "values": false,
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": ""
         },
         "showThresholdLabels": false,
@@ -293,11 +672,11 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(rate(http_server_requests_seconds_count{uri=\"$api_endpoint\",status=~\"5..\"}[5m])) / sum(rate(http_server_requests_seconds_count{uri=\"$api_endpoint\"}[5m]))",
+          "expr": "(sum(rate(http_server_requests_seconds_count{uri=\"$api_endpoint\",status=~\"5..\"}[5m])) or vector(0)) / sum(rate(http_server_requests_seconds_count{uri=\"$api_endpoint\"}[5m]))",
           "refId": "A"
         }
       ],
-      "title": "에러율 (5xx)",
+      "title": "서버 에러율 (5xx)",
       "type": "gauge"
     },
     {
@@ -328,7 +707,7 @@
         "h": 4,
         "w": 6,
         "x": 6,
-        "y": 8
+        "y": 12
       },
       "id": 4,
       "options": {
@@ -339,9 +718,7 @@
         "percentChangeColorMode": "standard",
         "reduceOptions": {
           "values": false,
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": ""
         },
         "showPercentChange": false,
@@ -359,7 +736,7 @@
           "refId": "A"
         }
       ],
-      "title": "총 요청 수",
+      "title": "총 요청 수 (서버)",
       "type": "stat"
     },
     {
@@ -382,11 +759,11 @@
               },
               {
                 "color": "yellow",
-                "value": 500
+                "value": 200
               },
               {
                 "color": "red",
-                "value": 1000
+                "value": 500
               }
             ]
           },
@@ -398,7 +775,7 @@
         "h": 4,
         "w": 6,
         "x": 12,
-        "y": 8
+        "y": 12
       },
       "id": 5,
       "options": {
@@ -409,9 +786,7 @@
         "percentChangeColorMode": "standard",
         "reduceOptions": {
           "values": false,
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": ""
         },
         "showPercentChange": false,
@@ -429,7 +804,7 @@
           "refId": "A"
         }
       ],
-      "title": "평균 응답 시간",
+      "title": "평균 응답 시간 (서버)",
       "type": "stat"
     },
     {
@@ -468,7 +843,7 @@
         "h": 4,
         "w": 6,
         "x": 18,
-        "y": 8
+        "y": 12
       },
       "id": 6,
       "options": {
@@ -477,9 +852,7 @@
         "orientation": "auto",
         "reduceOptions": {
           "values": false,
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": ""
         },
         "showThresholdLabels": false,
@@ -567,23 +940,19 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 0,
-        "y": 12
+        "x": 12,
+        "y": 16
       },
       "id": 9,
       "options": {
         "legend": {
-          "calcs": [
-            "mean",
-            "max",
-            "last"
-          ],
+          "calcs": ["mean", "max", "last"],
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -667,24 +1036,21 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 12,
         "w": 12,
-        "x": 12,
-        "y": 12
+        "x": 0,
+        "y": 16
       },
       "id": 7,
       "options": {
         "legend": {
-          "calcs": [
-            "mean",
-            "max"
-          ],
+          "calcs": ["mean", "max"],
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -786,24 +1152,21 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 7,
         "w": 24,
         "x": 0,
-        "y": 20
+        "y": 24
       },
       "id": 8,
       "options": {
         "legend": {
-          "calcs": [
-            "mean",
-            "max"
-          ],
+          "calcs": ["mean", "max"],
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -901,17 +1264,14 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 24,
+        "w": 8,
         "x": 0,
-        "y": 28
+        "y": 32
       },
       "id": 10,
       "options": {
         "legend": {
-          "calcs": [
-            "mean",
-            "max"
-          ],
+          "calcs": ["mean", "max"],
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
@@ -1001,18 +1361,14 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 36
+        "w": 8,
+        "x": 8,
+        "y": 32
       },
       "id": 11,
       "options": {
         "legend": {
-          "calcs": [
-            "mean",
-            "max",
-            "last"
-          ],
+          "calcs": ["mean", "max", "last"],
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
@@ -1094,18 +1450,14 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 44
+        "w": 8,
+        "x": 16,
+        "y": 32
       },
       "id": 12,
       "options": {
         "legend": {
-          "calcs": [
-            "mean",
-            "max",
-            "last"
-          ],
+          "calcs": ["mean", "max", "last"],
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
@@ -1121,7 +1473,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(rate(http_server_requests_seconds_count{uri=~\"/api/v1/.*\",status=~\"5..\"}[5m])) by (uri) / sum(rate(http_server_requests_seconds_count{uri=~\"/api/v1/.*\"}[5m])) by (uri)",
+          "expr": "(sum(rate(http_server_requests_seconds_count{uri=~\"/api/v1/.*\",status=~\"5..\"}[5m])) by (uri) or (0 * sum(rate(http_server_requests_seconds_count{uri=~\"/api/v1/.*\"}[5m])) by (uri))) / sum(rate(http_server_requests_seconds_count{uri=~\"/api/v1/.*\"}[5m])) by (uri)",
           "refId": "A",
           "legendFormat": "{{uri}} - 에러율"
         }
@@ -1132,17 +1484,13 @@
   ],
   "refresh": "5s",
   "schemaVersion": 39,
-  "tags": [
-    "k6",
-    "performance",
-    "spring-boot"
-  ],
+  "tags": ["k6", "performance", "spring-boot", "load-testing"],
   "templating": {
     "list": [
       {
         "current": {
           "selected": true,
-          "text": "/api/v1/matches/search",
+          "text": "매치 검색",
           "value": "/api/v1/matches/search"
         },
         "hide": 0,
@@ -1170,8 +1518,8 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "K6 성능 테스트 - API 모니터링",
-  "uid": "k6-match-search-performance",
+  "title": "통합 모니터링 (서버 + 부하)",
+  "uid": "mornitoring",
   "version": 0,
   "weekStart": ""
 }
