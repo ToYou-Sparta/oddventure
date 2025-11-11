@@ -93,6 +93,9 @@ dependencies {
     //prometheus
     implementation 'io.micrometer:micrometer-registry-prometheus'
 
+    // redisson
+    implementation 'org.redisson:redisson-spring-boot-starter:3.52.0'
+
 }
 
 dependencyManagement {

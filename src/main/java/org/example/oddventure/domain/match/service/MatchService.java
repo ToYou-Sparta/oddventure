@@ -19,8 +19,10 @@ import org.example.oddventure.domain.match.event.MatchEventProducer;
 import org.example.oddventure.domain.match.exception.MatchErrorCode;
 import org.example.oddventure.domain.match.exception.MatchException;
 import org.example.oddventure.domain.match.repository.MatchRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +34,7 @@ public class MatchService {
     private final MatchRepository matchRepository;
     private final HotKeywordsService hotKeywordsService;
     private final MatchEventProducer matchEventProducer;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     // 매치 생성 (매치별로 독립적인 트랜잭션 보유)
     @Transactional(propagation = REQUIRES_NEW)
@@ -73,16 +76,26 @@ public class MatchService {
         return matches.map(MatchResponse::from);
     }
 
-    @Transactional
+    @Cacheable(value = "matchDetails", key = "#matchId", unless = "#result.status.name() != 'FINISHED'")
+    @Transactional(readOnly = true)
     public MatchResponse getMatch(Long matchId) {
-        int updated = matchRepository.incrementViewCount(matchId);
-        if (updated == 0) {
-            throw new MatchException(MatchErrorCode.MATCH_NOT_FOUND);
-        }
-
+        log.info("getMatch for matchId: {}", matchId);
         Match match = findMatchById(matchId);
-
         return MatchResponse.from(match);
+    }
+
+    // 조회수 증가 로직
+    public void incrementViewCount(Long matchId) {
+        String viewCountKey = "match:viewcount:" + matchId;
+        redisTemplate.opsForValue().increment(viewCountKey);
+    }
+
+    @Transactional
+    public void updateViewCount(Long matchId, Long viewCount) {
+        int updated = matchRepository.updateViewCount(matchId, viewCount);
+        if (updated == 0) {
+            log.warn("DB에 matchId: {}가 존재하지 않아 조회수 동기화 실패", matchId);
+        }
     }
 
     @Transactional
