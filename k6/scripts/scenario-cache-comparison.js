@@ -1,13 +1,12 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 import { Rate, Trend, Counter } from 'k6/metrics';
-import { htmlReport } from "https://raw.githubusercontent.com/benc-uk/k6-reporter/main/dist/bundle.js";
 
 // 커스텀 메트릭 정의
 const errorRate = new Rate('errors');
-const cacheHitRate = new Rate('cache_hits'); // 캐시 히트율 추정
+const cacheHitRate = new Rate('cache_hits');
 const responseTime = new Trend('match_detail_response_time');
-const dbAccessCount = new Counter('db_access_count'); // DB 접근 횟수 추정
+const dbAccessCount = new Counter('db_access_count');
 
 // 테스트 설정
 export const options = {
@@ -32,7 +31,7 @@ export const options = {
                 { duration: '1m', target: 100 },  // 100명 유지
                 { duration: '30s', target: 0 },   // 0명으로 감소
             ],
-            startTime: '30s', // 워밍업 후 시작
+            startTime: '30s',
             tags: { phase: 'load_test' },
         },
     },
@@ -54,9 +53,15 @@ export const options = {
     },
 };
 
+// 환경 변수에서 API URL 가져오기
 const BASE_URL = __ENV.API_URL || 'http://host.docker.internal:8080';
 const MATCH_DETAIL_ENDPOINT = `${BASE_URL}/api/v1/matches`;
-const FINISHED_MATCH_IDS = [1, 2, 3, 4, 5];
+
+// 테스트할 경기 ID 목록 (FINISHED 상태의 경기들)
+// 실제 DB에 있는 종료된 경기 ID로 변경해야 함
+const FINISHED_MATCH_IDS = [
+    1, 2, 3, 4, 5
+];
 
 // 메인 테스트 함수
 export default function () {
@@ -106,7 +111,7 @@ export default function () {
     responseTime.add(duration);
 
     // 캐시 히트 추정 (응답 시간이 빠르면 캐시 히트로 간주)
-    // Redis 캐시 히트 시 일반적으로 10ms 미만
+    // Redis 캐시 히트 시 일반적으로 10~50ms
     const isCacheHit = duration < 50;
     cacheHitRate.add(isCacheHit ? 1 : 0);
 
@@ -114,8 +119,8 @@ export default function () {
         dbAccessCount.add(1);
     }
 
-    // 응답 시간별 로깅
-    if (__ITER % 100 === 0) { // 100번째 요청마다 로그
+    // 응답 시간별 로깅 (100번째 요청마다)
+    if (__ITER % 100 === 0) {
         console.log(`[Iter ${__ITER}] matchId: ${matchId}, duration: ${duration}ms, cacheHit: ${isCacheHit}`);
     }
 
@@ -137,6 +142,13 @@ export function setup() {
     console.log('테스트 단계:');
     console.log('1. 워밍업 (30초): 캐시 채우기');
     console.log('2. 부하 테스트 (5분): 캐시 효과 측정');
+    console.log('   - 10 VUs → 50 VUs → 100 VUs 단계별 증가');
+    console.log('');
+    console.log('측정 항목:');
+    console.log('- 응답 시간 (p50, p95, p99)');
+    console.log('- 캐시 히트율');
+    console.log('- DB 접근 횟수');
+    console.log('- 에러율');
     console.log('');
 
     return { startTime: new Date().toISOString() };
@@ -154,12 +166,8 @@ export function teardown(data) {
     console.log('- 캐시 적용 전후 응답 시간 비교');
     console.log('- DB 커넥션 풀 사용량 비교');
     console.log('- JVM 메모리 사용량 비교');
-}
-
-// HTML 리포트 생성
-export function handleSummary(data) {
-    return {
-        "k6/results/cache-comparison-summary.html": htmlReport(data),
-        "k6/results/cache-comparison-summary.json": JSON.stringify(data),
-    };
+    console.log('');
+    console.log('결과 파일 위치:');
+    console.log('- JSON: k6/results/scenario-cache-comparison-{VUS}vus-result.json');
+    console.log('- Summary: k6/results/scenario-cache-comparison-{VUS}vus-summary.json');
 }
