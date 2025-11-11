@@ -40,6 +40,9 @@ public class MatchController {
     public ResponseEntity<ApiResponse<MatchResponse>> getMatch(
             @PathVariable Long matchId
     ) {
+        // 1. 조회수 증가(Write) 로직을 먼저 호출 (캐시와 무관하게 항상 실행)
+        matchService.incrementViewCount(matchId);
+        // 2. 캐시가 적용된 순수 조회(Read) 로직을 호출
         MatchResponse match = matchService.getMatch(matchId);
         return ApiResponse.success(match, "매치 상세 조회에 성공했습니다.");
     }
