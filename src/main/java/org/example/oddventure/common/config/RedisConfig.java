@@ -14,7 +14,6 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.PatternTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
-import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
@@ -57,40 +56,18 @@ public class RedisConfig {
     @Bean
     public RedisMessageListenerContainer redisMessageListenerContainer(
             RedisConnectionFactory connectionFactory,
-            MessageListenerAdapter oddsListenerAdapter,
-            MessageListenerAdapter infoListenerAdapter,
-            MessageListenerAdapter chatMessageListenerAdapter,
-            MessageListenerAdapter chatOutputListenerAdapter
+            RedisSubscriber redisSubscriber,
+            ChatMessageSubscriber chatMessageSubscriber,
+            ChatMessageOutputSubscriber chatMessageOutputSubscriber
     ) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
 
-        // Pub/Sub 채널 구독 설정
-        container.addMessageListener(oddsListenerAdapter, new PatternTopic("match:*:odds"));
-        container.addMessageListener(infoListenerAdapter, new PatternTopic("match:*:info"));
-        container.addMessageListener(chatMessageListenerAdapter, new PatternTopic("chat:*:input"));
-        container.addMessageListener(chatOutputListenerAdapter, new PatternTopic("chat:*:output"));
+        container.addMessageListener(redisSubscriber, new PatternTopic("match:*:odds"));
+        container.addMessageListener(redisSubscriber, new PatternTopic("match:*:info"));
+        container.addMessageListener(chatMessageSubscriber, new PatternTopic("chat:*:input"));
+        container.addMessageListener(chatMessageOutputSubscriber, new PatternTopic("chat:*:output"));
 
         return container;
-    }
-
-    @Bean
-    public MessageListenerAdapter oddsListenerAdapter(RedisSubscriber subscriber) {
-        return new MessageListenerAdapter(subscriber);
-    }
-
-    @Bean
-    public MessageListenerAdapter infoListenerAdapter(RedisSubscriber subscriber) {
-        return new MessageListenerAdapter(subscriber);
-    }
-
-    @Bean
-    public MessageListenerAdapter chatMessageListenerAdapter(ChatMessageSubscriber subscriber) {
-        return new MessageListenerAdapter(subscriber);
-    }
-
-    @Bean
-    public MessageListenerAdapter chatOutputListenerAdapter(ChatMessageOutputSubscriber subscriber) {
-        return new MessageListenerAdapter(subscriber);
     }
 }
