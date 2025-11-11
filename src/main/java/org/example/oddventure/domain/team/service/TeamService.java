@@ -8,6 +8,7 @@ import org.example.oddventure.domain.team.dto.TeamResponse;
 import org.example.oddventure.domain.team.entity.Team;
 import org.example.oddventure.domain.team.exception.TeamException;
 import org.example.oddventure.domain.team.repository.TeamRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,11 +22,13 @@ public class TeamService {
 
     private final TeamRepository teamRepository;
 
+    @Cacheable(value = "teamId", key = "#pageable")
     public Page<TeamResponse> getAllTeam(Pageable pageable) {
         Page<Team> team = teamRepository.findAll(pageable);
         return team.map(TeamResponse::of);
     }
 
+    @Cacheable(value = "teamDetail", key = "#id")
     public TeamResponse getTeamById(Long id) {
         Team team = teamRepository.findById(id)
                 .orElseThrow(() -> new TeamException(TEAM_NOT_FOUND));
