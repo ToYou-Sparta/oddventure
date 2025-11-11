@@ -116,6 +116,14 @@ public class BetTransactionService {
         }
     }
 
+    /***
+     * 승 배당률 = 0.9 / 승 금액 비율
+     * 0.9 = 1 - 0.1(수수료)
+     * 승 금액 비율 = 승 총 베팅 금액 / 전체 베팅 금액(승 + 패)
+     * 처음 배당률 지정 로직과
+     * 이후 배당률 조정 로직이 필요하다. (이는 베팅 생성시 호출된다.)
+     * 배당률 조정 로직 구현 시, 유저 비율도 고려하는 가중 조합형 배당률로 구현하는 것이 필요해 보인다.
+     */
     private BigDecimal calculateOdds(Match match, SelectedTeam selectedTeam) {
         BigDecimal total = match.getTotalAmountA().add(match.getTotalAmountB());
         System.out.println("total: " + total);
