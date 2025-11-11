@@ -18,6 +18,7 @@ import org.example.oddventure.domain.match.enums.MatchStatus;
 import org.example.oddventure.domain.match.event.MatchEventProducer;
 import org.example.oddventure.domain.match.exception.MatchErrorCode;
 import org.example.oddventure.domain.match.exception.MatchException;
+//import org.example.oddventure.domain.match.messaging.MatchEsSyncPublisher;
 import org.example.oddventure.domain.match.repository.MatchRepository;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -34,7 +35,11 @@ public class MatchService {
     private final MatchRepository matchRepository;
     private final HotKeywordsService hotKeywordsService;
     private final MatchEventProducer matchEventProducer;
+    private final MatchSearchService matchSearchService;
+    //private final MatchEsSyncPublisher matchEsSyncPublisher;
+
     private final RedisTemplate<String, Object> redisTemplate;
+
 
     // 매치 생성 (매치별로 독립적인 트랜잭션 보유)
     @Transactional(propagation = REQUIRES_NEW)
@@ -54,7 +59,8 @@ public class MatchService {
                 .startTime(dto.startTime())
                 .build();
 
-        matchRepository.save(match);
+        Match savedMatch = matchRepository.save(match);
+       //matchEsSyncPublisher.publishMatchCreated(savedMatch.getId());
         matchEventProducer.produceMatchStartEvent(MatchStartEventDto.from(match.getId(), match.getStartTime()));
 
         return MatchCreateDto.builder().fetchId(dto.fetchId()).build();
@@ -66,6 +72,8 @@ public class MatchService {
         Match match = findMatchById(matchId);
 
         match.update(request.matchName(), request.teamA(), request.teamB(), request.startTime(), request.status());
+
+        //matchEsSyncPublisher.publishMatchUpdated(matchId);
 
         return MatchUpdateAdminResponse.from(match);
     }
@@ -129,5 +137,11 @@ public class MatchService {
     private Match findMatchById(Long matchId) {
         return matchRepository.findById(matchId)
                 .orElseThrow(() -> new MatchException(MatchErrorCode.MATCH_NOT_FOUND));
+    }
+
+    @Transactional
+    public Page<MatchResponse> elasticSearchMatches(MatchSearchCondition condition, Pageable pageable) {
+
+        return matchSearchService.searchMatches(condition, pageable);
     }
 }

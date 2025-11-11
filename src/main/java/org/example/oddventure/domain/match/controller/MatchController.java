@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/api/v1/matches")
+@RequiredArgsConstructor
 public class MatchController {
 
     private final MatchService matchService;
@@ -49,6 +49,18 @@ public class MatchController {
 
     @PostMapping("/search")
     public ResponseEntity<ApiPageResponse<MatchResponse>> searchMatches(
+            @RequestBody MatchSearchCondition condition,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<MatchResponse> matches = matchService.searchMatches(condition, pageable);
+        return ApiPageResponse.success(matches, "검색 조건에 맞는 매치 목록을 조회했습니다.");
+    }
+
+    // ElasticSearch 적용
+    @PostMapping("/v2/search")
+    public ResponseEntity<ApiPageResponse<MatchResponse>> elasticSearchMatches(
             @RequestBody MatchSearchCondition condition,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size

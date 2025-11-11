@@ -25,6 +25,13 @@ public class RabbitMQConfig {
     public static final String POINT_QUEUE = "bet.point.queue";
     public static final String POINT_ROUTING_KEY = "bet.point.adjust";
 
+    // Elasticsearch 동기화용
+    public static final String ES_SYNC_EXCHANGE = "match.es.sync.exchange";
+    public static final String ES_SYNC_QUEUE = "match.es.sync.queue";
+    public static final String ES_SYNC_CREATED_KEY = "match.es.created";
+    public static final String ES_SYNC_UPDATED_KEY = "match.es.updated";
+    public static final String ES_SYNC_DELETED_KEY = "match.es.deleted";
+
     @Bean
     public TopicExchange pointExchange() {
         return new TopicExchange(POINT_EXCHANGE);
@@ -76,6 +83,27 @@ public class RabbitMQConfig {
         return BindingBuilder.bind(realQueue())
                 .to(dlxExchange())
                 .with(REAL_ROUTING_KEY);
+    }
+
+    // Elasticsearch 동기화용 Exchange
+    @Bean
+    public TopicExchange esSyncExchange() {
+        return new TopicExchange(ES_SYNC_EXCHANGE);
+    }
+
+    // Elasticsearch 동기화용 Queue
+    @Bean
+    public Queue esSyncQueue() {
+        return QueueBuilder.durable(ES_SYNC_QUEUE).build();
+    }
+
+    // Elasticsearch 동기화용 Binding (match.es.* 패턴 모두 수신)
+    @Bean
+    public Binding esSyncBinding() {
+        return BindingBuilder
+                .bind(esSyncQueue())
+                .to(esSyncExchange())
+                .with("match.es.*");
     }
 
     @Bean
