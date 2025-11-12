@@ -30,8 +30,8 @@ public class MatchRepositoryTest {
     private EntityManager entityManager;
 
     @Test
-    @DisplayName("조회수 증가 성공")
-    void incrementViewCount() {
+    @DisplayName("스케줄러 조회수 동기화 성공")
+    void updateViewCount() {
         // given
         Match match = Match.builder()
                 .matchName("LCK")
@@ -40,15 +40,20 @@ public class MatchRepositoryTest {
                 .startTime(LocalDateTime.now().plusDays(1))
                 .build();
         matchRepository.save(match);
+        // 초기 조회수는 0L
+        assertThat(match.getViewCount()).isEqualTo(0L);
+
+        Long newViewCount = 12345L;
 
         // when
-        matchRepository.incrementViewCount(match.getId());
+        // MatchService가 호출할 동기화 쿼리 실행
+        matchRepository.updateViewCount(match.getId(), newViewCount);
         entityManager.flush();
         entityManager.clear();
 
         // then
         Match updatedMatch = matchRepository.findById(match.getId()).orElseThrow();
-        assertThat(updatedMatch.getViewCount()).isEqualTo(1L);
+        assertThat(updatedMatch.getViewCount()).isEqualTo(newViewCount); // 12345L
     }
 
     @Test

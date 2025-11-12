@@ -3,8 +3,10 @@ package org.example.oddventure.domain.match.unit;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -40,6 +42,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 
 @ExtendWith(MockitoExtension.class)
 class MatchServiceTest {
@@ -56,22 +60,24 @@ class MatchServiceTest {
     @Mock
     private HotKeywordsService hotKeywordsService;
 
+    @Mock
+    private RedisTemplate<String, Object> redisTemplate;
+
+    @Mock
+    private ValueOperations<String, Object> valueOperations;
+
     @Test
     @DisplayName("매치 생성 성공")
     void createMatch_Success() {
         // given
         LocalDateTime startTime = LocalDateTime.now().plusDays(1);
         MatchScheduleDto request = new MatchScheduleDto(1L, "LCK", "T1", "Gen.G", startTime);
-
         Match match = Match.builder().teamA("T1").teamB("Gen.G").startTime(startTime).build();
-
         given(matchRepository.save(any(Match.class))).willReturn(match);
         doNothing().when(matchEventProducer)
                 .produceMatchStartEvent(MatchStartEventDto.from(match.getId(), match.getStartTime()));
-
         // when
         MatchCreateDto response = matchService.createMatch(request);
-
         // then
         assertThat(response.fetchId()).isEqualTo(1L);
         verify(matchRepository).save(any(Match.class));
@@ -197,8 +203,8 @@ class MatchServiceTest {
     }
 
     @Nested
-    @DisplayName("경기 상세 조회")
-    class getMatch {
+    @DisplayName("경기 상세 조회 (캐시 적용)")
+    class GetMatch {
         @Test
         @DisplayName("경기 상세 조회 성공")
         void getMatch_success() {
@@ -211,7 +217,6 @@ class MatchServiceTest {
                     .startTime(LocalDateTime.now().plusDays(1))
                     .build();
 
-            when(matchRepository.incrementViewCount(matchId)).thenReturn(1);
             when(matchRepository.findById(matchId)).thenReturn(Optional.of(match));
 
             // when
@@ -220,29 +225,14 @@ class MatchServiceTest {
             // then
             assertThat(result).isNotNull();
             assertThat(result.teamA()).isEqualTo("T1");
-            assertThat(result.startTime()).isEqualTo(match.getStartTime());
+            verify(matchRepository).findById(matchId); // DB SELECT만 호출됨
         }
 
         @Test
-        @DisplayName("경기 상세 조회 실패 - 조회수 증가 실패 시 MatchException 발생")
-        void getMatch_fail_incrementViewCount() {
-            // given
-            Long matchId = 1L;
-            when(matchRepository.incrementViewCount(matchId)).thenReturn(0);
-
-            // when
-            MatchException exception = assertThrows(MatchException.class, () -> matchService.getMatch(matchId));
-
-            // then
-            assertThat(exception.getMessage()).isEqualTo(MatchErrorCode.MATCH_NOT_FOUND.getMessage());
-        }
-
-        @Test
-        @DisplayName("경기 상세 조회 실패 - increment 성공 후 findById에서 MatchException 발생")
+        @DisplayName("경기 상세 조회 실패 - findById 실패 시 MatchException 발생")
         void getMatch_fail_findById() {
             // given
             Long matchId = 1L;
-            when(matchRepository.incrementViewCount(matchId)).thenReturn(1);
             when(matchRepository.findById(matchId)).thenReturn(Optional.empty());
 
             // when
@@ -251,5 +241,85 @@ class MatchServiceTest {
             // then
             assertThat(exception.getMessage()).isEqualTo(MatchErrorCode.MATCH_NOT_FOUND.getMessage());
         }
+    }
+
+    @Nested
+    @DisplayName("조회수 증가 (Redis INCR)")
+    class IncrementViewCount {
+        @Test
+        @DisplayName("조회수 증가 성공 - Redis INCR 호출")
+        void incrementViewCount_success() {
+            // given
+            Long matchId = 1L;
+            String expectedKey = "match:viewcount:" + matchId;
+            given(redisTemplate.opsForValue()).willReturn(valueOperations);
+            given(valueOperations.increment(expectedKey)).willReturn(1L);
+
+            // when
+            matchService.incrementViewCount(matchId);
+
+            // then
+            verify(matchRepository, never()).existsById(anyLong());
+
+            // Redis INCR이 1번 호출되었는지 검증
+            verify(redisTemplate.opsForValue()).increment(expectedKey);
+        }
+    }
+
+    @Nested
+    @DisplayName("조회수 DB 동기화 (Scheduler)")
+    class UpdateViewCount {
+        @Test
+        @DisplayName("조회수 DB 동기화 성공")
+        void updateViewCount_success() {
+            // given
+            Long matchId = 1L;
+            Long viewCount = 120L;
+            given(matchRepository.updateViewCount(matchId, viewCount)).willReturn(1);
+
+            // when
+            matchService.updateViewCount(matchId, viewCount);
+
+            // then
+            verify(matchRepository).updateViewCount(matchId, viewCount);
+        }
+
+        @Test
+        @DisplayName("조회수 DB 동기화 - 대상 없음 (WARN 로그)")
+        void updateViewCount_fail_notFound() {
+            // given
+            Long matchId = 999L;
+            Long viewCount = 120L;
+            given(matchRepository.updateViewCount(matchId, viewCount)).willReturn(0);
+
+            // when
+            matchService.updateViewCount(matchId, viewCount);
+
+            // then
+            verify(matchRepository).updateViewCount(matchId, viewCount);
+        }
+    }
+
+    @Test
+    @DisplayName("매치 상태값 변경 성공")
+    void updateStatus_success() {
+        //given
+        Long matchId = 1L;
+        MatchStatus status = MatchStatus.ONGOING;
+
+        Match match = Match.builder()
+                .matchName("LCK")
+                .teamA("T1")
+                .teamB("GEN.G")
+                .startTime(LocalDateTime.now().plusDays(1))
+                .build();
+
+        when(matchRepository.findById(matchId)).thenReturn(Optional.of(match));
+
+        //when
+        matchService.updateStatus(matchId, status);
+
+        //then
+        assertThat(match.getStatus()).isEqualTo(status);
     }
 }

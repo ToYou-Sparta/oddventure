@@ -5,6 +5,7 @@ import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.QueueBuilder;
+import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -20,6 +21,34 @@ public class RabbitMQConfig {
     public static final String REAL_QUEUE = "match.real.queue";
     public static final String DELAY_ROUTING_KEY = "match.delay";
     public static final String REAL_ROUTING_KEY = "match.real";
+    public static final String POINT_EXCHANGE = "bet.point.exchange";
+    public static final String POINT_QUEUE = "bet.point.queue";
+    public static final String POINT_ROUTING_KEY = "bet.point.adjust";
+
+    // Elasticsearch 동기화용
+    public static final String ES_SYNC_EXCHANGE = "match.es.sync.exchange";
+    public static final String ES_SYNC_QUEUE = "match.es.sync.queue";
+    public static final String ES_SYNC_CREATED_KEY = "match.es.created";
+    public static final String ES_SYNC_UPDATED_KEY = "match.es.updated";
+    public static final String ES_SYNC_DELETED_KEY = "match.es.deleted";
+
+    @Bean
+    public TopicExchange pointExchange() {
+        return new TopicExchange(POINT_EXCHANGE);
+    }
+
+    @Bean
+    public Queue pointQueue() {
+        return new Queue(POINT_QUEUE, true);
+    }
+
+    @Bean
+    public Binding pointBinding() {
+        return BindingBuilder
+                .bind(pointQueue())
+                .to(pointExchange())
+                .with(POINT_ROUTING_KEY);
+    }
 
     @Bean
     public DirectExchange delayExchange() {
@@ -54,6 +83,27 @@ public class RabbitMQConfig {
         return BindingBuilder.bind(realQueue())
                 .to(dlxExchange())
                 .with(REAL_ROUTING_KEY);
+    }
+
+    // Elasticsearch 동기화용 Exchange
+    @Bean
+    public TopicExchange esSyncExchange() {
+        return new TopicExchange(ES_SYNC_EXCHANGE);
+    }
+
+    // Elasticsearch 동기화용 Queue
+    @Bean
+    public Queue esSyncQueue() {
+        return QueueBuilder.durable(ES_SYNC_QUEUE).build();
+    }
+
+    // Elasticsearch 동기화용 Binding (match.es.* 패턴 모두 수신)
+    @Bean
+    public Binding esSyncBinding() {
+        return BindingBuilder
+                .bind(esSyncQueue())
+                .to(esSyncExchange())
+                .with("match.es.*");
     }
 
     @Bean

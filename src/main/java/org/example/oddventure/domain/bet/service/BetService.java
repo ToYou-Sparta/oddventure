@@ -1,78 +1,83 @@
 package org.example.oddventure.domain.bet.service;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.example.oddventure.common.exception.CommonErrorCode;
+import org.example.oddventure.domain.bet.dto.PointEventDto;
 import org.example.oddventure.domain.bet.dto.request.BetCreateRequest;
 import org.example.oddventure.domain.bet.dto.response.BetCreateResponse;
 import org.example.oddventure.domain.bet.dto.response.BetDeleteResponse;
 import org.example.oddventure.domain.bet.dto.response.BetResponse;
 import org.example.oddventure.domain.bet.entity.Bet;
 import org.example.oddventure.domain.bet.enums.SelectedTeam;
+import org.example.oddventure.domain.bet.event.BetEventProducer;
 import org.example.oddventure.domain.bet.exception.BetErrorCode;
 import org.example.oddventure.domain.bet.exception.BetException;
 import org.example.oddventure.domain.bet.repository.BetRepository;
+import org.example.oddventure.domain.bet.service.BetTransactionService.CreateBetData;
+import org.example.oddventure.domain.bet.service.BetTransactionService.DeleteBetData;
 import org.example.oddventure.domain.event.RedisPublisher;
 import org.example.oddventure.domain.match.dto.event.MatchOddsUpdateDto;
-import org.example.oddventure.domain.match.entity.Match;
-import org.example.oddventure.domain.match.enums.MatchStatus;
-import org.example.oddventure.domain.match.exception.MatchErrorCode;
-import org.example.oddventure.domain.match.exception.MatchException;
-import org.example.oddventure.domain.match.repository.MatchRepository;
-import org.example.oddventure.domain.user.entity.User;
-import org.example.oddventure.domain.user.exception.UserErrorCode;
-import org.example.oddventure.domain.user.exception.UserException;
-import org.example.oddventure.domain.user.repository.UserRepository;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BetService {
 
     private final BetRepository betRepository;
-    private final UserRepository userRepository;
-    private final MatchRepository matchRepository;
     private final RedisPublisher redisPublisher;
+    private final BetEventProducer betEventProducer;
+    private final RedissonClient redissonClient;
+    private final BetTransactionService betTransactionService;
+    private static final String USER_POINT_LOCK_PREFIX = "LOCK:USER_POINT:";
+    private static final String MATCH_LOCK_PREFIX = "LOCK:MATCH:";
 
-    @Transactional
     public BetCreateResponse createBet(Long userId, BetCreateRequest request) {
-        User user = findUserById(userId);
 
-        BigDecimal betAmount = BigDecimal.valueOf(request.betAmount());
+        // 1. 락 2개 정의 (User, Match)
+        String userLockKey = USER_POINT_LOCK_PREFIX + userId;
+        String matchLockKey = MATCH_LOCK_PREFIX + request.matchId();
+        RLock userLock = redissonClient.getLock(userLockKey);
+        RLock matchLock = redissonClient.getLock(matchLockKey);
 
-        // 잔액 부족
-        if (user.getPoint().compareTo(betAmount) < 0) {
-            throw new BetException(BetErrorCode.NOT_ENOUGH_POINTS);
+        // 2. MultiLock으로 두 락을 묶음
+        RLock multiLock = redissonClient.getMultiLock(userLock, matchLock);
+
+        try {
+            // 3. 락 획득 시도 (10초 대기, 5초 점유)
+            boolean isLocked = multiLock.tryLock(10, 5, TimeUnit.SECONDS);
+
+            if (!isLocked) {
+                log.warn("베팅 락 획득 실패. userId: {}, matchId: {}", userId, request.matchId());
+                throw new BetException(BetErrorCode.BET_LOCK_FAILED);
+            }
+
+            // 4. 락 획득 성공 시, 분리된 트랜잭션 메서드 호출
+            CreateBetData data = betTransactionService.createBetInternal(userId, request);
+
+            // 5. 트랜잭션 커밋 성공 후, Redis 이벤트 발행
+            MatchOddsUpdateDto dto = new MatchOddsUpdateDto(data.bet().getMatch().getId(), data.selectedTeamName(), data.odds());
+            redisPublisher.publish("match:" + dto.matchId() + ":odds", dto);
+
+            return BetCreateResponse.of(data.bet(), data.selectedTeamName(), data.userPointAfter());
+
+        } catch (InterruptedException e) {
+            log.error("베팅 락 대기 중 인터럽트 발생", e);
+            Thread.currentThread().interrupt();
+            throw new BetException(CommonErrorCode.INTERNAL_SERVER_ERROR);
+        } finally {
+            // 6. 락 해제
+            multiLock.unlock();
         }
-
-        Match match = matchRepository.findByIdForUpdate(request.matchId())
-                .orElseThrow(() -> new MatchException(MatchErrorCode.MATCH_NOT_FOUND));
-
-        // 베팅 가능 여부 검증
-        validateBettable(match);
-
-        // 유저 포인트 차감
-        user.minusPoint(betAmount);
-
-        // 배당률 계산
-        BigDecimal odds = calculateOdds(match, request.selectedTeam());
-
-        // 베팅 금액 저장
-        updateTotalAmount(match, betAmount, request.selectedTeam());
-
-        Bet bet = request.toEntity(user, match, odds);
-        betRepository.save(bet);
-
-        String selectedTeamName = selectedTeamName(match, request.selectedTeam());
-
-        // 배당률 변경 시 Redis Pub/Sub으로 실시간 알림 전송
-        MatchOddsUpdateDto dto = new MatchOddsUpdateDto(match.getId(), selectedTeamName, odds);
-        redisPublisher.publish("match:" + dto.matchId() + ":odds", dto);
-
-        return BetCreateResponse.of(bet, selectedTeamName, user.getPoint());
     }
 
     @Transactional(readOnly = true)
@@ -81,98 +86,54 @@ public class BetService {
         return bets.map(BetResponse::from);
     }
 
-    @Transactional
     public BetDeleteResponse deleteBet(Long userId, Long betId) {
-        Bet bet = betRepository.findByIdForDelete(betId)
+
+        // 락 획득 전 matchId를 알기 위해 Bet 정보 pre-fetch
+        Bet preFetchedBet = betRepository.findById(betId)
                 .orElseThrow(() -> new BetException(BetErrorCode.BET_NOT_FOUND));
 
-        // 본인 베팅 확인
-        if (!bet.getUser().getId().equals(userId)) {
-            throw new BetException(BetErrorCode.PERMISSION_DENIED);
-        }
+        // 1. 락 2개 정의 (User, Match)
+        String userLockKey = USER_POINT_LOCK_PREFIX + userId;
+        String matchLockKey = MATCH_LOCK_PREFIX + preFetchedBet.getMatch().getId();
+        RLock userLock = redissonClient.getLock(userLockKey);
+        RLock matchLock = redissonClient.getLock(matchLockKey);
 
-        // 취소 가능 여부 확인
-        Match match = matchRepository.findByIdForUpdate(bet.getMatch().getId())
-                .orElseThrow(() -> new MatchException(MatchErrorCode.MATCH_NOT_FOUND));
-        validateCancelable(match.getStatus());
+        RLock multiLock = redissonClient.getMultiLock(userLock, matchLock);
 
-        bet.delete();
+        try {
+            // 2. 락 획득
+            boolean isLocked = multiLock.tryLock(10, 5, TimeUnit.SECONDS);
+            if (!isLocked) {
+                log.warn("베팅 취소 락 획득 실패. userId: {}, betId: {}", userId, betId);
+                throw new BetException(BetErrorCode.BET_LOCK_FAILED);
+            }
 
-        // 환불
-        User user = bet.getUser();
-        user.plusPoint(bet.getBetAmount());
+            // 3. 락 획득 후 트랜잭션 호출
+            DeleteBetData data = betTransactionService.deleteBetInternal(userId, betId);
 
-        // 총 베팅 금액 되돌리기
-        refundTotalAmount(match, bet.getBetAmount(), bet.getSelectedTeam());
+            return BetDeleteResponse.of(data.bet(), data.user());
 
-        return BetDeleteResponse.of(bet, user);
-    }
-
-    private User findUserById(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorCode.INVALID_USER_ID));
-    }
-
-    private void validateBettable(Match match) {
-        if (match.isDeleted()) {
-            throw new BetException(BetErrorCode.MATCH_NOT_EXIST);
-        }
-
-        if (!match.getStatus().equals(MatchStatus.SCHEDULED)) {
-            throw new BetException(BetErrorCode.MATCH_NOT_BETTABLE);
+        } catch (InterruptedException e) {
+            log.error("베팅 취소 락 대기 중 인터럽트 발생", e);
+            Thread.currentThread().interrupt();
+            throw new BetException(CommonErrorCode.INTERNAL_SERVER_ERROR);
+        } finally {
+            // 4. 락 해제
+            multiLock.unlock();
         }
     }
 
-    private void validateCancelable(MatchStatus status) {
-        if (!status.equals(MatchStatus.SCHEDULED)) {
-            throw new BetException(BetErrorCode.MATCH_NOT_CANCELABLE);
-        }
+    @Transactional(readOnly = true)
+    public List<Bet> findByMatchId(Long matchId) {
+        return betRepository.findByMatchId(matchId);
     }
 
-    private void updateTotalAmount(Match match, BigDecimal amount, SelectedTeam selectedTeam) {
-        if (selectedTeam.equals(SelectedTeam.Team_A)) {
-            match.plusTeamA(amount);
-        } else if (selectedTeam.equals(SelectedTeam.Team_B)) {
-            match.plusTeamB(amount);
-        }
-    }
-
-    private void refundTotalAmount(Match match, BigDecimal amount, SelectedTeam selectedTeam) {
-        if (selectedTeam.equals(SelectedTeam.Team_A)) {
-            match.minusTeamA(amount);
-        } else if (selectedTeam.equals(SelectedTeam.Team_B)) {
-            match.minusTeamB(amount);
-        }
-    }
-
-    /***
-     * 승 배당률 = 0.9 / 승 금액 비율
-     * 0.9 = 1 - 0.1(수수료)
-     * 승 금액 비율 = 승 총 베팅 금액 / 전체 베팅 금액(승 + 패)
-     * 처음 배당률 지정 로직과
-     * 이후 배당률 조정 로직이 필요하다. (이는 베팅 생성시 호출된다.)
-     * 배당률 조정 로직 구현 시, 유저 비율도 고려하는 가중 조합형 배당률로 구현하는 것이 필요해 보인다.
-     */
-    private BigDecimal calculateOdds(Match match, SelectedTeam selectedTeam) {
-        BigDecimal total = match.getTotalAmountA().add(match.getTotalAmountB());
-        System.out.println("total: " + total);
-        BigDecimal probability;
-
-        if (selectedTeam.equals(SelectedTeam.Team_A)) {
-            probability = match.getTotalAmountA().divide(total, 2, RoundingMode.HALF_UP);
-        } else {
-            probability = match.getTotalAmountB().divide(total, 2, RoundingMode.HALF_UP);
-        }
-
-        System.out.println("probability: " + probability);
-        return new BigDecimal("0.9").divide(probability, 2, RoundingMode.HALF_UP);
-    }
-
-    private String selectedTeamName(Match match, SelectedTeam selectedTeam) {
-        if (selectedTeam.equals(SelectedTeam.Team_A)) {
-            return match.getTeamA();
-        } else {
-            return match.getTeamB();
+    @Transactional
+    public void settleBet(Bet bet, SelectedTeam winner) {
+        if (bet.getSelectedTeam().equals(winner) && !bet.isDeleted()) {
+            bet.setWin(true);
+            BigDecimal point = bet.getBetAmount().multiply(bet.getOddsAtBetting());
+            betEventProducer.producePointEvent(PointEventDto.from(bet.getUser().getId(), point));
         }
     }
 }

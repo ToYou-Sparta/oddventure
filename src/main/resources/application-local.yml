@@ -19,6 +19,9 @@ spring:
       api-key: ${API_KEY}
       base-url: ${BASE_URL}
 
+  elasticsearch:
+    uris: http://localhost:9200
+
 jwt:
   secret:
     key: "${SECRET_KEY}"
