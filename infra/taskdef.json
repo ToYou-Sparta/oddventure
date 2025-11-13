@@ -45,10 +45,10 @@
         { "name": "elasticsearch.password", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/elasticsearch/credentials:elasticsearch.password::" },
         { "name": "jwt.secret.key", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/api/credentials:jwt.secret.key::" },
         { "name": "grid.api.key", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/api/credentials:grid.api.key::" },
-        { "name": "grid.central.base.url", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/api/credentials/grid.central.base.url::" },
-        { "name": "grid.live.base.url", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/api/credentials/grid.live.base.url::" },
-        { "name": "openai.api.key", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/api/credentials/openai.api.key::" },
-        { "name": "openai.base.url", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/api/credentials/openai.base.url::"}
+        { "name": "grid.central.base.url", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/api/credentials:grid.central.base.url::" },
+        { "name": "grid.live.base.url", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/api/credentials:grid.live.base.url::" },
+        { "name": "openai.api.key", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/api/credentials:openai.api.key::" },
+        { "name": "openai.base.url", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/api/credentials:openai.base.url::"}
       ]
     }
   ]
