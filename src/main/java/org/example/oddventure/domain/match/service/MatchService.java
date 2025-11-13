@@ -22,8 +22,10 @@ import org.example.oddventure.domain.match.exception.MatchErrorCode;
 import org.example.oddventure.domain.match.exception.MatchException;
 import org.example.oddventure.domain.match.repository.MatchJdbcRepository;
 import org.example.oddventure.domain.match.repository.MatchRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +38,9 @@ public class MatchService {
     private final HotKeywordsService hotKeywordsService;
     private final MatchEventProducer matchEventProducer;
     private final MatchJdbcRepository matchJdbcRepository;
+    private final MatchSearchService matchSearchService;
+    private final RedisTemplate<String, Object> redisTemplate;
+
 
     // 매치 생성 (배치 적용)
     @Transactional
@@ -81,6 +86,8 @@ public class MatchService {
 
         match.update(request.matchName(), request.teamA(), request.teamB(), request.startTime(), request.status());
 
+        //matchEsSyncPublisher.publishMatchUpdated(matchId);
+
         return MatchUpdateAdminResponse.from(match);
     }
 
@@ -90,16 +97,26 @@ public class MatchService {
         return matches.map(MatchResponse::from);
     }
 
-    @Transactional
+    @Cacheable(value = "matchDetails", key = "#matchId", unless = "#result.status.name() != 'FINISHED'")
+    @Transactional(readOnly = true)
     public MatchResponse getMatch(Long matchId) {
-        int updated = matchRepository.incrementViewCount(matchId);
-        if (updated == 0) {
-            throw new MatchException(MatchErrorCode.MATCH_NOT_FOUND);
-        }
-
+        log.info("getMatch for matchId: {}", matchId);
         Match match = findMatchById(matchId);
-
         return MatchResponse.from(match);
+    }
+
+    // 조회수 증가 로직
+    public void incrementViewCount(Long matchId) {
+        String viewCountKey = "match:viewcount:" + matchId;
+        redisTemplate.opsForValue().increment(viewCountKey);
+    }
+
+    @Transactional
+    public void updateViewCount(Long matchId, Long viewCount) {
+        int updated = matchRepository.updateViewCount(matchId, viewCount);
+        if (updated == 0) {
+            log.warn("DB에 matchId: {}가 존재하지 않아 조회수 동기화 실패", matchId);
+        }
     }
 
     @Transactional
@@ -137,5 +154,11 @@ public class MatchService {
     private Match findByFetchId(Long fetchId) {
         return matchRepository.findByFetchId(fetchId)
                 .orElseThrow(() -> new MatchException(MatchErrorCode.MATCH_NOT_FOUND));
+    }
+
+    @Transactional
+    public Page<MatchResponse> elasticSearchMatches(MatchSearchCondition condition, Pageable pageable) {
+
+        return matchSearchService.searchMatches(condition, pageable);
     }
 }

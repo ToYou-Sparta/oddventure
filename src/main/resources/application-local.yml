@@ -22,6 +22,9 @@ spring:
     jdbc:
       initialize-schema: always
 
+  elasticsearch:
+    uris: http://localhost:9200
+
 jwt:
   secret:
     key: "${SECRET_KEY}"

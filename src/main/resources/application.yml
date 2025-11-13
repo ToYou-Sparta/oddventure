@@ -15,6 +15,11 @@ spring:
   cache:
     type: redis
 
+  elasticsearch:
+    uris: ${ELASTICSEARCH_URIS}
+    connection-timeout: 5s
+    socket-timeout: 30s
+
   ai:
     openai:
       chat:

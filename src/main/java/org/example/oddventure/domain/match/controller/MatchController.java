@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/api/v1/matches")
+@RequiredArgsConstructor
 public class MatchController {
 
     private final MatchService matchService;
@@ -40,12 +40,27 @@ public class MatchController {
     public ResponseEntity<ApiResponse<MatchResponse>> getMatch(
             @PathVariable Long matchId
     ) {
+        // 1. 조회수 증가(Write) 로직을 먼저 호출 (캐시와 무관하게 항상 실행)
+        matchService.incrementViewCount(matchId);
+        // 2. 캐시가 적용된 순수 조회(Read) 로직을 호출
         MatchResponse match = matchService.getMatch(matchId);
         return ApiResponse.success(match, "매치 상세 조회에 성공했습니다.");
     }
 
     @PostMapping("/search")
     public ResponseEntity<ApiPageResponse<MatchResponse>> searchMatches(
+            @RequestBody MatchSearchCondition condition,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<MatchResponse> matches = matchService.searchMatches(condition, pageable);
+        return ApiPageResponse.success(matches, "검색 조건에 맞는 매치 목록을 조회했습니다.");
+    }
+
+    // ElasticSearch 적용
+    @PostMapping("/v2/search")
+    public ResponseEntity<ApiPageResponse<MatchResponse>> elasticSearchMatches(
             @RequestBody MatchSearchCondition condition,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
