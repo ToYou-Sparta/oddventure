@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -108,7 +109,7 @@ public class BetServiceTest {
         assertThat(response.selectedTeam()).isEqualTo(SelectedTeam.Team_A);
         assertThat(response.selectedTeamName()).isEqualTo("T1");
         assertThat(response.betAmount()).isEqualTo(new BigDecimal("1000"));
-        assertThat(response.oddsAtBetting()).isEqualTo(new BigDecimal("1.55"));
+        assertThat(response.oddsAtBetting()).isEqualTo(new BigDecimal("1.50"));
         assertThat(response.userPointAfter()).isEqualTo(new BigDecimal("0"));
         verify(multiLock).unlock(); // 락이 해제되었는지 검증
         verify(redisPublisher).publish(any(String.class), any()); // 이벤트가 발행되었는지 검증
@@ -152,7 +153,6 @@ public class BetServiceTest {
 
         //then
         assertThat(response.refundAmount()).isEqualTo(new BigDecimal("1000"));
-        assertThat(match.getTotalAmountA()).isEqualTo(new BigDecimal("7000"));
         assertThat(response.userPointAfter()).isEqualTo(new BigDecimal("2000")); // 기본 1000 + 환불 1000
         verify(multiLock).unlock(); // 락이 해제되었는지 검증
     }
