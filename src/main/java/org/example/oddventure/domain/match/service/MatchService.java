@@ -18,9 +18,12 @@ import org.example.oddventure.domain.match.enums.MatchStatus;
 import org.example.oddventure.domain.match.event.MatchEventProducer;
 import org.example.oddventure.domain.match.exception.MatchErrorCode;
 import org.example.oddventure.domain.match.exception.MatchException;
+//import org.example.oddventure.domain.match.messaging.MatchEsSyncPublisher;
 import org.example.oddventure.domain.match.repository.MatchRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +35,11 @@ public class MatchService {
     private final MatchRepository matchRepository;
     private final HotKeywordsService hotKeywordsService;
     private final MatchEventProducer matchEventProducer;
+    private final MatchSearchService matchSearchService;
+    //private final MatchEsSyncPublisher matchEsSyncPublisher;
+
+    private final RedisTemplate<String, Object> redisTemplate;
+
 
     // 매치 생성 (매치별로 독립적인 트랜잭션 보유)
     @Transactional(propagation = REQUIRES_NEW)
@@ -51,7 +59,8 @@ public class MatchService {
                 .startTime(dto.startTime())
                 .build();
 
-        matchRepository.save(match);
+        Match savedMatch = matchRepository.save(match);
+       //matchEsSyncPublisher.publishMatchCreated(savedMatch.getId());
         matchEventProducer.produceMatchStartEvent(MatchStartEventDto.from(match.getId(), match.getStartTime()));
 
         return MatchCreateDto.builder().fetchId(dto.fetchId()).build();
@@ -64,6 +73,8 @@ public class MatchService {
 
         match.update(request.matchName(), request.teamA(), request.teamB(), request.startTime(), request.status());
 
+        //matchEsSyncPublisher.publishMatchUpdated(matchId);
+
         return MatchUpdateAdminResponse.from(match);
     }
 
@@ -73,16 +84,26 @@ public class MatchService {
         return matches.map(MatchResponse::from);
     }
 
-    @Transactional
+    @Cacheable(value = "matchDetails", key = "#matchId", unless = "#result.status.name() != 'FINISHED'")
+    @Transactional(readOnly = true)
     public MatchResponse getMatch(Long matchId) {
-        int updated = matchRepository.incrementViewCount(matchId);
-        if (updated == 0) {
-            throw new MatchException(MatchErrorCode.MATCH_NOT_FOUND);
-        }
-
+        log.info("getMatch for matchId: {}", matchId);
         Match match = findMatchById(matchId);
-
         return MatchResponse.from(match);
+    }
+
+    // 조회수 증가 로직
+    public void incrementViewCount(Long matchId) {
+        String viewCountKey = "match:viewcount:" + matchId;
+        redisTemplate.opsForValue().increment(viewCountKey);
+    }
+
+    @Transactional
+    public void updateViewCount(Long matchId, Long viewCount) {
+        int updated = matchRepository.updateViewCount(matchId, viewCount);
+        if (updated == 0) {
+            log.warn("DB에 matchId: {}가 존재하지 않아 조회수 동기화 실패", matchId);
+        }
     }
 
     @Transactional
@@ -116,5 +137,11 @@ public class MatchService {
     private Match findMatchById(Long matchId) {
         return matchRepository.findById(matchId)
                 .orElseThrow(() -> new MatchException(MatchErrorCode.MATCH_NOT_FOUND));
+    }
+
+    @Transactional
+    public Page<MatchResponse> elasticSearchMatches(MatchSearchCondition condition, Pageable pageable) {
+
+        return matchSearchService.searchMatches(condition, pageable);
     }
 }

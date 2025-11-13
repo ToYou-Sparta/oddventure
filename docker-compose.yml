@@ -84,6 +84,74 @@ services:
     networks:
       - oddventure-network
 
+  # Elsticsearch 검색 엔진
+  elasticsearch:
+    image: elasticsearch:9.2.0
+    container_name: oddventure-elasticsearch
+    restart: unless-stopped
+
+    environment:
+      - discovery.type=single-node # 단일 노드로 클러스터 구성(개발 환경)
+      - xpack.security.enabled=false # 보안 기능 비활성화
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m" # JVM 메모리 설정
+      - bootstrap.memory_lock=true # 스왑 방지를 위해 메모리를 물리 메모리에 고정
+
+    ports:
+      - "9200:9200"
+
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+
+    ulimits:
+      # memlock (메모리 락)
+      # bootstrap.memory_lock=true 설정을 위해 필요
+      # -1: 무제한 (메모리를 스왑으로 이동하지 않음)
+      memlock:
+        soft: -1  # 소프트 제한 (경고 수준)
+        hard: -1  # 하드 제한 (강제 제한)
+
+      # nofile (파일 디스크립터)
+      # Elasticsearch는 많은 파일을 동시에 열어야 함
+      # 65536: 충분한 파일 핸들 확보
+      # 기본값(1024)으로는 부족할 수 있음
+      nofile:
+        soft: 65536  # 권장 최소값
+        hard: 65536  # 최대값
+
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+    networks:
+      - oddventure-network
+
+  # Elasticsearch 관리 UI
+  kibana:
+    image: kibana:9.2.0
+    container_name: oddventure-kibana
+    restart: unless-stopped
+
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+
+    ports:
+      - "5601:5601"  # Kibana 웹 UI 포트
+
+    depends_on:
+      - elasticsearch
+
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:5601/api/status || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+    networks:
+      - oddventure-network
+
+
 # 볼륨 정의 (데이터 영속성)
 volumes:
   mysql_data:
@@ -91,6 +159,8 @@ volumes:
   redis_data:
     driver: local # Grafana 데이터 저장소 (대시보드/설정 영속화)
   rabbitmq_data:
+    driver: local
+  elasticsearch_data:
     driver: local
 
 # 네트워크 정의 (컨테이너 간 통신)
