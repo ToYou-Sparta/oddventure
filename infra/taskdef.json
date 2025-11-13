@@ -1,0 +1,55 @@
+{
+  "family": "aws-demo-ecs-task-definition",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "runtimePlatform": { "cpuArchitecture": "X86_64", "operatingSystemFamily": "LINUX" },
+
+  "executionRoleArn": "arn:aws:iam::<ACCOUNT_ID>:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::<ACCOUNT_ID>:role/ecsTaskExecutionRole",
+
+  "containerDefinitions": [
+    {
+      "name": "aws-demo-container",
+      "image": "<IMAGE_URI>",
+      "environment": [
+        { "name": "SPRING_PROFILES_ACTIVE", "value": "<PROFILE>" }
+      ],
+      "essential": true,
+      "portMappings": [
+        { "containerPort": 8080, "protocol": "tcp", "appProtocol": "http" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/aws-demo-ecs-task-definition",
+          "awslogs-create-group": "true",
+          "awslogs-region": "ap-northeast-2",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "secrets": [
+        { "name": "db.host",     "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/mysql/credentials:db.host::" },
+        { "name": "db.name",     "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/mysql/credentials:db.name::" },
+        { "name": "db.username", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/mysql/credentials:db.username::" },
+        { "name": "db.password", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/mysql/credentials:db.password::" },
+        { "name": "rabbitmq.host", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/rabbitmq/credentials:rabbitmq.host::" },
+        { "name": "rabbitmq.port", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/rabbitmq/credentials:rabbitmq.port::" },
+        { "name": "rabbitmq.username", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/rabbitmq/credentials:rabbitmq.username::" },
+        { "name": "rabbitmq.password", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/rabbitmq/credentials:rabbitmq.password::" },
+        { "name": "redis.host", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/redis/credentials:redis.host::" },
+        { "name": "redis.port", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/redis/credentials:redis.port::" },
+        { "name": "elasticsearch.uris", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/elasticsearch/credentials:elasticsearch.uris::" },
+        { "name": "elasticsearch.username", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/elasticsearch/credentials:elasticsearch.username::" },
+        { "name": "elasticsearch.password", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/elasticsearch/credentials:elasticsearch.password::" },
+        { "name": "jwt.secret.key", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/api/credentials:jwt.secret.key::" },
+        { "name": "grid.api.key", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/api/credentials:grid.api.key::" },
+        { "name": "grid.central.base.url", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/api/grid.central.base.url::" },
+        { "name": "grid.live.base.url", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/api/grid.live.base.url::" },
+        { "name": "openai.api.key", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/api/openai.api.key::" },
+        { "name": "openai.base.url", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/api/openai.base.url::" }
+      ]
+    }
+  ]
+}

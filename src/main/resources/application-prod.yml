@@ -1,0 +1,53 @@
+spring:
+  cloud:
+    aws:
+      region:
+        static: ap-northeast-2
+      parameter-store:
+        enabled: false
+
+  datasource:
+    url: jdbc:mysql://${db.host}:${db.port:3306}/${db.name}?useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    username: ${db.username}
+    password: ${db.password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  data:
+    redis:
+      host: ${redis.host}
+      port: ${redis.port}
+
+  rabbitmq:
+    host: ${rabbitmq.host}
+    port: ${rabbitmq.port}
+    username: ${rabbitmq.username}
+    password: ${rabbitmq.password}
+
+  elasticsearch:
+    uris: ${elasticsearch.uris}
+    username: ${elasticsearch.username}
+    password: ${elasticsearch.password}
+
+  jwt:
+    secret:
+      key: ${jwt.secret.key}
+
+  grid:
+    central-data:
+      base-url: ${grid.central.base.url}
+    live-data:
+      base-url: ${grid.live.base.url}
+    api-key: ${grid.api.key}
+
+  ai:
+    openai:
+      api-key: ${openai.api.key}
+      base-url: ${openai.base.url}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+
