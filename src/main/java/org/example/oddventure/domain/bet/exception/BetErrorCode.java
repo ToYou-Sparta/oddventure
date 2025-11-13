@@ -16,6 +16,7 @@ public enum BetErrorCode implements ErrorCode {
     ODDS_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 베팅 항목입니다."),
     BET_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 베팅 내역입니다."),
     PERMISSION_DENIED(HttpStatus.FORBIDDEN, "베팅을 취소할 권한이 없습니다."),
+    POINT_BATCH_EXCEPTION(HttpStatus.EXPECTATION_FAILED, "포인트 정산 배치 실행 오류"),
     BET_LOCK_FAILED(HttpStatus.CONFLICT, "다른 요청을 처리 중입니다. 잠시 후 다시 시도해주세요.");
 
     private final HttpStatus httpStatus;
