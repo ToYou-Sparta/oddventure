@@ -1,7 +1,9 @@
 package org.example.oddventure.domain.match.unit;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -99,8 +101,8 @@ class MatchControllerTest extends RestDocsTestSupport {
                                 fieldWithPath("data.content[].startTime").description("매치 시작 시간"),
                                 fieldWithPath("data.content[].endTime").description("매치 종료 시간"),
                                 fieldWithPath("data.content[].status").description("매치 상태"),
-                                fieldWithPath("data.content[].winner").description("승리 팀").optional(),
-                                fieldWithPath("data.content[].loser").description("패배 팀").optional(),
+                                fieldWithPath("data.content[].winner").type(STRING).description("승리 팀").optional(),
+                                fieldWithPath("data.content[].loser").type(STRING).description("패배 팀").optional(),
                                 fieldWithPath("data.content[].viewCount").description("조회수"),
                                 fieldWithPath("data.content[].createdAt").description("생성일시"),
                                 fieldWithPath("data.totalElements").description("전체 데이터 개수"),
@@ -140,8 +142,8 @@ class MatchControllerTest extends RestDocsTestSupport {
                                 fieldWithPath("data.startTime").description("매치 시작 시간"),
                                 fieldWithPath("data.endTime").description("매치 종료 시간"),
                                 fieldWithPath("data.status").description("매치 상태"),
-                                fieldWithPath("data.winner").description("승리 팀").optional(),
-                                fieldWithPath("data.loser").description("패배 팀").optional(),
+                                fieldWithPath("data.winner").type(STRING).description("승리 팀").optional(),
+                                fieldWithPath("data.loser").type(STRING).description("패배 팀").optional(),
                                 fieldWithPath("data.viewCount").description("조회수"),
                                 fieldWithPath("data.createdAt").description("생성일시")
                         )
@@ -169,6 +171,13 @@ class MatchControllerTest extends RestDocsTestSupport {
                 .andExpect(jsonPath("$.data.content[0].matchId").value(1))
                 .andExpect(jsonPath("$.data.content[0].teamB").value("GEN.G"))
                 .andDo(restDocs.document(
+                        requestFields(
+                                fieldWithPath("keyword").description("검색 키워드 (팀명, 매치명 등)").optional(),
+                                fieldWithPath("fromDate").type(STRING).description("검색 시작일시 (예: 2025-11-01T00:00:00)")
+                                        .optional(),
+                                fieldWithPath("toDate").type(STRING).description("검색 종료일시 (예: 2025-11-12T23:59:59)")
+                                        .optional()
+                        ),
                         RestDocsUtils.successWithDataFields(
                                 fieldWithPath("data.content[].matchId").description("매치 ID"),
                                 fieldWithPath("data.content[].matchName").description("매치명"),
@@ -179,8 +188,8 @@ class MatchControllerTest extends RestDocsTestSupport {
                                 fieldWithPath("data.content[].startTime").description("매치 시작 시간"),
                                 fieldWithPath("data.content[].endTime").description("매치 종료 시간"),
                                 fieldWithPath("data.content[].status").description("매치 상태"),
-                                fieldWithPath("data.content[].winner").description("승리 팀").optional(),
-                                fieldWithPath("data.content[].loser").description("패배 팀").optional(),
+                                fieldWithPath("data.content[].winner").type(STRING).description("승리 팀").optional(),
+                                fieldWithPath("data.content[].loser").type(STRING).description("패배 팀").optional(),
                                 fieldWithPath("data.content[].viewCount").description("조회수"),
                                 fieldWithPath("data.content[].createdAt").description("생성일시"),
                                 fieldWithPath("data.totalElements").description("전체 데이터 개수"),
