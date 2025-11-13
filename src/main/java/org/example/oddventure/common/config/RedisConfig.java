@@ -10,6 +10,8 @@ import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.util.List;
+import org.example.oddventure.domain.ai.subscriber.ChatMessageOutputSubscriber;
+import org.example.oddventure.domain.ai.subscriber.ChatMessageSubscriber;
 import org.example.oddventure.domain.event.RedisSubscriber;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -23,7 +25,6 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.PatternTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
-import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
@@ -90,28 +91,22 @@ public class RedisConfig {
     @Bean
     public RedisMessageListenerContainer redisMessageListenerContainer(
             RedisConnectionFactory connectionFactory,
-            MessageListenerAdapter oddsListenerAdapter,
-            MessageListenerAdapter infoListenerAdapter
+            RedisSubscriber redisSubscriber,
+            ChatMessageSubscriber chatMessageSubscriber,
+            ChatMessageOutputSubscriber chatMessageOutputSubscriber
     ) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
-        container.addMessageListener(oddsListenerAdapter, new PatternTopic("match:*:odds"));
-        container.addMessageListener(infoListenerAdapter, new PatternTopic("match:*:info"));
+
+        container.addMessageListener(redisSubscriber, new PatternTopic("match:*:odds"));
+        container.addMessageListener(redisSubscriber, new PatternTopic("match:*:info"));
+        container.addMessageListener(chatMessageSubscriber, new PatternTopic("chat:*:input"));
+        container.addMessageListener(chatMessageOutputSubscriber, new PatternTopic("chat:*:output"));
+
         return container;
     }
 
-    @Bean
-    public MessageListenerAdapter oddsListenerAdapter(RedisSubscriber subscriber) {
-        return new MessageListenerAdapter(subscriber);
-    }
-
-    @Bean
-    public MessageListenerAdapter infoListenerAdapter(RedisSubscriber subscriber) {
-        return new MessageListenerAdapter(subscriber);
-    }
-
     // --- Page/Sort Mixin Helper ---
-
 
     // PageImpl, PageRequest, Sort 역직렬화를 위한 Jackson Mixin 모듈
     private Module pageModule() {
@@ -129,7 +124,8 @@ public class RedisConfig {
         PageImplMixin(
                 @JsonProperty("content") List<T> content,
                 @JsonProperty("pageable") Pageable pageable,
-                @JsonProperty("totalElements") long totalElements) {}
+                @JsonProperty("totalElements") long totalElements) {
+        }
     }
 
     // PageRequest 역직렬화용 Mixin

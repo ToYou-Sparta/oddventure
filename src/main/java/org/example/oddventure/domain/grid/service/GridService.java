@@ -39,8 +39,8 @@ public class GridService {
                 filter:{
                   titleId: "28" # CS2
                   startTimeScheduled:{
-                    gte: "2025-11-03T15:00:07+02:00"
-                    lte: "2025-11-04T15:00:07+02:00"
+                    gte: "2025-10-06T15:00:07+02:00"
+                    lte: "2025-11-05T15:00:07+02:00"
                   }
                 }
                 orderBy: StartTimeScheduled
