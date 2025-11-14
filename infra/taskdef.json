@@ -14,7 +14,7 @@
       "name": "aws-demo-container",
       "image": "<IMAGE_URI>",
       "environment": [
-        { "name": "SPRING_PROFILES_ACTIVE", "value": "<SPRING_PROFILE>" }
+        { "name": "SPRING_PROFILES_ACTIVE", "value": "<PROFILE>" }
       ],
       "essential": true,
       "portMappings": [
