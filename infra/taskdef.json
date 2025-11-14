@@ -45,11 +45,11 @@
         { "name": "ELASTICSEARCH_USERNAME", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/elasticsearch/credentials:elasticsearch.username::" },
         { "name": "ELASTICSEARCH_PASSWORD", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/elasticsearch/credentials:elasticsearch.password::" },
         { "name": "JWT_SECRET_KEY", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/api/credentials:jwt.secret.key::" },
-        { "name": "GRID_API_KEY", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/api/credentials:grid.api.key::" },
-        { "name": "GRID_CENTRAL_BASE_URL", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/api/credentials:grid.central.base.url::" },
-        { "name": "GRID_LIVE_BASE_URL", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/api/credentials:grid.live.base.url::" },
-        { "name": "OPENAI_API_KEY", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/api/credentials:openai.api.key::" },
-        { "name": "OPENAI_BASE_URL", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/api/credentials:openai.base.url::"}
+        { "name": "GRID_API_KEY", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/api/credentials:grid.api-key::" },
+        { "name": "GRID_CENTRAL_BASE_URL", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/api/credentials:grid.central-data.base-url::" },
+        { "name": "GRID_LIVE_BASE_URL", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/api/credentials:grid.live-data.base-url::" },
+        { "name": "OPENAI_API_KEY", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/api/credentials:openai.api-key::" },
+        { "name": "OPENAI_BASE_URL", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:<ACCOUNT_ID>:secret:<PROFILE>/api/credentials:openai.base-url::"}
       ]
     }
   ]
