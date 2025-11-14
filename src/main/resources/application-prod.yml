@@ -28,10 +28,10 @@ spring:
     username: ${ELASTICSEARCH_USERNAME}
     password: ${ELASTICSEARCH_PASSWORD}
 
-    ai:
-      openai:
-        api-key: ${OPENAI_API_KEY}
-        base-url: ${OPENAI_BASE_URL}
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      base-url: ${OPENAI_BASE_URL}
 
   jpa:
     hibernate:
