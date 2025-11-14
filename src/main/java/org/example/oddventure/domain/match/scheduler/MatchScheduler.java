@@ -70,6 +70,7 @@ public class MatchScheduler {
         });
 
         if (matchIds.isEmpty()) {
+            log.info("종료된 매치가 없습니다.");
             return;
         }
 
@@ -100,7 +101,9 @@ public class MatchScheduler {
             try {
                 // 1. Redis에서 현재 조회수 가져오기
                 Object rawValue = redisTemplate.opsForValue().get(key);
-                if (rawValue == null) continue;
+                if (rawValue == null) {
+                    continue;
+                }
 
                 Long viewCount = Long.parseLong(String.valueOf(rawValue));
 
