@@ -28,21 +28,10 @@ spring:
     username: ${ELASTICSEARCH_USERNAME}
     password: ${ELASTICSEARCH_PASSWORD}
 
-  jwt:
-    secret:
-      key: ${JWT_SECRET_KEY}
-
-  grid:
-    central-data:
-      base-url: ${GRID_CENTRAL_BASE_URL}
-    live-data:
-      base-url: ${GRID_LIVE_BASE_URL}
-    api-key: ${GRID_API_KEY}
-
-  ai:
-    openai:
-      api-key: ${OPENAI_API_KEY}
-      base-url: ${OPENAI_BASE_URL}
+    ai:
+      openai:
+        api-key: ${OPENAI_API_KEY}
+        base-url: ${OPENAI_BASE_URL}
 
   jpa:
     hibernate:
@@ -51,3 +40,13 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
 
+jwt:
+  secret:
+    key: ${JWT_SECRET_KEY}
+
+grid:
+  central-data:
+    base-url: ${GRID_CENTRAL_BASE_URL}
+  live-data:
+    base-url: ${GRID_LIVE_BASE_URL}
+  api-key: ${GRID_API_KEY}
