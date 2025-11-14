@@ -1,6 +1,7 @@
 package org.example.oddventure.domain.match.unit;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import java.time.LocalDateTime;
 import org.example.oddventure.base.RedisTestContainerConfig;
 import org.example.oddventure.domain.match.entity.Match;
@@ -14,10 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.util.StopWatch;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@TestPropertySource(properties = {"spring.data.redis.host=localhost", "spring.data.redis.port=0"})
 public class MatchServiceCacheTest extends RedisTestContainerConfig {
 
     @Autowired
