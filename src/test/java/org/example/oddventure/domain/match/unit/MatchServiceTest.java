@@ -2,6 +2,7 @@ package org.example.oddventure.domain.match.unit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -11,6 +12,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.example.oddventure.common.exception.GlobalException;
@@ -19,7 +21,6 @@ import org.example.oddventure.domain.admin.dto.response.MatchUpdateAdminResponse
 import org.example.oddventure.domain.grid.dto.MatchScheduleDto;
 import org.example.oddventure.domain.hotKeywords.service.HotKeywordsService;
 import org.example.oddventure.domain.match.dto.MatchCreateDto;
-import org.example.oddventure.domain.match.dto.event.MatchStartEventDto;
 import org.example.oddventure.domain.match.dto.projection.MatchProjection;
 import org.example.oddventure.domain.match.dto.request.MatchSearchCondition;
 import org.example.oddventure.domain.match.dto.response.MatchResponse;
@@ -28,6 +29,7 @@ import org.example.oddventure.domain.match.enums.MatchStatus;
 import org.example.oddventure.domain.match.event.MatchEventProducer;
 import org.example.oddventure.domain.match.exception.MatchErrorCode;
 import org.example.oddventure.domain.match.exception.MatchException;
+import org.example.oddventure.domain.match.repository.MatchJdbcRepository;
 import org.example.oddventure.domain.match.repository.MatchRepository;
 import org.example.oddventure.domain.match.service.MatchService;
 import org.junit.jupiter.api.DisplayName;
@@ -61,6 +63,9 @@ class MatchServiceTest {
     private HotKeywordsService hotKeywordsService;
 
     @Mock
+    private MatchJdbcRepository matchJdbcRepository;
+
+    @Mock
     private RedisTemplate<String, Object> redisTemplate;
 
     @Mock
@@ -71,16 +76,21 @@ class MatchServiceTest {
     void createMatch_Success() {
         // given
         LocalDateTime startTime = LocalDateTime.now().plusDays(1);
-        MatchScheduleDto request = new MatchScheduleDto(1L, "LCK", "T1", "Gen.G", startTime);
-        Match match = Match.builder().teamA("T1").teamB("Gen.G").startTime(startTime).build();
-        given(matchRepository.save(any(Match.class))).willReturn(match);
-        doNothing().when(matchEventProducer)
-                .produceMatchStartEvent(MatchStartEventDto.from(match.getId(), match.getStartTime()));
+        List<MatchScheduleDto> request = new ArrayList<>();
+        request.add(new MatchScheduleDto(1L, "LCK", "T1", "Gen.G", startTime));
+
+        List<Match> matches = new ArrayList<>();
+        matches.add(Match.builder().teamA("T1").teamB("Gen.G").startTime(startTime).build());
+
+        given(matchRepository.findExistingFetchIds(anyList())).willReturn(List.of());
+        doNothing().when(matchJdbcRepository).saveAllMatches(anyList());
+
         // when
-        MatchCreateDto response = matchService.createMatch(request);
+        List<MatchCreateDto> response = matchService.createMatch(request);
+
         // then
-        assertThat(response.fetchId()).isEqualTo(1L);
-        verify(matchRepository).save(any(Match.class));
+        assertThat(response.get(0).fetchId()).isEqualTo(1L);
+        verify(matchJdbcRepository).saveAllMatches(anyList());
     }
 
     @Test
@@ -300,12 +310,12 @@ class MatchServiceTest {
         }
     }
 
-    @Test
-    @DisplayName("매치 상태값 변경 성공")
-    void updateStatus_success() {
-        //given
-        Long matchId = 1L;
-        MatchStatus status = MatchStatus.ONGOING;
+        @Test
+        @DisplayName("매치 상태값 변경 성공")
+        void updateStatus_success() {
+            //given
+            Long fetchId = 1L;
+            MatchStatus status = MatchStatus.ONGOING;
 
         Match match = Match.builder()
                 .matchName("LCK")
@@ -314,10 +324,10 @@ class MatchServiceTest {
                 .startTime(LocalDateTime.now().plusDays(1))
                 .build();
 
-        when(matchRepository.findById(matchId)).thenReturn(Optional.of(match));
+            when(matchRepository.findByFetchId(fetchId)).thenReturn(Optional.of(match));
 
-        //when
-        matchService.updateStatus(matchId, status);
+            //when
+            matchService.updateStatus(fetchId, status);
 
         //then
         assertThat(match.getStatus()).isEqualTo(status);

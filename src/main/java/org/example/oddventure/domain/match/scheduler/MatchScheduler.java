@@ -33,8 +33,18 @@ public class MatchScheduler {
     private final MatchService matchService;
     private final GridService gridService;
     private final JobLauncher jobLauncher;
+    private final Job matchScheduleJob;
     private final Job pointSetJob;
     private final RedisTemplate<String, Object> redisTemplate;
+
+    @Scheduled(cron = "0 0 4 * * *", zone = "Asia/Seoul")
+    public void runMatchScheduleJob() throws Exception {
+        JobParameters params = new JobParametersBuilder()
+                .addLong("timestamp", System.currentTimeMillis())
+                .toJobParameters();
+
+        jobLauncher.run(matchScheduleJob, params);
+    }
 
     @Scheduled(cron = "0 0 13 * * *", zone = "Asia/Seoul")
     public void autoFinishMatches() {
@@ -60,6 +70,7 @@ public class MatchScheduler {
         });
 
         if (matchIds.isEmpty()) {
+            log.info("종료된 매치가 없습니다.");
             return;
         }
 
@@ -90,7 +101,9 @@ public class MatchScheduler {
             try {
                 // 1. Redis에서 현재 조회수 가져오기
                 Object rawValue = redisTemplate.opsForValue().get(key);
-                if (rawValue == null) continue;
+                if (rawValue == null) {
+                    continue;
+                }
 
                 Long viewCount = Long.parseLong(String.valueOf(rawValue));
 

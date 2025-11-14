@@ -30,10 +30,10 @@ public class MatchEventConsumerTest {
     @DisplayName("매치 스타트 이벤트를 소비하여 매치 상태값 변경에 성공한다.")
     public void consumeMatchStartEvent_success() {
         //given
-        Long matchId = 1L;
+        Long fetchId = 1L;
         LocalDateTime startTime = LocalDateTime.now().plusDays(1);
         MatchStartEventDto dto = MatchStartEventDto.builder()
-                .matchId(matchId)
+                .fetchId(fetchId)
                 .startTime(startTime)
                 .build();
 
@@ -43,6 +43,6 @@ public class MatchEventConsumerTest {
         matchEventConsumer.consumeMatchStartEvent(dto);
 
         //then
-        verify(matchService).updateStatus(matchId, MatchStatus.ONGOING);
+        verify(matchService).updateStatus(fetchId, MatchStatus.ONGOING);
     }
 }

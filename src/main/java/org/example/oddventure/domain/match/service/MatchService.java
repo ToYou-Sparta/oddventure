@@ -1,7 +1,9 @@
 package org.example.oddventure.domain.match.service;
 
-import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
-
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.oddventure.domain.admin.dto.request.MatchUpdateRequest;
@@ -18,7 +20,7 @@ import org.example.oddventure.domain.match.enums.MatchStatus;
 import org.example.oddventure.domain.match.event.MatchEventProducer;
 import org.example.oddventure.domain.match.exception.MatchErrorCode;
 import org.example.oddventure.domain.match.exception.MatchException;
-//import org.example.oddventure.domain.match.messaging.MatchEsSyncPublisher;
+import org.example.oddventure.domain.match.repository.MatchJdbcRepository;
 import org.example.oddventure.domain.match.repository.MatchRepository;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -35,35 +37,46 @@ public class MatchService {
     private final MatchRepository matchRepository;
     private final HotKeywordsService hotKeywordsService;
     private final MatchEventProducer matchEventProducer;
+    private final MatchJdbcRepository matchJdbcRepository;
     private final MatchSearchService matchSearchService;
-    //private final MatchEsSyncPublisher matchEsSyncPublisher;
-
     private final RedisTemplate<String, Object> redisTemplate;
 
 
-    // 매치 생성 (매치별로 독립적인 트랜잭션 보유)
-    @Transactional(propagation = REQUIRES_NEW)
-    public MatchCreateDto createMatch(MatchScheduleDto dto) {
-        boolean isExist = matchRepository.existsByFetchId(dto.fetchId());
-        boolean isPending = dto.teamA().contains("TBD") || dto.teamB().contains("TBD");
+    // 매치 생성 (배치 적용)
+    @Transactional
+    public List<MatchCreateDto> createMatch(List<MatchScheduleDto> fetchedList) {
+        List<Long> allFetchIds = fetchedList.stream()
+                .map(MatchScheduleDto::fetchId)
+                .toList();
+        List<Long> existingFetchIds = matchRepository.findExistingFetchIds(allFetchIds);
+        Set<Long> existingSet = new HashSet<>(existingFetchIds);
 
-        if (isExist || isPending) {
-            throw new MatchException(MatchErrorCode.MATCH_NOT_CREATABLE);
+        List<Match> toSave = new ArrayList<>();
+        for (MatchScheduleDto dto : fetchedList) {
+            if (existingSet.contains(dto.fetchId())) {
+                log.info("이미 생성된 매치입니다. fetchId: {}", dto.fetchId());
+                continue;
+            }
+            if (dto.teamA().contains("TBD") || dto.teamB().contains("TBD")) {
+                log.info("미정된 매치입니다. fetchId: {}", dto.fetchId());
+                continue;
+            }
+
+            toSave.add(Match.builder()
+                    .fetchId(dto.fetchId())
+                    .matchName(dto.matchName())
+                    .teamA(dto.teamA())
+                    .teamB(dto.teamB())
+                    .startTime(dto.startTime())
+                    .build());
         }
 
-        Match match = Match.builder()
-                .fetchId(dto.fetchId())
-                .matchName(dto.matchName())
-                .teamA(dto.teamA())
-                .teamB(dto.teamB())
-                .startTime(dto.startTime())
-                .build();
+        matchJdbcRepository.saveAllMatches(toSave);
 
-        Match savedMatch = matchRepository.save(match);
-       //matchEsSyncPublisher.publishMatchCreated(savedMatch.getId());
-        matchEventProducer.produceMatchStartEvent(MatchStartEventDto.from(match.getId(), match.getStartTime()));
+        toSave.stream().map(match -> MatchStartEventDto.from(match.getFetchId(), match.getStartTime()))
+                .forEach(matchEventProducer::produceMatchStartEvent);
 
-        return MatchCreateDto.builder().fetchId(dto.fetchId()).build();
+        return toSave.stream().map(MatchCreateDto::from).toList();
     }
 
     // 매치 정보 수정
@@ -117,8 +130,7 @@ public class MatchService {
 
     @Transactional
     public void updateMatchResult(Long fetchId, String winner, String loser) {
-        Match match = matchRepository.findByFetchId(fetchId)
-                .orElseThrow(() -> new MatchException(MatchErrorCode.MATCH_NOT_FOUND));
+        Match match = findByFetchId(fetchId);
 
         if (match.getStatus().equals(MatchStatus.FINISHED)) {
             throw new MatchException(MatchErrorCode.MATCH_FINISHED);
@@ -129,13 +141,18 @@ public class MatchService {
     }
 
     @Transactional
-    public void updateStatus(Long matchId, MatchStatus status) {
-        Match match = findMatchById(matchId);
+    public void updateStatus(Long fetchId, MatchStatus status) {
+        Match match = findByFetchId(fetchId);
         match.setStatus(status);
     }
 
     private Match findMatchById(Long matchId) {
         return matchRepository.findById(matchId)
+                .orElseThrow(() -> new MatchException(MatchErrorCode.MATCH_NOT_FOUND));
+    }
+
+    private Match findByFetchId(Long fetchId) {
+        return matchRepository.findByFetchId(fetchId)
                 .orElseThrow(() -> new MatchException(MatchErrorCode.MATCH_NOT_FOUND));
     }
 

@@ -23,12 +23,11 @@ public class WebClientConfig {
 
     @Bean
     public WebClient gridCentralClient() {
-        WebClient build = WebClient.builder()
+        return WebClient.builder()
                 .baseUrl(GRID_CENTRAL_BASE_URL)
                 .defaultHeader("x-api-key", GRID_API_KEY)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .build();
-        return build;
     }
 
     @Bean
