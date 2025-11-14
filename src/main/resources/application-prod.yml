@@ -7,42 +7,42 @@ spring:
         enabled: false
 
   datasource:
-    url: jdbc:mysql://${db.host}:${db.port:3306}/${db.name}?useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
-    username: ${db.username}
-    password: ${db.password}
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   data:
     redis:
-      host: ${redis.host}
-      port: ${redis.port}
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
 
   rabbitmq:
-    host: ${rabbitmq.host}
-    port: ${rabbitmq.port}
-    username: ${rabbitmq.username}
-    password: ${rabbitmq.password}
+    host: ${RABBITMQ_HOST}
+    port: ${RABBITMQ_PORT}
+    username: ${RABBITMQ_USERNAME}
+    password: ${RABBITMQ_PASSWORD}
 
   elasticsearch:
-    uris: ${elasticsearch.uris}
-    username: ${elasticsearch.username}
-    password: ${elasticsearch.password}
+    uris: ${ELASTICSEARCH_URIS}
+    username: ${ELASTICSEARCH_USERNAME}
+    password: ${ELASTICSEARCH_PASSWORD}
 
   jwt:
     secret:
-      key: ${jwt.secret.key}
+      key: ${JWT_SECRET_KEY}
 
   grid:
     central-data:
-      base-url: ${grid.central.base.url}
+      base-url: ${GRID_CENTRAL_BASE_URL}
     live-data:
-      base-url: ${grid.live.base.url}
-    api-key: ${grid.api.key}
+      base-url: ${GRID_LIVE_BASE_URL}
+    api-key: ${GRID_API_KEY}
 
   ai:
     openai:
-      api-key: ${openai.api.key}
-      base-url: ${openai.base.url}
+      api-key: ${OPENAI_API_KEY}
+      base-url: ${OPENAI_BASE_URL}
 
   jpa:
     hibernate:
