@@ -94,8 +94,11 @@ dependencies {
     //prometheus
     implementation 'io.micrometer:micrometer-registry-prometheus'
 
-    // Elasticsearch
+    // Elasticsearch (로컬) & OpenSearch (프로덕션) 공통 사용
     implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+
+    // HTTP 클라이언트 (OpenSearch 인증용)
+    implementation 'org.apache.httpcomponents:httpclient:4.5.14'
 
     // redisson
     implementation 'org.redisson:redisson-spring-boot-starter:3.52.0'

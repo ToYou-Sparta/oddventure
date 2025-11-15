@@ -1,13 +1,26 @@
 package org.example.oddventure.common.config;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.json.jackson.JacksonJsonpMapper;
+import co.elastic.clients.transport.rest_client.RestClientTransport;
+import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.elasticsearch.client.RestClient;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.elasticsearch.client.ClientConfiguration;
-import org.springframework.data.elasticsearch.client.elc.ElasticsearchConfiguration;
-import org.springframework.lang.NonNull;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 
+/**
+ * AWS OpenSearch 설정 (Elasticsearch 클라이언트 사용)
+ * OpenSearch는 Elasticsearch 7.x REST API와 호환됨
+ */
 @Configuration
-public class ElasticsearchConfig extends ElasticsearchConfiguration {
+@Profile("prod")  // 프로덕션 환경에서만 활성화
+public class ElasticsearchConfig {
 
     @Value("${spring.elasticsearch.uris}")
     private String elasticsearchUris;
@@ -18,30 +31,54 @@ public class ElasticsearchConfig extends ElasticsearchConfiguration {
     @Value("${spring.elasticsearch.password}")
     private String password;
 
-    @Override
-    @NonNull
-    public ClientConfiguration clientConfiguration() {
-        // connectedTo()는 호스트명:포트 형식으로 받음
+    @Bean
+    @Primary  // 기본 Elasticsearch 클라이언트를 OpenSearch용으로 대체
+    public ElasticsearchClient elasticsearchClient() {
+        // URI에서 호스트와 포트 추출
         String host = elasticsearchUris
                 .replace("https://", "")
                 .replace("http://", "");
 
-        // 포트가 없으면 443 추가 (AWS Elasticsearch는 HTTPS 443 포트 사용)
-        if (!host.contains(":")) {
-            host = host + ":443";
+        // 포트 분리
+        String hostname;
+        int port = 443; // AWS OpenSearch 기본 포트
+
+        if (host.contains(":")) {
+            String[] parts = host.split(":");
+            hostname = parts[0];
+            port = Integer.parseInt(parts[1]);
+        } else {
+            hostname = host;
         }
 
-        var builder = ClientConfiguration.builder()
-                .connectedTo(host)
-                .usingSsl()  // HTTPS 통신 사용
-                .withConnectTimeout(java.time.Duration.ofSeconds(5))
-                .withSocketTimeout(java.time.Duration.ofSeconds(30));
+        // HTTPS 사용 여부 확인
+        String scheme = elasticsearchUris.startsWith("https") ? "https" : "http";
 
-        // username과 password가 모두 존재하는 경우에만 Basic Auth 설정
+        // RestClient 빌더 생성
+        var restClientBuilder = RestClient.builder(new HttpHost(hostname, port, scheme));
+
+        // Master User 인증 설정
         if (username != null && !username.isEmpty() && password != null && !password.isEmpty()) {
-            builder.withBasicAuth(username, password);
+            final BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+            credentialsProvider.setCredentials(
+                    AuthScope.ANY,
+                    new UsernamePasswordCredentials(username, password)
+            );
+
+            restClientBuilder.setHttpClientConfigCallback(httpClientBuilder ->
+                    httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider)
+            );
         }
 
-        return builder.build();
+        // RestClient 생성
+        RestClient restClient = restClientBuilder.build();
+
+        // ElasticsearchClient 생성 (OpenSearch와 호환)
+        RestClientTransport transport = new RestClientTransport(
+                restClient,
+                new JacksonJsonpMapper()
+        );
+
+        return new ElasticsearchClient(transport);
     }
 }
