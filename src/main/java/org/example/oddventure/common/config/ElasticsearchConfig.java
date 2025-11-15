@@ -35,14 +35,7 @@ public class ElasticsearchConfig extends ElasticsearchConfiguration {
                 .connectedTo(host)
                 .usingSsl()  // HTTPS 통신 사용
                 .withConnectTimeout(java.time.Duration.ofSeconds(5))
-                .withSocketTimeout(java.time.Duration.ofSeconds(30))
-                .withHeaders(() -> {
-                    // Elasticsearch 7.x와 8.x 클라이언트 호환성을 위한 헤더
-                    var headers = new org.springframework.data.elasticsearch.support.HttpHeaders();
-                    headers.add("Accept", "application/vnd.elasticsearch+json;compatible-with=7");
-                    headers.add("Content-Type", "application/vnd.elasticsearch+json;compatible-with=7");
-                    return headers;
-                });
+                .withSocketTimeout(java.time.Duration.ofSeconds(30));
 
         // username과 password가 모두 존재하는 경우에만 Basic Auth 설정
         if (username != null && !username.isEmpty() && password != null && !password.isEmpty()) {
