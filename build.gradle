@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.5.6'
+    id 'org.springframework.boot' version '3.3.6'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'jacoco'
     id "org.asciidoctor.jvm.convert" version "3.3.2"
@@ -30,6 +30,7 @@ repositories {
 ext {
     set('springAiVersion', "1.0.3")
     snippetsDir = file('build/generated-snippets')
+    set('springDataElasticsearchVersion', "5.3.6")
 }
 
 dependencies {
@@ -94,11 +95,13 @@ dependencies {
     //prometheus
     implementation 'io.micrometer:micrometer-registry-prometheus'
 
-    // Elasticsearch (로컬) & OpenSearch (프로덕션) 공통 사용
-    implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
-
-    // HTTP 클라이언트 (OpenSearch 인증용)
-    implementation 'org.apache.httpcomponents:httpclient:4.5.14'
+    //Elasticsarch
+    implementation("org.springframework.data:spring-data-elasticsearch:${springDataElasticsearchVersion}") {
+        exclude group: 'co.elastic.clients', module: 'elasticsearch-java'
+    }
+    implementation 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.17.25'
+    implementation 'org.elasticsearch.client:elasticsearch-rest-client:7.17.25'
+    implementation 'org.elasticsearch:elasticsearch:7.17.25'
 
     // redisson
     implementation 'org.redisson:redisson-spring-boot-starter:3.52.0'
