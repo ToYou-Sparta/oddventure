@@ -82,7 +82,8 @@ public class ElasticsearchConfig {
         // 표준 "application/json" 사용
         builder.setDefaultHeaders(new Header[]{
                 new BasicHeader("Accept", "application/json"),
-                new BasicHeader("Content-Type", "application/json")
+                new BasicHeader("Content-Type", "application/json"),
+                new BasicHeader("X-Elastic-Product", "Elasticsearch")
         });
 
         // 타임아웃 설정 (선택사항)
