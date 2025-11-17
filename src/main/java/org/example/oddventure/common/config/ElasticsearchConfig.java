@@ -9,14 +9,19 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.elasticsearch.config.AbstractElasticsearchConfiguration;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
-
+/**
+ * AWS OpenSearch 설정 (Elasticsearch 7.17 버전 사용)
+ * RestHighLevelClient 기반
+ */
 @Configuration
 @Profile("prod")
 @EnableElasticsearchRepositories(basePackages = "org.example.oddventure.domain.match.repository.elasticsearch")
-public class ElasticsearchConfig {
+public class ElasticsearchConfig extends AbstractElasticsearchConfiguration {
 
     @Value("${spring.elasticsearch.uris}")
     private String elasticsearchUris;
@@ -28,13 +33,16 @@ public class ElasticsearchConfig {
     private String password;
 
     @Bean
+    @Primary
+    @Override
     public RestHighLevelClient elasticsearchClient() {
+        // URI에서 호스트와 포트 추출
         String cleanUri = elasticsearchUris
                 .replace("https://", "")
                 .replace("http://", "");
 
         String hostname;
-        int port = 443;
+        int port = 443; // AWS OpenSearch 기본 포트
 
         if (cleanUri.contains(":")) {
             String[] parts = cleanUri.split(":");
