@@ -60,7 +60,7 @@ public class RedisConfig {
         // 3. record 클래스(final)를 포함한 모든 객체에 타입 정보를 추가
         objectMapper.activateDefaultTyping(
                 LaissezFaireSubTypeValidator.instance,
-                ObjectMapper.DefaultTyping.EVERYTHING, // NON_FINAL에서 변경
+                ObjectMapper.DefaultTyping.NON_FINAL, // NON_FINAL에서 변경
                 JsonTypeInfo.As.PROPERTY
         );
 
