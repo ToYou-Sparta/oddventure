@@ -1,13 +1,11 @@
 package org.example.oddventure.common.config;
 
-import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.json.jackson.JacksonJsonpMapper;
-import co.elastic.clients.transport.rest_client.RestClientTransport;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +13,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 
 /**
- * AWS OpenSearch 설정 (Elasticsearch 클라이언트 사용)
+ * AWS OpenSearch 설정 (RestHighLevelClient 사용)
  * OpenSearch는 Elasticsearch 7.x REST API와 호환됨
  */
 @Configuration
@@ -32,8 +30,8 @@ public class ElasticsearchConfig {
     private String password;
 
     @Bean
-    @Primary  // 기본 Elasticsearch 클라이언트를 OpenSearch용으로 대체
-    public ElasticsearchClient elasticsearchClient() {
+    @Primary
+    public RestHighLevelClient restHighLevelClient() {
         // URI에서 호스트와 포트 추출
         String host = elasticsearchUris
                 .replace("https://", "")
@@ -70,15 +68,7 @@ public class ElasticsearchConfig {
             );
         }
 
-        // RestClient 생성
-        RestClient restClient = restClientBuilder.build();
-
-        // ElasticsearchClient 생성 (OpenSearch와 호환)
-        RestClientTransport transport = new RestClientTransport(
-                restClient,
-                new JacksonJsonpMapper()
-        );
-
-        return new ElasticsearchClient(transport);
+        // RestHighLevelClient 생성
+        return new RestHighLevelClient(restClientBuilder);
     }
 }
