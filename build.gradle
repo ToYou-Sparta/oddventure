@@ -102,6 +102,8 @@ dependencies {
     // redisson
     implementation 'org.redisson:redisson-spring-boot-starter:3.52.0'
 
+    // resilience4j
+    implementation "io.github.resilience4j:resilience4j-spring-boot3:2.3.0"
 }
 
 dependencyManagement {
