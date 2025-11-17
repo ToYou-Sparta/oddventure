@@ -1,23 +1,32 @@
 package org.example.oddventure.common.config;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.json.jackson.JacksonJsonpMapper;
+import co.elastic.clients.transport.ElasticsearchTransport;
+import co.elastic.clients.transport.rest_client.RestClientTransport;
+import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.message.BasicHeader;
 import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.RestClientBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.elasticsearch.client.elc.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.convert.ElasticsearchConverter;
 
 /**
- * AWS OpenSearch 설정 (RestHighLevelClient 사용)
- * OpenSearch는 Elasticsearch 7.x REST API와 호환됨
+ * AWS OpenSearch 설정 (Elasticsearch 7.x 호환 모드)
+ * OpenSearch는 Elasticsearch 7.10 기반으로 Elasticsearch 8.x Content-Type 미지원
+ * 명시적으로 application/json 헤더 사용하여 406 에러 방지
  */
 @Configuration
-@Profile("prod")  // 프로덕션 환경에서만 활성화
+@Profile("prod")
 public class ElasticsearchConfig {
 
     @Value("${spring.elasticsearch.uris}")
@@ -31,44 +40,82 @@ public class ElasticsearchConfig {
 
     @Bean
     @Primary
-    public RestHighLevelClient restHighLevelClient() {
-        // URI에서 호스트와 포트 추출
-        String host = elasticsearchUris
+    public RestClient restClient() {
+        // URI 파싱
+        String cleanUri = elasticsearchUris
                 .replace("https://", "")
                 .replace("http://", "");
 
-        // 포트 분리
         String hostname;
-        int port = 443; // AWS OpenSearch 기본 포트
+        int port = 443;
 
-        if (host.contains(":")) {
-            String[] parts = host.split(":");
+        if (cleanUri.contains(":")) {
+            String[] parts = cleanUri.split(":");
             hostname = parts[0];
             port = Integer.parseInt(parts[1]);
         } else {
-            hostname = host;
+            hostname = cleanUri;
         }
 
-        // HTTPS 사용 여부 확인
         String scheme = elasticsearchUris.startsWith("https") ? "https" : "http";
 
         // RestClient 빌더 생성
-        var restClientBuilder = RestClient.builder(new HttpHost(hostname, port, scheme));
+        RestClientBuilder builder = RestClient.builder(
+                new HttpHost(hostname, port, scheme)
+        );
 
-        // Master User 인증 설정
-        if (username != null && !username.isEmpty() && password != null && !password.isEmpty()) {
-            final BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+        // 인증 설정
+        if (username != null && !username.isEmpty()) {
+            BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
             credentialsProvider.setCredentials(
                     AuthScope.ANY,
                     new UsernamePasswordCredentials(username, password)
             );
 
-            restClientBuilder.setHttpClientConfigCallback(httpClientBuilder ->
+            builder.setHttpClientConfigCallback(httpClientBuilder ->
                     httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider)
             );
         }
 
-        // RestHighLevelClient 생성
-        return new RestHighLevelClient(restClientBuilder);
+        // OpenSearch 호환을 위한 헤더 설정
+        // Elasticsearch 8.x의 "application/vnd.elasticsearch+json" 대신
+        // 표준 "application/json" 사용
+        builder.setDefaultHeaders(new Header[]{
+                new BasicHeader("Accept", "application/json"),
+                new BasicHeader("Content-Type", "application/json")
+        });
+
+        // 타임아웃 설정 (선택사항)
+        builder.setRequestConfigCallback(requestConfigBuilder ->
+                requestConfigBuilder
+                        .setConnectTimeout(5000)
+                        .setSocketTimeout(60000)
+        );
+
+        return builder.build();
+    }
+
+    @Bean
+    @Primary
+    public ElasticsearchTransport elasticsearchTransport(RestClient restClient) {
+        // RestClientTransport 생성
+        return new RestClientTransport(
+                restClient,
+                new JacksonJsonpMapper()
+        );
+    }
+
+    @Bean
+    @Primary
+    public ElasticsearchClient elasticsearchClient(ElasticsearchTransport transport) {
+        return new ElasticsearchClient(transport);
+    }
+
+    @Bean
+    @Primary
+    public ElasticsearchTemplate elasticsearchTemplate(
+            ElasticsearchClient elasticsearchClient,
+            ElasticsearchConverter elasticsearchConverter) {
+        return new ElasticsearchTemplate(elasticsearchClient, elasticsearchConverter);
     }
 }
