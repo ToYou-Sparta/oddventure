@@ -1490,7 +1490,7 @@
       {
         "current": {
           "selected": true,
-          "text": "매치 검색",
+          "text": "/api/v1/matches/search",
           "value": "/api/v1/matches/search"
         },
         "hide": 0,
@@ -1503,9 +1503,14 @@
             "selected": true,
             "text": "/api/v1/matches/search",
             "value": "/api/v1/matches/search"
+          },
+          {
+            "selected": false,
+            "text": "/api/v1/matches/v2/search",
+            "value": "/api/v1/matches/v2/search"
           }
         ],
-        "query": "/api/v1/matches/search",
+        "query": "/api/v1/matches/search, /api/v1/matches/v2/search",
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
