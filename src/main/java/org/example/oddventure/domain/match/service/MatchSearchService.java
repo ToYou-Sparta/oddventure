@@ -1,25 +1,28 @@
 package org.example.oddventure.domain.match.service;
 
-import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.Query;
-import co.elastic.clients.elasticsearch._types.query_dsl.RangeQuery;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.RangeQueryBuilder;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.example.oddventure.domain.hotKeywords.service.HotKeywordsService;
 import org.example.oddventure.domain.match.document.MatchDocument;
 import org.example.oddventure.domain.match.dto.request.MatchSearchCondition;
 import org.example.oddventure.domain.match.dto.response.MatchResponse;
 import org.example.oddventure.domain.match.enums.MatchStatus;
-import org.example.oddventure.domain.match.repository.elasticsearch.MatchSearchRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.elasticsearch.client.elc.NativeQuery;
-import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
-import org.springframework.data.elasticsearch.core.SearchHit;
-import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -30,9 +33,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MatchSearchService {
 
-    private final MatchSearchRepository matchSearchRepository;
-    private final ElasticsearchOperations elasticsearchOperations;
+    private final RestHighLevelClient elasticsearchClient;
     private final HotKeywordsService hotKeywordsService;
+    private final ObjectMapper objectMapper;
 
     public Page<MatchResponse> searchMatches(MatchSearchCondition condition, Pageable pageable) {
         log.info("Elasticsearch 검색 시작 - keyword: {}, fromDate: {}, toDate{}",
@@ -43,89 +46,68 @@ public class MatchSearchService {
             hotKeywordsService.incrementSearchScore(condition.keyword());
         }
 
-        // 검색 쿼리 빌드
-        NativeQuery searchQuery = buildSearchQuery(condition, pageable);
+        try {
+            // 검색 쿼리 빌드
+            SearchSourceBuilder searchSourceBuilder = buildSearchQuery(condition, pageable);
 
-        //Elasticsearch 검색 실행
-        SearchHits<MatchDocument> searchHits = elasticsearchOperations.search(
-                searchQuery,
-                MatchDocument.class
-        );
+            // Elasticsearch 검색 실행
+            SearchRequest searchRequest = new SearchRequest("matches"); // 인덱스 이름
+            searchRequest.source(searchSourceBuilder);
 
-        // 검색 결과를 MatchResponse로 변환
-        List<MatchResponse> matchResponses = searchHits.getSearchHits().stream()
-                .map(SearchHit::getContent)
-                .map(this::toMatchResponse)
-                .toList();
+            SearchResponse searchResponse = elasticsearchClient.search(searchRequest, RequestOptions.DEFAULT);
 
-        return new PageImpl<>(matchResponses, pageable, searchHits.getTotalHits());
+            // 검색 결과를 MatchResponse로 변환
+            List<MatchResponse> matchResponses = new ArrayList<>();
+            for (SearchHit hit : searchResponse.getHits().getHits()) {
+                MatchDocument document = objectMapper.readValue(hit.getSourceAsString(), MatchDocument.class);
+                matchResponses.add(toMatchResponse(document));
+            }
+
+            long totalHits = searchResponse.getHits().getTotalHits().value;
+            return new PageImpl<>(matchResponses, pageable, totalHits);
+
+        } catch (IOException e) {
+            log.error("Elasticsearch 검색 중 오류 발생", e);
+            throw new RuntimeException("검색 중 오류가 발생했습니다", e);
+        }
     }
 
     /**
-     * Elasticsearch NativeQuery 빌드
+     * Elasticsearch SearchSourceBuilder 빌드
      */
-    private NativeQuery buildSearchQuery(MatchSearchCondition condition, Pageable pageable) {
-        List<Query> mustQueries = new ArrayList<>();
+    private SearchSourceBuilder buildSearchQuery(MatchSearchCondition condition, Pageable pageable) {
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
 
         // 1. 키워드 검색 (matchName, teamA, teamB)
         if (condition.keyword() != null && !condition.keyword().isBlank()) {
-            Query keywordQuery = Query.of(q -> q
-                    .bool(BoolQuery.of(b -> b
-                            .should(Query.of(s -> s
-                                    .match(m -> m
-                                            .field("matchName")
-                                            .query(condition.keyword())
-                                            .boost(2.0f)  // 매치 이름 가중치 높임
-                                    )
-                            ))
-                            .should(Query.of(s -> s
-                                    .match(m -> m
-                                            .field("teamA")
-                                            .query(condition.keyword())
-                                            .boost(1.5f)
-                                    )
-                            ))
-                            .should(Query.of(s -> s
-                                    .match(m -> m
-                                            .field("teamB")
-                                            .query(condition.keyword())
-                                            .boost(1.5f)
-                                    )
-                            ))
-                            .minimumShouldMatch("1")  // 최소 1개 조건 만족
-                    ))
-            );
-            mustQueries.add(keywordQuery);
+            BoolQueryBuilder keywordQuery = QueryBuilders.boolQuery()
+                    .should(QueryBuilders.matchQuery("matchName", condition.keyword()).boost(2.0f))
+                    .should(QueryBuilders.matchQuery("teamA", condition.keyword()).boost(1.5f))
+                    .should(QueryBuilders.matchQuery("teamB", condition.keyword()).boost(1.5f))
+                    .minimumShouldMatch(1);  // 최소 1개 조건 만족
+
+            boolQuery.must(keywordQuery);
         }
 
-        // 날짜 범위 필터
+        // 2. 날짜 범위 필터
         if (condition.fromDate() != null || condition.toDate() != null) {
-            RangeQuery dateRangeQuery = new RangeQuery.Builder()
-                    .date(d -> {
-                        d.field("startTime");
-                        if (condition.fromDate() != null) {
-                            d.gte(formatDateTime(condition.fromDate()));
-                        }
-                        if (condition.toDate() != null) {
-                            d.lte(formatDateTime(condition.toDate()));
-                        }
-                        return d;
-                    })
-                    .build();
+            RangeQueryBuilder dateRangeQuery = QueryBuilders.rangeQuery("startTime");
 
-            mustQueries.add(dateRangeQuery._toQuery());
+            if (condition.fromDate() != null) {
+                dateRangeQuery.gte(formatDateTime(condition.fromDate()));
+            }
+            if (condition.toDate() != null) {
+                dateRangeQuery.lte(formatDateTime(condition.toDate()));
+            }
+
+            boolQuery.must(dateRangeQuery);
         }
-        // 3. BoolQuery로 조합
-        BoolQuery boolQuery = BoolQuery.of(b -> {
-            mustQueries.forEach(b::must);
-            return b;
-        });
 
-        // 4. NativeQuery 생성
-        return NativeQuery.builder()
-                .withQuery(Query.of(q -> q.bool(boolQuery)))
-                .withPageable(pageable)
-                .build();
+        // 3. SearchSourceBuilder로 쿼리 + 페이징 설정
+        return new SearchSourceBuilder()
+                .query(boolQuery)
+                .from((int) pageable.getOffset())
+                .size(pageable.getPageSize());
     }
 
     /**
