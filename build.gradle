@@ -30,7 +30,8 @@ repositories {
 ext {
     set('springAiVersion', "1.0.3")
     snippetsDir = file('build/generated-snippets')
-    set('springDataElasticsearchVersion', "4.4.7")
+    set('springDataElasticsearchVersion', "4.4.1")
+    set('elasticsearchVersion', "7.10.2") // AWS OpenSearch Elasticsearch 7.1 호환 버전
 }
 
 dependencies {
@@ -95,13 +96,13 @@ dependencies {
     //prometheus
     implementation 'io.micrometer:micrometer-registry-prometheus'
 
-    //Elasticsarch
+    //Elasticsearch - AWS OpenSearch Elasticsearch 7.1 호환
     implementation("org.springframework.data:spring-data-elasticsearch:${springDataElasticsearchVersion}") {
         exclude group: 'co.elastic.clients', module: 'elasticsearch-java'
     }
-    implementation 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.17.25'
-    implementation 'org.elasticsearch.client:elasticsearch-rest-client:7.17.25'
-    implementation 'org.elasticsearch:elasticsearch:7.17.25'
+    implementation "org.elasticsearch.client:elasticsearch-rest-high-level-client:${elasticsearchVersion}"
+    implementation "org.elasticsearch.client:elasticsearch-rest-client:${elasticsearchVersion}"
+    implementation "org.elasticsearch:elasticsearch:${elasticsearchVersion}"
 
     // redisson
     implementation 'org.redisson:redisson-spring-boot-starter:3.52.0'
