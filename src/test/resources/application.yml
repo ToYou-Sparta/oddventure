@@ -28,6 +28,11 @@ spring:
         secret-key: test-secret
       region:
         static: ap-northeast-2
+  batch:
+    job:
+      enabled: false
+  elasticsearch:
+    uris: http://localhost:9200
 
 jwt:
   secret:

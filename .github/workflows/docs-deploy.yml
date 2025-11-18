@@ -1,0 +1,66 @@
+name: Deploy REST Docs
+
+on:
+  pull_request:
+    types: [ "closed" ]
+    branches: [ "dev" ]
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    services:
+      redis:
+        image: redis:8.2.1
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      elasticsearch:
+        image: elasticsearch:9.2.0
+        env:
+          discovery.type: single-node
+          xpack.security.enabled: false
+          ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+        ports:
+          - 9200:9200
+        options: >-
+          --health-cmd "curl -f http://localhost:9200/_cluster/health || exit 1"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'corretto'
+
+      - name: Grant execute permission for Gradle
+        run: chmod +x gradlew
+
+      # TEST (스니펫 생성)
+      - name: Run Test
+        run: ./gradlew clean test -Dspring.profiles.active=test -Dspring.data.redis.host=redis -Dspring.data.redis.port=6379 -Dspring.elasticsearch.uris=http://elasticsearch:9200
+
+      # REST Docs 생성
+      - name: Build REST Docs
+        run: ./gradlew clean asciidoctor
+
+      # GitHub Pages로 배포
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build/docs/asciidoc

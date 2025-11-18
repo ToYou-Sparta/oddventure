@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -91,7 +92,7 @@ public class BetTransactionServiceTest {
             //then
             assertThat(data.userPointAfter()).isEqualTo(initialPoint.subtract(new BigDecimal(100))); // 900
             assertThat(user.getPoint()).isEqualTo(new BigDecimal("900")); // User 객체 상태 변경 확인
-            assertThat(match.getTotalAmountA()).isEqualTo(new BigDecimal("200")); // 100(초기값) + 100(베팅)
+            assertThat(match.getTotalAmountA()).isEqualTo(new BigDecimal("1200")); // 1100(초기값) + 100(베팅)
         }
 
         @Test

@@ -1,8 +1,6 @@
 package org.example.oddventure.domain.admin.service;
 
-import java.util.ArrayList;
 import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.oddventure.domain.admin.dto.response.MatchCreateAdminResponse;
@@ -10,7 +8,6 @@ import org.example.oddventure.domain.grid.dto.MatchResultDto;
 import org.example.oddventure.domain.grid.dto.MatchScheduleDto;
 import org.example.oddventure.domain.grid.service.GridService;
 import org.example.oddventure.domain.match.dto.MatchCreateDto;
-import org.example.oddventure.domain.match.exception.MatchException;
 import org.example.oddventure.domain.match.service.MatchService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,17 +24,11 @@ public class AdminMatchService {
     @Transactional
     public MatchCreateAdminResponse createMatch() {
         List<MatchScheduleDto> fetchResponses = gridService.fetchMatchSchedules();
-        List<Long> fetchIds = new ArrayList<>();
 
-        for (MatchScheduleDto response : fetchResponses) {
-            try {
-                MatchCreateDto matchCreateDto = matchService.createMatch(response);
-                fetchIds.add(matchCreateDto.fetchId());
-            } catch (MatchException e) {
-                log.info("fetchId={}: {}", response.fetchId(), e.getMessage());
-            }
-        }
+        List<MatchCreateDto> matchCreateDtoList = matchService.createMatch(fetchResponses);
 
+        List<Long> fetchIds = matchCreateDtoList.stream().map(MatchCreateDto::fetchId).toList();
+        log.info("total count: {}, fetchIds: {}", fetchIds.size(), fetchIds);
         return MatchCreateAdminResponse.of(fetchIds);
     }
 

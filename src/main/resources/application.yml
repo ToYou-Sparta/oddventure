@@ -2,6 +2,11 @@ spring:
   application:
     name: oddventure
 
+  # Job 자동 실행 비활성화
+  batch:
+    job:
+      enabled: false
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
 

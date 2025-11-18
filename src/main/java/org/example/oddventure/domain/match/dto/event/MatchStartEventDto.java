@@ -5,12 +5,12 @@ import lombok.Builder;
 
 @Builder
 public record MatchStartEventDto(
-        Long matchId,
+        Long fetchId,
         LocalDateTime startTime
 ) {
-    public static MatchStartEventDto from(Long matchId, LocalDateTime startTime) {
+    public static MatchStartEventDto from(Long fetchId, LocalDateTime startTime) {
         return MatchStartEventDto.builder()
-                .matchId(matchId)
+                .fetchId(fetchId)
                 .startTime(startTime)
                 .build();
     }
