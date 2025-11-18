@@ -126,6 +126,12 @@ public class BetServiceConcurrencyTest extends RedisTestContainerConfig {
         User updatedUser = userRepository.findById(testUser.getId()).orElseThrow();
         long betCount = betRepository.count();
 
+        log.info("==== CONCURRENCY RESULT ====");
+        log.info("success={} / fail={}", successCount.get(), failCount.get());
+        log.info("betCount={}", betCount);
+        log.info("userPoint={}", updatedUser.getPoint());
+        log.info("============================");
+
         // 분산 락은 DB 락보다 락 획득/해제 속도가 빨라서 10회/10회(50%)가 아닌 11회/9회 등으로 결과가 나올 수 있음
         // 중요한 것은 (성공 횟수 * 베팅금액) == (차감된 포인트)
         BigDecimal totalBetAmount = new BigDecimal(betAmount).multiply(new BigDecimal(successCount.get()));
@@ -137,6 +143,5 @@ public class BetServiceConcurrencyTest extends RedisTestContainerConfig {
         assertThat(betCount).isEqualTo(successCount.get());
         // 3. 유저의 최종 잔액 == 1000 - (성공 횟수 * 100)
         assertThat(updatedUser.getPoint()).isEqualByComparingTo(expectedPoint);
-        log.info("success={}, fail={}", successCount.get(), failCount.get());
     }
 }
