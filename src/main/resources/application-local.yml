@@ -35,3 +35,7 @@ grid:
   live-data:
     base-url: ${GRID_LIVE_BASE_URL}
   api-key: ${GRID_API_KEY}
+
+cookie:
+  secure: false
+  same-site: Lax
