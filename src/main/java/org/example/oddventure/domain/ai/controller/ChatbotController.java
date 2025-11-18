@@ -6,7 +6,7 @@ import org.example.oddventure.common.dto.response.ApiResponse;
 import org.example.oddventure.domain.ai.agent.AgentExecutor;
 import org.example.oddventure.domain.ai.agent.AgentRunnerService;
 import org.example.oddventure.domain.ai.pubsub.RedisPublisher;
-import org.example.oddventure.domain.ai.service.ChatbotService;
+import org.example.oddventure.domain.ai.service.LoadTestChatbotService;
 import org.example.oddventure.domain.auth.dto.AuthUser;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ChatbotController {
 
     private final AgentRunnerService agentRunnerService;
+    private final LoadTestChatbotService loadTestChatbotService;
     private final RedisPublisher redisPublisher;
 
     // 로컬 테스트용
@@ -37,6 +38,14 @@ public class ChatbotController {
 
         AgentExecutor.State reply = agentRunnerService.execute(user.id(), userMessage.message()).orElse(null);
         return ApiResponse.success(reply, "AI 응답 테스트가 정상적으로 완료되었습니다.");
+    }
+
+    @PostMapping("/loadtest")
+    public ResponseEntity<ApiResponse<String>> loadTest(
+            @RequestBody UserMessage userMessage
+    ) {
+        String reply = loadTestChatbotService.reply(userMessage.message());
+        return ApiResponse.success(reply, "부하 테스트용 응답입니다.");
     }
 
     public record UserMessage(
