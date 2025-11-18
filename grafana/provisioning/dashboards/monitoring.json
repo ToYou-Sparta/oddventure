@@ -1540,7 +1540,7 @@
       {
         "current": {
           "selected": true,
-          "text": "매치 검색",
+          "text": "/api/v1/matches/search",
           "value": "/api/v1/matches/search"
         },
         "hide": 0,
@@ -1554,13 +1554,18 @@
             "text": "/api/v1/matches/search",
             "value": "/api/v1/matches/search"
           },
+           {
+            "selected": false,
+            "text": "/api/v1/matches/v2/search",
+            "value": "/api/v1/matches/v2/search"
+          },
           {
-            "selected": true,
+            "selected": false,
             "text": "/api/v1/chat/loadtest",
             "value": "/api/v1/chat/loadtest"
           }
         ],
-        "query": "/api/v1/matches/search, /api/v1/chat/loadtest",
+        "query": "/api/v1/matches/search, /api/v1/matches/v2/search, /api/v1/chat/loadtest",
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"

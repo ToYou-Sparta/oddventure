@@ -2,7 +2,6 @@ package org.example.oddventure.common.config;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectMapper.DefaultTyping;
@@ -14,13 +13,17 @@ import java.util.List;
 import org.example.oddventure.domain.ai.subscriber.ChatMessageOutputSubscriber;
 import org.example.oddventure.domain.ai.subscriber.ChatMessageSubscriber;
 import org.example.oddventure.domain.event.RedisSubscriber;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.cache.RedisCacheConfiguration;
+import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -28,6 +31,7 @@ import org.springframework.data.redis.listener.PatternTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
@@ -45,39 +49,63 @@ public class RedisConfig {
         return new LettuceConnectionFactory(host, port);
     }
 
-
-    // 캐시와 RedisTemplate이 공용으로 사용할 ObjectMapper 빈을 생성
+    // 응답용 ObjectMapper (HTTP 응답, @class 없음)
     @Bean
-    public ObjectMapper redisObjectMapper() {
+    public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
-
-        // 1. LocalDateTime 직렬화 모듈
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        return objectMapper;
+    }
 
-        // 2. Page 객체 역직렬화 모듈 (PageImpl, PageRequest, Sort)
+    // Redis 캐싱용 ObjectMapper (@class 포함)
+    @Bean("redisObjectMapper")
+    public ObjectMapper redisObjectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         objectMapper.registerModule(pageModule());
 
-        // 3. record 클래스(final)를 포함한 모든 객체에 타입 정보를 추가
+        // Redis 캐싱에만 타입 정보 추가
         objectMapper.activateDefaultTyping(
                 LaissezFaireSubTypeValidator.instance,
-                DefaultTyping.NON_FINAL,
-                JsonTypeInfo.As.PROPERTY
+                ObjectMapper.DefaultTyping.NON_FINAL,
+                com.fasterxml.jackson.annotation.JsonTypeInfo.As.PROPERTY
         );
 
         return objectMapper;
     }
 
-
-    // 공용 ObjectMapper를 주입받아 RedisTemplate을 생성
+    // CacheManager (@Cacheable 어노테이션용)
     @Bean
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory,
-                                                       ObjectMapper redisObjectMapper) { // ObjectMapper 주입
+    public CacheManager cacheManager(
+            RedisConnectionFactory redisConnectionFactory,
+            @Qualifier("redisObjectMapper") ObjectMapper redisObjectMapper) {
+
+        GenericJackson2JsonRedisSerializer serializer =
+                new GenericJackson2JsonRedisSerializer(redisObjectMapper);
+
+        RedisCacheConfiguration config = RedisCacheConfiguration
+                .defaultCacheConfig()
+                .serializeValuesWith(
+                        RedisSerializationContext.SerializationPair.fromSerializer(serializer)
+                );
+
+        return RedisCacheManager.builder(redisConnectionFactory)
+                .cacheDefaults(config)
+                .build();
+    }
+
+    // Redis용 ObjectMapper를 주입받아 RedisTemplate 생성
+    @Bean
+    public RedisTemplate<String, Object> redisTemplate(
+            RedisConnectionFactory redisConnectionFactory,
+            @Qualifier("redisObjectMapper") ObjectMapper redisObjectMapper) {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
 
-        // 주입받은 ObjectMapper로 Serializer 생성
-        GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(redisObjectMapper);
+        GenericJackson2JsonRedisSerializer serializer =
+                new GenericJackson2JsonRedisSerializer(redisObjectMapper);
 
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(serializer);
@@ -117,7 +145,6 @@ public class RedisConfig {
         module.setMixInAnnotation(Sort.class, SortMixin.class);
         return module;
     }
-
 
     // PageImpl 역직렬화용 Mixin
     private abstract static class PageImplMixin<T> {

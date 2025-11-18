@@ -19,7 +19,9 @@ services:
     environment:
       # Spring Boot 애플리케이션 주소
       # host.docker.internal = Docker 컨테이너에서 호스트 PC를 가리킴
-      - API_URL=http://host.docker.internal:8080
+      - BASE_URL=http://host.docker.internal:8080
+
+      - API_URL=${API_URL:/api/v1/matches/search}
 
       # TARGET_VUS = Virtual Users (가상 사용자 수, 동시 접속자)
       # 기본값: 10명 / 명령어에서 변경 가능 (예: TARGET_VUS=50)
@@ -37,6 +39,7 @@ services:
       # SCENARIO = 실행할 스크립트 파일 이름 (확장자 제외)
       # 기본값: scenario1-data-volume / 변경 가능 (예: SCENARIO=scenario2-concurrent-users)
       - SCENARIO=${SCENARIO:-scenario1-data-volume}
+
 
     # k6 실행 명령어
     # (여러 줄로 나눠서 가독성 향상)
