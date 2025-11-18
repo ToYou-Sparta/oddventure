@@ -28,7 +28,7 @@ public class AgentExecutorTest {
 
     @Test
     @DisplayName("schedule agent를 호출한다.")
-    public void testScheduleAgent(){
+    public void callScheduleAgent_success(){
         // given
         Map<String, Object> input = new HashMap<>();
         Map<String, Object> mid = new HashMap<>();
@@ -51,7 +51,7 @@ public class AgentExecutorTest {
 
     @Test
     @DisplayName("winRate agent를 호출한다.")
-    public void testWinRateAgent(){
+    public void callWinRateAgent_success(){
         // given
         Map<String, Object> input = new HashMap<>();
         Map<String, Object> mid = new HashMap<>();
@@ -74,7 +74,7 @@ public class AgentExecutorTest {
 
     @Test
     @DisplayName("hotKeyword agent를 호출한다.")
-    public void testHotKeywordAgent(){
+    public void callHotKeywordAgent_success(){
         // given
         Map<String, Object> input = new HashMap<>();
         Map<String, Object> mid = new HashMap<>();
@@ -97,7 +97,7 @@ public class AgentExecutorTest {
 
     @Test
     @DisplayName("cs2News agent를 호출한다.")
-    public void testCs2NewsAgent(){
+    public void callCs2NewsAgent_success(){
         // given
         Map<String, Object> input = new HashMap<>();
         Map<String, Object> mid = new HashMap<>();
@@ -122,7 +122,7 @@ public class AgentExecutorTest {
 
     @Test
     @DisplayName("default agent를 호출한다.")
-    public void testDefaultAgent(){
+    public void callDefaultAgent_success(){
         // given
         Map<String, Object> input = new HashMap<>();
         Map<String, Object> mid = new HashMap<>();
@@ -145,7 +145,7 @@ public class AgentExecutorTest {
 
     @Test
     @DisplayName("한 번에 여러 agent를 호출한다.")
-    public void testMultiAgent() throws GraphStateException {
+    public void callMultiAgent_success() throws GraphStateException {
         // given
         Map<String, Object> input = new HashMap<>();
         Map<String, Object> initData = new HashMap<>();
