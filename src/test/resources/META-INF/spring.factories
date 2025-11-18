@@ -1,2 +1,0 @@
-org.springframework.boot.test.context.TestConfiguration=\
-org.example.oddventure.base.MockRabbitMQConfig
