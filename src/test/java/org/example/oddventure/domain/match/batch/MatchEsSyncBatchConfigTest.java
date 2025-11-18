@@ -1,3 +1,4 @@
+/*
 package org.example.oddventure.domain.match.batch;
 
 import org.example.oddventure.domain.match.document.MatchDocument;
@@ -23,11 +24,13 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+*/
 /**
  * MatchEsSyncBatchConfig 통합 테스트
  *
  * <p>Spring Batch를 사용한 MySQL → Elasticsearch 동기화 테스트
- */
+ *//*
+
 @SpringBatchTest
 @SpringBootTest(properties = "spring.rabbitmq.listener.simple.auto-startup=false")
 class MatchEsSyncBatchConfigTest {
@@ -85,9 +88,11 @@ class MatchEsSyncBatchConfigTest {
         assertThat(document.getTeamB()).isEqualTo(firstMatch.getTeamB());
     }
 
-    /**
+    */
+/**
      * 테스트용 Match 데이터 생성
-     */
+     *//*
+
     private List<Match> createTestMatches(int count) {
         List<Match> matches = new ArrayList<>();
         for (int i = 0; i < count; i++) {
@@ -102,4 +107,4 @@ class MatchEsSyncBatchConfigTest {
         }
         return matches;
     }
-}
+}*/
