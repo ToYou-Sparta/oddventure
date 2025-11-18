@@ -167,11 +167,13 @@ public class AgentExecutorTest {
 
         // when
         Optional<AgentExecutor.State> result = app.invoke(initData);
+        Map<String, Object> output = result.get().getOutput();
+        System.out.println(output);
 
         // then
-        assertThat(((Map<String, Object>) result.get()).get("hotKeyword"))
+        assertThat((output).get("hotKeyword"))
                 .isEqualTo("요즘 인기있는 팀은 FaZe Clan 입니다.");
-        assertThat(((Map<String, Object>) result.get()).get("winRate"))
+        assertThat((output).get("winRate"))
                 .isEqualTo("FaZe Clan의 승률은 70% 입니다.");
     }
 }
