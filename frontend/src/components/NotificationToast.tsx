@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { notificationService } from '../services/notificationService';
+import { betService } from '../services/betService';
 import type { MatchStatusNotification, OddsChangeNotification } from '../services/notificationService';
 import './NotificationToast.css';
 
@@ -49,6 +50,11 @@ const NotificationToast: React.FC = () => {
         (connected) => {
           console.log('[NotificationToast] 🔌 Connection status changed:', connected);
           setIsConnected(connected);
+
+          // WebSocket 연결 성공 시 배팅한 경기 구독
+          if (connected) {
+            subscribeToMyBets();
+          }
         }
     );
 
@@ -56,6 +62,31 @@ const NotificationToast: React.FC = () => {
       notificationService.disconnect();
     };
   }, [user]);
+
+  // 내가 배팅한 경기들에 대해 배당률 알림 구독
+  const subscribeToMyBets = async () => {
+    try {
+      console.log('[NotificationToast] 📡 Fetching my bets...');
+      const response = await betService.getMyBets(0, 100); // 최근 100개 배팅 조회
+
+      console.log('[NotificationToast] 📊 My bets response:', response);
+
+      if (response.content && response.content.length > 0) {
+        // 중복 제거 (같은 경기에 여러 번 배팅했을 수 있음)
+        const uniqueMatchIds = [...new Set(response.content.map(bet => bet.matchBetResponse.matchId))];
+
+        console.log('[NotificationToast] 🎯 Subscribing to match IDs:', uniqueMatchIds);
+
+        uniqueMatchIds.forEach(matchId => {
+          notificationService.subscribeToMatchOdds(matchId);
+        });
+      } else {
+        console.log('[NotificationToast] ℹ️ No bets found');
+      }
+    } catch (error) {
+      console.error('[NotificationToast] ❌ Failed to fetch my bets:', error);
+    }
+  };
 
   const formatNotificationMessage = (
       notification: MatchStatusNotification | OddsChangeNotification,
@@ -85,6 +116,7 @@ const NotificationToast: React.FC = () => {
   }
 
   console.log('[NotificationToast] 🎨 Rendering with toasts:', toasts);
+  console.log('[NotificationToast] 🔢 Toasts count:', toasts.length);
 
   return (
       <>
@@ -95,7 +127,6 @@ const NotificationToast: React.FC = () => {
 
         {/* 토스트 알림 */}
         <div className="notification-toast-container">
-          {console.log('[NotificationToast] 🔢 Toasts count:', toasts.length)}
           {toasts.map((toast) => {
             console.log('[NotificationToast] 🎯 Rendering toast:', toast);
             return (

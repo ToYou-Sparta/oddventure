@@ -4,6 +4,7 @@ import type { Match } from '../../types';
 import { MatchStatus, SelectedTeam } from '../../types';
 import { betService } from '../../services/betService';
 import { useAuth } from '../../contexts/AuthContext';
+import { notificationService } from '../../services/notificationService';
 import './MatchesPage.css';
 
 const MatchesPage: React.FC = () => {
@@ -116,6 +117,9 @@ const MatchesPage: React.FC = () => {
         selectedTeam,
         betAmount: amount,
       });
+
+      // 배팅 성공 시 해당 경기의 배당률 알림 구독
+      notificationService.subscribeToMatchOdds(selectedMatch.matchId);
 
       alert('배팅이 완료되었습니다!');
       setSelectedMatch(null);

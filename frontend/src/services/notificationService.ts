@@ -77,18 +77,30 @@ class NotificationService {
     this.client.activate();
   }
 
-  // 사용자별 배당률 알림 구독
+  // 사용자별 배당률 알림 구독 (초기화)
   private subscribeToUserQueue() {
-    if (!this.client || !this.userId) {
+    console.log('[NotificationService] Initial queue subscription - will subscribe to specific matches via subscribeToMatchOdds()');
+  }
+
+  // 특정 경기의 배당률 변경 구독
+  subscribeToMatchOdds(matchId: number) {
+    if (!this.client?.connected || !this.userId) {
+      console.warn('[NotificationService] Cannot subscribe - client not connected or no userId');
       return;
     }
 
-    const destination = `/user/${this.userId}/queue/matches/+/odds`;
+    if (this.subscribedMatches.has(matchId)) {
+      console.log(`[NotificationService] Already subscribed to odds for match ${matchId}`);
+      return;
+    }
 
-    console.log(`[NotificationService] Subscribing to ${destination} for userId: ${this.userId}`);
+    const destination = `/user/${this.userId}/queue/matches/${matchId}/odds`;
 
-    const subscription = this.client.subscribe(destination, (message) => {
+    console.log(`[NotificationService] Subscribing to ${destination}`);
+
+    this.client.subscribe(destination, (message) => {
       console.log('[NotificationService] 📨 Received odds notification:', {
+        matchId,
         destination,
         body: message.body,
         headers: message.headers
@@ -115,7 +127,8 @@ class NotificationService {
       }
     });
 
-    console.log('[NotificationService] Subscription created:', subscription);
+    this.subscribedMatches.add(matchId);
+    console.log('[NotificationService] Successfully subscribed to match odds:', matchId);
   }
 
   // 특정 경기 상태 변경 구독

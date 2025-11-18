@@ -15,7 +15,7 @@ const Chatbot: React.FC = () => {
   useEffect(() => {
     if (user && isOpen && !isConnected) {
       chatService.connect(
-        user.id,
+        user.userId,
         (message: string) => {
           // AI 응답 수신
           setMessages((prev) => [
