@@ -62,7 +62,7 @@ public class ChatbotServiceTest {
         mockChatClientContentWithTool("안녕하세요! 오늘은 FaZe Clan과 Team Vitality의 경기가 있어요.");
 
         // when
-        String reply = chatbotService.replyCs2News(userId, userMessage);
+        String reply = chatbotService.replySchedule(userId, userMessage);
 
         // then
         assertThat(reply).isNotNull();
@@ -76,7 +76,6 @@ public class ChatbotServiceTest {
     @DisplayName("tool 분류 메서드가 정상 작동한다.")
     void classifyTools_success() {
         // given
-        Long userId = 1L;
         String userMessage = "오늘은 어떤 경기가 있나요?";
         mockChatClientContent("schedule");
 
