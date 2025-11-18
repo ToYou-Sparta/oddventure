@@ -1,6 +1,5 @@
 package org.example.oddventure.domain.ai.service;
 
-import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.oddventure.domain.ai.tools.Cs2NewsTools;
@@ -132,6 +131,11 @@ public class ChatbotService {
     public String classifyTools(String userMassage) {
 
         String prompt = """
+                [사용자 요청]
+                %s
+                """.formatted(userMassage);
+
+        String system = """
                 너는 사용자 의도를 정확히 분류하는 분류기입니다.
                 가능한 출력 값(따옴표 없이):
                 - schedule
@@ -158,7 +162,7 @@ public class ChatbotService {
 
         CallResponseSpec callTools = chatClient
                 .prompt(prompt)
-                .user(userMassage)
+                .system(system)
                 .call();
 
         return callTools.content();
