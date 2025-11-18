@@ -52,7 +52,7 @@ public class AgentExecutor {
         Long userId = (Long) state.getInput().get("userId");
 
         Object answer = chatbotService.replySchedule(userId, query);
-        Map<String, Object> output = new HashMap<>();
+        Map<String, Object> output = new HashMap<>(state.getOutput());
         output.put("schedule", answer);
 
         log.info("Schedule Agent Output: {}", output);
@@ -73,7 +73,7 @@ public class AgentExecutor {
         Long userId = (Long) state.getInput().get("userId");
 
         Object answer = chatbotService.replyWinRate(userId, query);
-        Map<String, Object> output = new HashMap<>();
+        Map<String, Object> output = new HashMap<>(state.getOutput());
         output.put("winRate", answer);
 
         log.info("WinRate Agent Output: {}", output);
@@ -94,7 +94,7 @@ public class AgentExecutor {
         Long userId = (Long) state.getInput().get("userId");
 
         Object answer = chatbotService.replyHotKeyword(userId, query);
-        Map<String, Object> output = new HashMap<>();
+        Map<String, Object> output = new HashMap<>(state.getOutput());
         output.put("hotKeyword", answer);
 
         log.info("HotKeyword Agent Output: {}", output);
@@ -115,7 +115,7 @@ public class AgentExecutor {
         Long userId = (Long) state.getInput().get("userId");
 
         Object answer = chatbotService.replyCs2News(userId, query);
-        Map<String, Object> output = new HashMap<>();
+        Map<String, Object> output = new HashMap<>(state.getOutput());
         output.put("cs2News", answer);
 
         log.info("CS2News Agent Output: {}", output);
@@ -130,7 +130,7 @@ public class AgentExecutor {
         Long userId = (Long) state.getInput().get("userId");
 
         Object answer = chatbotService.reply(userId, query);
-        Map<String, Object> output = new HashMap<>();
+        Map<String, Object> output = new HashMap<>(state.getOutput());
         output.put("default", answer);
 
         log.info("default Agent Output: {}", output);
