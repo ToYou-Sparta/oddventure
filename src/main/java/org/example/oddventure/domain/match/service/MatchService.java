@@ -22,6 +22,7 @@ import org.example.oddventure.domain.match.event.dto.MatchInfoUpdateDto;
 import org.example.oddventure.domain.match.event.dto.MatchStartEventDto;
 import org.example.oddventure.domain.match.exception.MatchErrorCode;
 import org.example.oddventure.domain.match.exception.MatchException;
+import org.example.oddventure.domain.match.event.MatchEsSyncPublisher;
 import org.example.oddventure.domain.match.repository.MatchJdbcRepository;
 import org.example.oddventure.domain.match.repository.MatchRepository;
 import org.springframework.cache.annotation.Cacheable;
@@ -43,6 +44,7 @@ public class MatchService {
     private final MatchSearchService matchSearchService;
     private final RedisTemplate<String, Object> redisTemplate;
     private final MatchNotificationProducer matchNotificationProducer;
+    private final MatchEsSyncPublisher esSyncPublisher;
 
 
     // 매치 생성 (배치 적용)
@@ -79,6 +81,9 @@ public class MatchService {
         toSave.stream().map(match -> MatchStartEventDto.from(match.getFetchId(), match.getStartTime()))
                 .forEach(matchEventProducer::produceMatchStartEvent);
 
+        // Elasticsearch 동기화 이벤트 발행 (생성)
+        toSave.forEach(match -> esSyncPublisher.publishMatchCreated(match.getId()));
+
         return toSave.stream().map(MatchCreateDto::from).toList();
     }
 
@@ -89,7 +94,8 @@ public class MatchService {
 
         match.update(request.matchName(), request.teamA(), request.teamB(), request.startTime(), request.status());
 
-        //matchEsSyncPublisher.publishMatchUpdated(matchId);
+        // Elasticsearch 동기화 이벤트 발행 (업데이트)
+        esSyncPublisher.publishMatchUpdated(matchId);
 
         return MatchUpdateAdminResponse.from(match);
     }
@@ -142,6 +148,8 @@ public class MatchService {
         match.finishMatch(winner, loser);
 
         publishMatchStatusChanged(match);
+        // Elasticsearch 동기화 이벤트 발행 (경기 결과 업데이트)
+        esSyncPublisher.publishMatchUpdated(match.getId());
     }
 
     @Transactional
@@ -150,6 +158,8 @@ public class MatchService {
         match.setStatus(status);
 
         publishMatchStatusChanged(match);
+        // Elasticsearch 동기화 이벤트 발행 (상태 업데이트)
+        esSyncPublisher.publishMatchUpdated(match.getId());
     }
 
     private Match findMatchById(Long matchId) {

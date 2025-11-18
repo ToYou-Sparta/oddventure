@@ -7,6 +7,7 @@ import org.example.oddventure.domain.admin.dto.request.MatchUpdateRequest;
 import org.example.oddventure.domain.admin.dto.response.MatchCreateAdminResponse;
 import org.example.oddventure.domain.admin.dto.response.MatchUpdateAdminResponse;
 import org.example.oddventure.domain.admin.service.AdminMatchService;
+import org.example.oddventure.domain.match.scheduler.MatchEsSyncScheduler;
 import org.example.oddventure.domain.match.service.MatchService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,7 @@ public class AdminMatchController {
 
     private final AdminMatchService adminMatchService;
     private final MatchService matchService;
+    private final MatchEsSyncScheduler matchEsSyncScheduler;
 
     // 매치 생성
     @PostMapping
@@ -41,5 +43,12 @@ public class AdminMatchController {
     public ResponseEntity<ApiResponse<Void>> createMatchResult(@PathVariable Long fetchId) {
         adminMatchService.createMatchResult(fetchId);
         return ApiResponse.success("매치 결과가 연동되었습니다.");
+    }
+
+    // 데이터 수동 동기화
+    @PostMapping("/sync-elasticsearch")
+    public ResponseEntity<ApiResponse<Void>> syncElasticsearch() {
+        matchEsSyncScheduler.syncAllMatchesToElasticsearch();
+        return ApiResponse.success("Elasticsearch 동기화가 시작되었습니다.");
     }
 }
