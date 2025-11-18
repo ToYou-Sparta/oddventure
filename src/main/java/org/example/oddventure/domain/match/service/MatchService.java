@@ -20,7 +20,7 @@ import org.example.oddventure.domain.match.enums.MatchStatus;
 import org.example.oddventure.domain.match.event.MatchEventProducer;
 import org.example.oddventure.domain.match.exception.MatchErrorCode;
 import org.example.oddventure.domain.match.exception.MatchException;
-import org.example.oddventure.domain.match.messaging.MatchEsSyncPublisher;
+import org.example.oddventure.domain.match.event.MatchEsSyncPublisher;
 import org.example.oddventure.domain.match.repository.MatchJdbcRepository;
 import org.example.oddventure.domain.match.repository.MatchRepository;
 import org.springframework.cache.annotation.Cacheable;
