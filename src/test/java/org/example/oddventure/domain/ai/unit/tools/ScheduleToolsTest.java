@@ -27,7 +27,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 public class ScheduleToolsTest {
 
-    private final LocalDate today = LocalDate.now();
+    private static final ZoneId KST = ZoneId.of("Asia/Seoul");
+    private LocalDate today;
     private Match match;
     @Mock
     private MatchRepository matchRepository;
@@ -36,6 +37,8 @@ public class ScheduleToolsTest {
 
     @BeforeEach
     void setUp() {
+        today = LocalDate.now(KST);
+
         match = Match.builder()
                 .matchName("IEM Katowice 2025")
                 .teamA("FaZe Clan")
@@ -115,7 +118,7 @@ public class ScheduleToolsTest {
 
         LocalDateTime startKst = today.atStartOfDay();
         LocalDateTime expectedUtc = startKst
-                .atZone(ZoneId.of("Asia/Seoul"))
+                .atZone(KST)
                 .withZoneSameInstant(ZoneOffset.UTC)
                 .toLocalDateTime();
 
