@@ -3,6 +3,7 @@ package org.example.oddventure.support.fixture.match;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.oddventure.domain.match.entity.Match;
+import org.example.oddventure.domain.match.event.MatchEsSyncPublisher;
 import org.example.oddventure.domain.match.repository.MatchRepository;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ import java.util.Random;
 public class MatchFixtureService {
 
     private final MatchRepository matchRepository;
+    private final MatchEsSyncPublisher matchEsSyncPublisher;
 
     /**
      * 성능 테스트용 대량 더미 데이터 생성
@@ -68,7 +70,8 @@ public class MatchFixtureService {
 
             // 6. 배치 저장 (BATCH_SIZE씩 끊어서)
             if (matches.size() >= MatchFixtureData.BATCH_SIZE) {
-                matchRepository.saveAll(matches);
+                List<Match> savedMatches = matchRepository.saveAll(matches);
+                publishEsSyncEvents(savedMatches);
                 matches.clear();
                 log.info("배치 저장 : {} / {}", i + 1, count);
             }
@@ -76,9 +79,21 @@ public class MatchFixtureService {
 
         // 7. 남은 데이터 저장
         if (!matches.isEmpty()) {
-            matchRepository.saveAll(matches);
+            List<Match> savedMatches = matchRepository.saveAll(matches);
+            publishEsSyncEvents(savedMatches);
         }
 
         log.info("테스트 데이터 생성 완료 : {} 경기", count);
+    }
+
+    /**
+     * Elasticsearch 동기화 이벤트 발행
+     * @param savedMatches 저장된 경기 목록
+     */
+    private void publishEsSyncEvents(List<Match> savedMatches) {
+        for (Match match : savedMatches) {
+            matchEsSyncPublisher.publishMatchCreated(match.getId());
+        }
+        log.debug("ES 동기화 이벤트 발행 완료: {} 건", savedMatches.size());
     }
 }
