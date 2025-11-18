@@ -10,7 +10,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -35,7 +34,7 @@ public class AgentExecutorTest {
         Map<String, Object> mid = new HashMap<>();
         Map<String, Object> initData = new HashMap<>();
         input.put("question","오늘은 어떤 경기가 있나요?");
-        mid.put("intent", List.of("schedule"));
+        mid.put("intent", "schedule");
         initData.put(AgentExecutor.State.INPUT, input);
         initData.put(AgentExecutor.State.MID, mid);
         AgentExecutor.State state = new AgentExecutor.State(initData);
@@ -58,7 +57,7 @@ public class AgentExecutorTest {
         Map<String, Object> mid = new HashMap<>();
         Map<String, Object> initData = new HashMap<>();
         input.put("question","FaZe Clan 팀의 승률 알려줘.");
-        mid.put("intent", List.of("winRate"));
+        mid.put("intent", "winRate");
         initData.put(AgentExecutor.State.INPUT, input);
         initData.put(AgentExecutor.State.MID, mid);
         AgentExecutor.State state = new AgentExecutor.State(initData);
@@ -81,7 +80,7 @@ public class AgentExecutorTest {
         Map<String, Object> mid = new HashMap<>();
         Map<String, Object> initData = new HashMap<>();
         input.put("question","요즘 인기 있는 팀은 어디야?");
-        mid.put("intent", List.of("hotKeyword"));
+        mid.put("intent", "hotKeyword");
         initData.put(AgentExecutor.State.INPUT, input);
         initData.put(AgentExecutor.State.MID, mid);
         AgentExecutor.State state = new AgentExecutor.State(initData);
@@ -104,7 +103,7 @@ public class AgentExecutorTest {
         Map<String, Object> mid = new HashMap<>();
         Map<String, Object> initData = new HashMap<>();
         input.put("question","CS2 최근 소식 알려줘.");
-        mid.put("intent", List.of("cs2News"));
+        mid.put("intent", "cs2News");
         initData.put(AgentExecutor.State.INPUT, input);
         initData.put(AgentExecutor.State.MID, mid);
         AgentExecutor.State state = new AgentExecutor.State(initData);
@@ -129,7 +128,7 @@ public class AgentExecutorTest {
         Map<String, Object> mid = new HashMap<>();
         Map<String, Object> initData = new HashMap<>();
         input.put("question","오늘 날씨 어때?");
-        mid.put("intent", List.of("default"));
+        mid.put("intent", "default");
         initData.put(AgentExecutor.State.INPUT, input);
         initData.put(AgentExecutor.State.MID, mid);
         AgentExecutor.State state = new AgentExecutor.State(initData);
