@@ -1,5 +1,6 @@
 package org.example.oddventure.common.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
@@ -13,6 +14,7 @@ import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+@Slf4j
 @Configuration
 public class RabbitMQConfig {
     public static final String DELAY_EXCHANGE = "match.delay.exchange";
@@ -31,6 +33,10 @@ public class RabbitMQConfig {
     public static final String ES_SYNC_CREATED_KEY = "match.es.created";
     public static final String ES_SYNC_UPDATED_KEY = "match.es.updated";
     public static final String ES_SYNC_DELETED_KEY = "match.es.deleted";
+
+    // 실시간 알림용
+    public static final String MATCH_NOTIFY_EXCHANGE = "match.notify.exchange";
+    public static final String MATCH_NOTIFY_QUEUE = "match.notify.queue";
 
     @Bean
     public TopicExchange pointExchange() {
@@ -91,10 +97,13 @@ public class RabbitMQConfig {
         return new TopicExchange(ES_SYNC_EXCHANGE);
     }
 
-    // Elasticsearch 동기화용 Queue
+    // Elasticsearch 동기화용 Queue (메시지 손실 방지 설정)
     @Bean
     public Queue esSyncQueue() {
-        return QueueBuilder.durable(ES_SYNC_QUEUE).build();
+        return QueueBuilder.durable(ES_SYNC_QUEUE)
+                .maxLength(10000L)  // 최대 큐 크기 설정 (1만건)
+                .overflow(QueueBuilder.Overflow.rejectPublish)  // 초과 시 publish 거부 (메시지 손실 방지)
+                .build();
     }
 
     // Elasticsearch 동기화용 Binding (match.es.* 패턴 모두 수신)
@@ -115,6 +124,34 @@ public class RabbitMQConfig {
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         rabbitTemplate.setMessageConverter(jsonMessageConverter());
+
+        // Publisher Confirms 활성화 (메시지 전송 성공 확인)
+        rabbitTemplate.setMandatory(true);
+
+        // Publisher Returns 처리 (라우팅 실패 시)
+        rabbitTemplate.setReturnsCallback(returned -> {
+            log.error("메시지 라우팅 실패 - exchange: {}, routingKey: {}, replyText: {}",
+                    returned.getExchange(), returned.getRoutingKey(), returned.getReplyText());
+        });
+
         return rabbitTemplate;
+    }
+
+    @Bean
+    public TopicExchange matchNotifyExchange() {
+        return new TopicExchange(MATCH_NOTIFY_EXCHANGE);
+    }
+
+    @Bean
+    public Queue matchNotifyQueue() {
+        return new Queue(MATCH_NOTIFY_QUEUE, true);
+    }
+
+    @Bean
+    public Binding matchNotifyBinding() {
+        return BindingBuilder
+                .bind(matchNotifyQueue())
+                .to(matchNotifyExchange())
+                .with("match.*.*");
     }
 }

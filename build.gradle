@@ -44,6 +44,8 @@ dependencies {
     // lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
 
     // db
     runtimeOnly 'com.mysql:mysql-connector-j'
@@ -89,6 +91,7 @@ dependencies {
     testImplementation 'com.squareup.okhttp3:mockwebserver:4.12.0'
     testImplementation 'org.springframework.batch:spring-batch-test'
     testImplementation 'org.testcontainers:elasticsearch:1.21.3'
+    testImplementation 'org.bsc.langgraph4j:langgraph4j-studio-springboot:1.7.2'
 
     // actuator
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
@@ -102,6 +105,16 @@ dependencies {
     // redisson
     implementation 'org.redisson:redisson-spring-boot-starter:3.52.0'
 
+    // resilience4j
+    implementation "io.github.resilience4j:resilience4j-spring-boot3:2.3.0"
+
+    // ai-agent
+    implementation 'org.bsc.langgraph4j:langgraph4j-core:1.6.0'
+    implementation 'org.bsc.langgraph4j:langgraph4j-springai-agentexecutor:1.7.2'
+    implementation 'org.bsc.langgraph4j:langgraph4j-spring-ai:1.7.2'
+    implementation 'org.bsc.langgraph4j:langgraph4j-bom:1.7.2'
+    implementation 'org.bsc.langgraph4j:spring-ai-agent-archetype:1.7.2'
+    implementation 'org.springframework.ai:spring-ai-ollama:1.0.3'
 }
 
 dependencyManagement {

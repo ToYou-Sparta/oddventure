@@ -1,6 +1,7 @@
 package org.example.oddventure.domain.bet.unit;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.concurrent.CountDownLatch;
@@ -78,9 +79,7 @@ public class BetServiceConcurrencyTest extends RedisTestContainerConfig {
     }
 
     /**
-     * 1000 포인트를 가진 사용자가 100 포인트 베팅을 20회 동시 시도할 때,
-     * 정확히 10회만 성공하고 10회는 "포인트 부족" 예외가 발생하며,
-     * 사용자의 최종 잔액은 0원이 되는지 테스트함
+     * 1000 포인트를 가진 사용자가 100 포인트 베팅을 20회 동시 시도할 때, 정확히 10회만 성공하고 10회는 "포인트 부족" 예외가 발생하며, 사용자의 최종 잔액은 0원이 되는지 테스트함
      */
     @Test
     @DisplayName("1000포인트 유저가 100포인트 베팅 20회 동시 시도 시, 10회만 성공하고 잔액은 0이 된다 (분산 락)")

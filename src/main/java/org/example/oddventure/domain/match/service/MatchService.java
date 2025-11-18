@@ -11,15 +11,18 @@ import org.example.oddventure.domain.admin.dto.response.MatchUpdateAdminResponse
 import org.example.oddventure.domain.grid.dto.MatchScheduleDto;
 import org.example.oddventure.domain.hotKeywords.service.HotKeywordsService;
 import org.example.oddventure.domain.match.dto.MatchCreateDto;
-import org.example.oddventure.domain.match.dto.event.MatchStartEventDto;
 import org.example.oddventure.domain.match.dto.projection.MatchProjection;
 import org.example.oddventure.domain.match.dto.request.MatchSearchCondition;
 import org.example.oddventure.domain.match.dto.response.MatchResponse;
 import org.example.oddventure.domain.match.entity.Match;
 import org.example.oddventure.domain.match.enums.MatchStatus;
 import org.example.oddventure.domain.match.event.MatchEventProducer;
+import org.example.oddventure.domain.match.event.MatchNotificationProducer;
+import org.example.oddventure.domain.match.event.dto.MatchInfoUpdateDto;
+import org.example.oddventure.domain.match.event.dto.MatchStartEventDto;
 import org.example.oddventure.domain.match.exception.MatchErrorCode;
 import org.example.oddventure.domain.match.exception.MatchException;
+import org.example.oddventure.domain.match.event.MatchEsSyncPublisher;
 import org.example.oddventure.domain.match.repository.MatchJdbcRepository;
 import org.example.oddventure.domain.match.repository.MatchRepository;
 import org.springframework.cache.annotation.Cacheable;
@@ -40,6 +43,8 @@ public class MatchService {
     private final MatchJdbcRepository matchJdbcRepository;
     private final MatchSearchService matchSearchService;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final MatchEsSyncPublisher esSyncPublisher;
+    private final MatchNotificationProducer matchNotificationProducer;
 
 
     // 매치 생성 (배치 적용)
@@ -76,6 +81,9 @@ public class MatchService {
         toSave.stream().map(match -> MatchStartEventDto.from(match.getFetchId(), match.getStartTime()))
                 .forEach(matchEventProducer::produceMatchStartEvent);
 
+        // Elasticsearch 동기화 이벤트 발행 (생성)
+        toSave.forEach(match -> esSyncPublisher.publishMatchCreated(match.getId()));
+
         return toSave.stream().map(MatchCreateDto::from).toList();
     }
 
@@ -86,7 +94,8 @@ public class MatchService {
 
         match.update(request.matchName(), request.teamA(), request.teamB(), request.startTime(), request.status());
 
-        //matchEsSyncPublisher.publishMatchUpdated(matchId);
+        // Elasticsearch 동기화 이벤트 발행 (업데이트)
+        esSyncPublisher.publishMatchUpdated(matchId);
 
         return MatchUpdateAdminResponse.from(match);
     }
@@ -138,12 +147,19 @@ public class MatchService {
 
         match.finishMatch(winner, loser);
 
+        // Elasticsearch 동기화 이벤트 발행 (경기 결과 업데이트)
+        esSyncPublisher.publishMatchUpdated(match.getId());
+        publishMatchStatusChanged(match);
     }
 
     @Transactional
     public void updateStatus(Long fetchId, MatchStatus status) {
         Match match = findByFetchId(fetchId);
         match.setStatus(status);
+
+        // Elasticsearch 동기화 이벤트 발행 (상태 업데이트)
+        esSyncPublisher.publishMatchUpdated(match.getId());
+        publishMatchStatusChanged(match);
     }
 
     private Match findMatchById(Long matchId) {
@@ -160,5 +176,10 @@ public class MatchService {
     public Page<MatchResponse> elasticSearchMatches(MatchSearchCondition condition, Pageable pageable) {
 
         return matchSearchService.searchMatches(condition, pageable);
+    }
+
+    private void publishMatchStatusChanged(Match match) {
+        MatchInfoUpdateDto dto = MatchInfoUpdateDto.of(match);
+        matchNotificationProducer.sendMatchStatusChanged(dto);
     }
 }

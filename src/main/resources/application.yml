@@ -20,6 +20,10 @@ spring:
   cache:
     type: redis
 
+  rabbitmq:
+    publisher-confirm-type: correlated  # Publisher Confirms 활성화
+    publisher-returns: true  # Publisher Returns 활성화
+
   elasticsearch:
     uris: ${ELASTICSEARCH_URIS}
     connection-timeout: 5s
@@ -63,3 +67,17 @@ management:
     tomcat:
       mbeanregistry:
         enabled: true
+
+resilience4j:
+  retry:
+    instances:
+      steamNews:
+        maxAttempts: 3
+        waitDuration: 500ms
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2     # 500ms → 1s → 2s
+        enableRandomizedWait: true
+        retryExceptions:
+          - org.springframework.web.client.HttpServerErrorException
+          - org.springframework.web.client.ResourceAccessException
+          - java.net.SocketTimeoutException

@@ -130,9 +130,10 @@ public class MatchSearchService {
 
     /**
      * LocalDateTime을 Elasticsearch 날짜 형식으로 변환
+     * date_hour_minute_second 포맷에 맞춰 밀리초 제거
      */
     private String formatDateTime(LocalDateTime dateTime) {
-        return dateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        return dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"));
     }
 
     /**

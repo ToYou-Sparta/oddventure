@@ -18,6 +18,7 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+
       elasticsearch:
         image: elasticsearch:9.2.0
         env:
@@ -31,6 +32,17 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 10
+
+      rabbitmq:
+        image: rabbitmq:3-management
+        ports:
+          - 5672:5672
+          - 15672:15672
+        options: >-
+          --health-cmd "rabbitmqctl status"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - name: Checkout code
