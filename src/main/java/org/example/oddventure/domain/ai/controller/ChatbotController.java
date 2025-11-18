@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/chat")
@@ -28,7 +26,7 @@ public class ChatbotController {
 
     // 로컬 테스트용
     @PostMapping
-    public ResponseEntity<ApiResponse<Optional<AgentExecutor.State>>> reply(
+    public ResponseEntity<ApiResponse<AgentExecutor.State>> reply(
             @AuthenticationPrincipal AuthUser user,
             @RequestBody UserMessage userMessage
     ) throws Exception {
@@ -36,7 +34,7 @@ public class ChatbotController {
         String channel = "chat:" + user.id() + ":input";
         redisPublisher.publish(channel, userMessage);
 
-        Optional<AgentExecutor.State> reply = agentRunnerService.execute(user.id(), userMessage.message());
+        AgentExecutor.State reply = agentRunnerService.execute(user.id(), userMessage.message()).orElse(null);
         return ApiResponse.success(reply, "AI 응답 테스트가 정상적으로 완료되었습니다.");
     }
 
