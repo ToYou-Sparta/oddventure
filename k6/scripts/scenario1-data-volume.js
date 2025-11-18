@@ -28,8 +28,9 @@ export const options = {
     },
 };
 
-const BASE_URL = 'http://host.docker.internal:8080';
-const SEARCH_ENDPOINT = `${BASE_URL}/api/v1/matches/search`;
+const BASE_URL = __ENV.BASE_URL || 'http://host.docker.internal:8080';
+const API_URL = __ENV.API_URL || '/api/v1/matches/search';
+const ENDPOINT = BASE_URL + API_URL;
 
 // 다양한 검색 키워드 (실제 테스트 데이터와 매칭)
 const keywords = [
@@ -130,7 +131,7 @@ export default function (data) {
 
     const page = Math.floor(Math.random() * 3); // 0~2 페이지
     const size = 10;
-    const url = `${SEARCH_ENDPOINT}?page=${page}&size=${size}`;
+    const url = `${ENDPOINT}?page=${page}&size=${size}`;
 
     const startTime = new Date();
     const response = http.post(url, JSON.stringify(searchCondition), params);
@@ -177,7 +178,7 @@ export default function (data) {
 
 export function setup() {
     console.log('=== 시나리오 1: 데이터 볼륨 영향도 테스트 ===');
-    console.log(`테스트 대상 API: ${BASE_URL}`);
+    console.log(`테스트 대상 API: ${ENDPOINT}`);
     console.log('이 테스트는 데이터 양이 증가할 때 성능 저하를 측정합니다');
 
     const token = getAuthToken();
