@@ -32,7 +32,7 @@ public class AdaptiveEsSyncManager {
      * @return true: RabbitMQ 사용, false: 사용안함
      */
     public boolean shouldUseRabbitMQ() {
-        // 이미 대용량 모드인지 확인
+        // 대용량 모드인지 확인
         Boolean isBulkMode = (Boolean) redisTemplate.opsForValue().get(BULK_MODE_KEY);
 
         if (Boolean.TRUE.equals(isBulkMode)) {
