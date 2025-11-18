@@ -157,10 +157,9 @@ public class MatchService {
         Match match = findByFetchId(fetchId);
         match.setStatus(status);
 
-        publishMatchStatusChanged(match);
-
         // Elasticsearch 동기화 이벤트 발행 (상태 업데이트)
         esSyncPublisher.publishMatchUpdated(match.getId());
+        publishMatchStatusChanged(match);
     }
 
     private Match findMatchById(Long matchId) {

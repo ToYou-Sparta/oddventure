@@ -347,4 +347,29 @@ class MatchServiceTest {
             verify(matchRepository).updateViewCount(matchId, viewCount);
         }
     }
+
+    @Test
+    @DisplayName("매치 상태값 변경 성공")
+    void updateStatus_success() {
+        //given
+        Long fetchId = 1L;
+        MatchStatus status = MatchStatus.ONGOING;
+
+        Match match = Match.builder()
+                .matchName("LCK")
+                .teamA("T1")
+                .teamB("GEN.G")
+                .startTime(LocalDateTime.now().plusDays(1))
+                .build();
+
+        when(matchRepository.findByFetchId(fetchId)).thenReturn(Optional.of(match));
+        doNothing().when(esSyncPublisher).publishMatchUpdated(any());
+
+        //when
+        matchService.updateStatus(fetchId, status);
+
+        //then
+        assertThat(match.getStatus()).isEqualTo(status);
+        verify(esSyncPublisher).publishMatchUpdated(any());
+    }
 }
