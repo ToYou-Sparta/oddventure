@@ -103,6 +103,9 @@ dependencies {
     // redisson
     implementation 'org.redisson:redisson-spring-boot-starter:3.52.0'
 
+    // resilience4j
+    implementation "io.github.resilience4j:resilience4j-spring-boot3:2.3.0"
+
     // ai-agent
     implementation 'org.bsc.langgraph4j:langgraph4j-core:1.6.0'
     implementation 'org.bsc.langgraph4j:langgraph4j-springai-agentexecutor:1.7.2'
@@ -110,7 +113,6 @@ dependencies {
     implementation 'org.bsc.langgraph4j:langgraph4j-bom:1.7.2'
     implementation 'org.bsc.langgraph4j:spring-ai-agent-archetype:1.7.2'
     implementation 'org.springframework.ai:spring-ai-ollama:1.0.3'
-
 }
 
 dependencyManagement {
