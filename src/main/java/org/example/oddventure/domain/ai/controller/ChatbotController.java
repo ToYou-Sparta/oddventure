@@ -3,6 +3,8 @@ package org.example.oddventure.domain.ai.controller;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.example.oddventure.common.dto.response.ApiResponse;
+import org.example.oddventure.domain.ai.agent.AgentExecutor;
+import org.example.oddventure.domain.ai.agent.AgentRunnerService;
 import org.example.oddventure.domain.ai.pubsub.RedisPublisher;
 import org.example.oddventure.domain.ai.service.ChatbotService;
 import org.example.oddventure.domain.auth.dto.AuthUser;
@@ -20,20 +22,20 @@ import org.springframework.web.bind.annotation.RestController;
 @Profile("local")
 public class ChatbotController {
 
-    private final ChatbotService chatbotService;
+    private final AgentRunnerService agentRunnerService;
     private final RedisPublisher redisPublisher;
 
     // 로컬 테스트용
     @PostMapping
-    public ResponseEntity<ApiResponse<String>> reply(
+    public ResponseEntity<ApiResponse<AgentExecutor.State>> reply(
             @AuthenticationPrincipal AuthUser user,
             @RequestBody UserMessage userMessage
-    ) {
+    ) throws Exception {
         // 테스트용 Redis 직접 발행
         String channel = "chat:" + user.id() + ":input";
         redisPublisher.publish(channel, userMessage);
 
-        String reply = chatbotService.reply(user.id(), userMessage.message());
+        AgentExecutor.State reply = agentRunnerService.execute(user.id(), userMessage.message()).orElse(null);
         return ApiResponse.success(reply, "AI 응답 테스트가 정상적으로 완료되었습니다.");
     }
 
