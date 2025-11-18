@@ -129,7 +129,7 @@ public class ChatbotService {
     }
 
     //tool 분류 메서드
-    public List<String> classifyTools(String userMassage) {
+    public String classifyTools(String userMassage) {
 
         String prompt = """
                 너는 사용자 의도를 정확히 분류하는 분류기입니다.
@@ -142,10 +142,10 @@ public class ChatbotService {
                 
                 [출력 규칙]
                 1. 목록 중 여러 개에 해당할 경우 반점(,)으로 구분해 출력합니다.
-                2. 추가 설명, 문장, 마침표, 따옴표, 괄호 등은 절대 포함하지 않습니다.
+                2. 추가 설명, 문장, 마침표, 따옴표, 괄호, 공백 등은 절대 포함하지 않습니다.
                 3. 반환값이 없을 경우는 존재하지 않습니다.
                 4. 예: schedule
-                5. 예: schedule, hotKeyword
+                5. 예: schedule,hotKeyword
                 
                 [사용자 질문 예시]
                 사용자: 오늘 경기 일정 알려줘 → schedule
@@ -153,7 +153,7 @@ public class ChatbotService {
                 사용자: 요즘 제일 핫한 경기 이름 알려줘 → hotKeyword
                 사용자: Counter-Strike 2 패치노트 알려줘 → cs2News
                 사용자: FaZe Clan 팀의 배당률 알려줘 → default
-                사용자: FaZe Clan 팀의 승률과 배당률 알려줘 → winRate, default
+                사용자: FaZe Clan 팀의 승률과 배당률 알려줘 → winRate,default
                 """;
 
         CallResponseSpec callTools = chatClient
@@ -161,10 +161,6 @@ public class ChatbotService {
                 .user(userMassage)
                 .call();
 
-        String answer = callTools.content();
-        if (answer != null) {
-            return Arrays.stream(answer.split(",")).toList();
-        }
-        throw new NullPointerException();
+        return callTools.content();
     }
 }
