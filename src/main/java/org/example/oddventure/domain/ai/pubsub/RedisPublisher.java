@@ -1,4 +1,4 @@
-package org.example.oddventure.domain.event;
+package org.example.oddventure.domain.ai.pubsub;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

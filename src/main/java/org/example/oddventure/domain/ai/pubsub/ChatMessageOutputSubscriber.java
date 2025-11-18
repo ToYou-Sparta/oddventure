@@ -1,20 +1,18 @@
-package org.example.oddventure.domain.ai.subscriber;
+package org.example.oddventure.domain.ai.pubsub;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.oddventure.domain.ai.service.ChatbotService;
-import org.example.oddventure.domain.event.RedisPublisher;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ChatMessageSubscriber implements MessageListener {
+public class ChatMessageOutputSubscriber implements MessageListener {
 
-    private final ChatbotService chatbotService;
-    private final RedisPublisher redisPublisher;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
@@ -24,9 +22,9 @@ public class ChatMessageSubscriber implements MessageListener {
         log.info("[Redis 구독] channel={}, message={}", channel, body);
 
         String[] parts = channel.split(":");
-        Long userId = Long.valueOf(parts[1]);
-        String aiResponse = chatbotService.reply(userId, body);
+        String userId = parts[1];
 
-        redisPublisher.publish("chat:" + userId + ":output", aiResponse);
+        String destination = "/topic/chat/" + userId;
+        messagingTemplate.convertAndSend(destination, body);
     }
 }

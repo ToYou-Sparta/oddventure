@@ -1,16 +1,15 @@
 package org.example.oddventure.domain.match.event;
 
+import java.time.Duration;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.oddventure.common.config.RabbitMQConfig;
-import org.example.oddventure.domain.match.dto.event.MatchEsSyncEvent;
+import org.example.oddventure.domain.match.event.dto.MatchEsSyncEvent;
 import org.example.oddventure.domain.match.sync.AdaptiveEsSyncManager;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
-
-import java.time.Duration;
-import java.util.Set;
 
 /**
  * Match 데이터 변경 시 Elasticsearch 동기화 이벤트 발행
@@ -20,11 +19,10 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class MatchEsSyncPublisher {
 
+    private static final String PENDING_SYNC_KEY = "es:sync:pending:";
     private final RabbitTemplate rabbitTemplate;
     private final AdaptiveEsSyncManager syncManager;
     private final RedisTemplate<String, Object> redisTemplate;
-
-    private static final String PENDING_SYNC_KEY = "es:sync:pending:";
 
     /**
      * Match 생성 이벤트 발행

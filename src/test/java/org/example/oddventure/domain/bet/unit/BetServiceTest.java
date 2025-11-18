@@ -23,8 +23,9 @@ import org.example.oddventure.domain.bet.event.BetEventProducer;
 import org.example.oddventure.domain.bet.repository.BetRepository;
 import org.example.oddventure.domain.bet.service.BetService;
 import org.example.oddventure.domain.bet.service.BetTransactionService;
-import org.example.oddventure.domain.event.RedisPublisher;
 import org.example.oddventure.domain.match.entity.Match;
+import org.example.oddventure.domain.match.event.MatchNotificationProducer;
+import org.example.oddventure.domain.match.event.NotificationSubscriptionService;
 import org.example.oddventure.domain.user.entity.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,9 +51,6 @@ public class BetServiceTest {
     private BetRepository betRepository;
 
     @Mock
-    private RedisPublisher redisPublisher;
-
-    @Mock
     private BetEventProducer betEventProducer;
 
     @Mock
@@ -69,6 +67,12 @@ public class BetServiceTest {
 
     @Mock
     private RLock matchLock;
+
+    @Mock
+    private MatchNotificationProducer matchNotificationProducer;
+
+    @Mock
+    private NotificationSubscriptionService notificationSubscriptionService;
 
     @Test
     @DisplayName("베팅을 생성 성공하면 유저 포인트가 차감되고 베팅 금액이 저장된다.")
@@ -112,7 +116,7 @@ public class BetServiceTest {
         assertThat(response.oddsAtBetting()).isEqualTo(new BigDecimal("1.50"));
         assertThat(response.userPointAfter()).isEqualTo(new BigDecimal("0"));
         verify(multiLock).unlock(); // 락이 해제되었는지 검증
-        verify(redisPublisher).publish(any(String.class), any()); // 이벤트가 발행되었는지 검증
+        verify(matchNotificationProducer).sendOddsChanged(any());
     }
 
     @Test
