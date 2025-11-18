@@ -36,6 +36,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.ResultActions;
+import org.example.oddventure.domain.match.scheduler.MatchEsSyncScheduler;
 
 @WebMvcTest(AdminMatchController.class)
 @Import({SecurityConfig.class, JwtUtil.class, RestDocsUtils.class})
@@ -53,6 +54,9 @@ public class AdminMatchControllerTest extends RestDocsTestSupport {
 
     @MockitoBean
     private JwtUtil jwtUtil;
+
+    @MockitoBean
+    private MatchEsSyncScheduler matchEsSyncScheduler;
 
     @Test
     @DisplayName("매치 생성 성공")
