@@ -8,6 +8,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+import lombok.extern.slf4j.Slf4j;
 import org.example.oddventure.base.RedisTestContainerConfig;
 import org.example.oddventure.domain.bet.dto.request.BetCreateRequest;
 import org.example.oddventure.domain.bet.enums.SelectedTeam;
@@ -27,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-
+@Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
 public class BetServiceConcurrencyTest extends RedisTestContainerConfig {
@@ -136,6 +137,6 @@ public class BetServiceConcurrencyTest extends RedisTestContainerConfig {
         assertThat(betCount).isEqualTo(successCount.get());
         // 3. 유저의 최종 잔액 == 1000 - (성공 횟수 * 100)
         assertThat(updatedUser.getPoint()).isEqualByComparingTo(expectedPoint);
-        System.out.println("SUCCESS = " + successCount.get() + ", FAIL = " + failCount.get());
+        log.info("success={}, fail={}", successCount.get(), failCount.get());
     }
 }
