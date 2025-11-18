@@ -8,7 +8,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
-import lombok.extern.slf4j.Slf4j;
 import org.example.oddventure.base.RedisTestContainerConfig;
 import org.example.oddventure.domain.bet.dto.request.BetCreateRequest;
 import org.example.oddventure.domain.bet.enums.SelectedTeam;
@@ -28,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-@Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
 public class BetServiceConcurrencyTest extends RedisTestContainerConfig {
@@ -125,12 +123,6 @@ public class BetServiceConcurrencyTest extends RedisTestContainerConfig {
         // then
         User updatedUser = userRepository.findById(testUser.getId()).orElseThrow();
         long betCount = betRepository.count();
-
-        log.info("==== CONCURRENCY RESULT ====");
-        log.info("success={} / fail={}", successCount.get(), failCount.get());
-        log.info("betCount={}", betCount);
-        log.info("userPoint={}", updatedUser.getPoint());
-        log.info("============================");
 
         // 분산 락은 DB 락보다 락 획득/해제 속도가 빨라서 10회/10회(50%)가 아닌 11회/9회 등으로 결과가 나올 수 있음
         // 중요한 것은 (성공 횟수 * 베팅금액) == (차감된 포인트)
