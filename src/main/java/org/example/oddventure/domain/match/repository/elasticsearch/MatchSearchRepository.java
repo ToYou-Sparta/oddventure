@@ -13,6 +13,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MatchSearchRepository extends ElasticsearchRepository<MatchDocument, String> {
 
+    // 기본 CRUD 메서드 명시적 선언 (버전 호환성 문제 해결)
+    <S extends MatchDocument> S save(S entity);
+
+    <S extends MatchDocument> Iterable<S> saveAll(Iterable<S> entities);
+
+    void deleteById(String id);
+
     /**
      * 키워드로 매치 이름, 팀A, 팀B에서 검색
      * Query DSL을 JSON 형태로 직접 작성
