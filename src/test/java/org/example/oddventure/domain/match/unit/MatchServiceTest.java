@@ -27,10 +27,12 @@ import org.example.oddventure.domain.match.dto.response.MatchResponse;
 import org.example.oddventure.domain.match.entity.Match;
 import org.example.oddventure.domain.match.enums.MatchStatus;
 import org.example.oddventure.domain.match.event.MatchEventProducer;
+import org.example.oddventure.domain.match.event.MatchEsSyncPublisher;
 import org.example.oddventure.domain.match.exception.MatchErrorCode;
 import org.example.oddventure.domain.match.exception.MatchException;
 import org.example.oddventure.domain.match.repository.MatchJdbcRepository;
 import org.example.oddventure.domain.match.repository.MatchRepository;
+import org.example.oddventure.domain.match.service.MatchSearchService;
 import org.example.oddventure.domain.match.service.MatchService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -66,10 +68,16 @@ class MatchServiceTest {
     private MatchJdbcRepository matchJdbcRepository;
 
     @Mock
+    private MatchSearchService matchSearchService;
+
+    @Mock
     private RedisTemplate<String, Object> redisTemplate;
 
     @Mock
     private ValueOperations<String, Object> valueOperations;
+
+    @Mock
+    private MatchEsSyncPublisher esSyncPublisher;
 
     @Test
     @DisplayName("매치 생성 성공")
@@ -79,11 +87,9 @@ class MatchServiceTest {
         List<MatchScheduleDto> request = new ArrayList<>();
         request.add(new MatchScheduleDto(1L, "LCK", "T1", "Gen.G", startTime));
 
-        List<Match> matches = new ArrayList<>();
-        matches.add(Match.builder().teamA("T1").teamB("Gen.G").startTime(startTime).build());
-
         given(matchRepository.findExistingFetchIds(anyList())).willReturn(List.of());
         doNothing().when(matchJdbcRepository).saveAllMatches(anyList());
+        doNothing().when(esSyncPublisher).publishMatchCreated(any());
 
         // when
         List<MatchCreateDto> response = matchService.createMatch(request);
@@ -91,6 +97,7 @@ class MatchServiceTest {
         // then
         assertThat(response.get(0).fetchId()).isEqualTo(1L);
         verify(matchJdbcRepository).saveAllMatches(anyList());
+        verify(esSyncPublisher).publishMatchCreated(any());
     }
 
     @Test
@@ -184,6 +191,7 @@ class MatchServiceTest {
                     .build();
 
             given(matchRepository.findById(matchId)).willReturn(Optional.of(existingMatch));
+            doNothing().when(esSyncPublisher).publishMatchUpdated(anyLong());
 
             // when
             MatchUpdateAdminResponse response = matchService.updateMatch(matchId, request);
@@ -192,6 +200,7 @@ class MatchServiceTest {
             assertThat(response.teamA()).isEqualTo("DWG KIA");
             assertThat(response.startTime()).isEqualTo(newStartTime);
             assertThat(response.status()).isEqualTo(MatchStatus.ONGOING);
+            verify(esSyncPublisher).publishMatchUpdated(matchId);
         }
 
         @Test
@@ -310,12 +319,12 @@ class MatchServiceTest {
         }
     }
 
-        @Test
-        @DisplayName("매치 상태값 변경 성공")
-        void updateStatus_success() {
-            //given
-            Long fetchId = 1L;
-            MatchStatus status = MatchStatus.ONGOING;
+    @Test
+    @DisplayName("매치 상태값 변경 성공")
+    void updateStatus_success() {
+        //given
+        Long fetchId = 1L;
+        MatchStatus status = MatchStatus.ONGOING;
 
         Match match = Match.builder()
                 .matchName("LCK")
@@ -324,12 +333,14 @@ class MatchServiceTest {
                 .startTime(LocalDateTime.now().plusDays(1))
                 .build();
 
-            when(matchRepository.findByFetchId(fetchId)).thenReturn(Optional.of(match));
+        when(matchRepository.findByFetchId(fetchId)).thenReturn(Optional.of(match));
+        doNothing().when(esSyncPublisher).publishMatchUpdated(any());
 
-            //when
-            matchService.updateStatus(fetchId, status);
+        //when
+        matchService.updateStatus(fetchId, status);
 
         //then
         assertThat(match.getStatus()).isEqualTo(status);
+        verify(esSyncPublisher).publishMatchUpdated(any());
     }
 }

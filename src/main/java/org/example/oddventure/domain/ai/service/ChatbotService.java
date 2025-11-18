@@ -8,6 +8,7 @@ import org.example.oddventure.domain.ai.tools.ScheduleTools;
 import org.example.oddventure.domain.ai.tools.WinRateTools;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.ChatClient.CallResponseSpec;
+import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,12 +21,7 @@ public class ChatbotService {
     private final WinRateTools winRateTools;
     private final HotKeywordTools hotKeywordTools;
     private final Cs2NewsTools cs2NewsTools;
-
-    public String reply(Long userId, String userMessage) {
-        List<String> history = chatHistoryService.getRecentMessages(userId);
-        String historyText = String.join("\n", history);
-
-        String system = """
+    private final String system = """
                 너는 e스포츠 도메인 어시스턴트다.
                 
                 [사고 지침(내부)]
@@ -39,23 +35,13 @@ public class ChatbotService {
                 - 목록형보다는 자연스러운 문장으로 응답한다.
                 - 가능하면 출처(URL)나 공식 링크를 마지막에 함께 안내한다.
                 - 불필요한 반복 표현은 피하고, 핵심 내용 위주로 간결히 요약한다.
-                
-                [툴 사용 원칙]
-                - 경기 일정이 필요하면 query_schedule 또는 query_schedule_by_date를 사용한다.
-                - 팀·리그의 승률이 필요하면 analyze_winning_rate를 사용한다.
-                - 최근 인기 있는 팀/리그를 묻는다면 query_hot_keywords를 사용한다.
-                - Counter-Strike 2의 최근 뉴스·패치·이벤트를 묻는다면 query_cs2_news를 사용한다.
-                - 한 번에 여러 툴이 필요하지 않다면 호출을 최소화한다.
-                
-                [툴 사용 예시]
-                사용자: 안녕하세요! → 툴 호출 없이 최종 답만 생성
-                사용자: 오늘 경기 있어요? → query_schedule({"when":"오늘"})
-                사용자: 11월 4일 경기 일정 알려줘 → query_schedule_by_date({"month":11,"day":4})
-                사용자: Nexus 승률 알려줘 → analyze_winning_rate({"teamA":"Nexus"})
-                사용자: 요즘 인기 있는 팀은 어디야? → query_hot_keywords()
-                사용자: CS2 최근 소식 알려줘 → query_cs2_news()
-                사용자: Counter-Strike 2 패치노트 알려줘 → query_cs2_news()
                 """;
+
+    // LLM 기본 응답
+    @Tool(description = "e스포츠 데이터 기반 AI 챗봇")
+    public String reply(Long userId, String userMessage) {
+        List<String> history = chatHistoryService.getRecentMessages(userId);
+        String historyText = String.join("\n", history);
 
         String prompt = """
                     [최근 대화]
@@ -65,17 +51,120 @@ public class ChatbotService {
                     %s
                 """.formatted(historyText, userMessage);
 
-        CallResponseSpec call = chatClient
+        CallResponseSpec callTools = chatClient
                 .prompt(prompt)
                 .system(system)
-                .tools(scheduleTools, winRateTools, hotKeywordTools, cs2NewsTools)
                 .call();
 
-        String answer = call.content();
-
+        String answer = callTools.content();
         chatHistoryService.addMessage(userId, "user", userMessage);
         chatHistoryService.addMessage(userId, "assistant", answer);
 
         return answer;
+    }
+
+   // 경기 일정 툴 적용
+    public String replySchedule(Long userId, String userMessage) {
+        String system = """
+                [툴 사용 예시]
+                사용자: 오늘 경기 있어요? → query_schedule({"when":"오늘"})
+                사용자: 11월 4일 경기 일정 알려줘 → query_schedule_by_date({"month":11,"day":4})
+                """;
+        return callTools(userId, userMessage, system, scheduleTools);
+    }
+
+   // 승률 계산 툴 적용
+    public String replyWinRate(Long userId, String userMessage) {
+        String system = """
+                [툴 사용 예시]
+                사용자: Nexus 승률 알려줘 → analyze_winning_rate({"teamA":"Nexus"})
+                """;
+        return callTools(userId, userMessage, system, winRateTools);
+    }
+
+    // 인기 검색어 툴 적용
+    public String replyHotKeyword(Long userId, String userMessage) {
+        String system = """
+                [툴 사용 예시]
+                사용자: 요즘 인기 있는 팀은 어디야? → query_hot_keywords()
+                """;
+        return callTools(userId, userMessage, system, hotKeywordTools);
+    }
+
+    // cs2 뉴스 툴 적용
+    public String replyCs2News(Long userId, String userMessage) {
+        String system = """
+                [툴 사용 예시]
+                사용자: CS2 최근 소식 알려줘 → query_cs2_news()
+                사용자: Counter-Strike 2 패치노트 알려줘 → query_cs2_news()
+                """;
+        return callTools(userId, userMessage, system, cs2NewsTools);
+    }
+
+    // 툴 적용 메서드
+    public String callTools(Long userId, String userMessage, String toolSystem, Object... tool) {
+        List<String> history = chatHistoryService.getRecentMessages(userId);
+        String historyText = String.join("\n", history);
+
+        String prompt = """
+                    [최근 대화]
+                    %s
+                
+                    [사용자 요청]
+                    %s
+                """.formatted(historyText, userMessage);
+
+        CallResponseSpec callTools = chatClient
+                .prompt(prompt)
+                .system(system+"\n"+toolSystem)
+                .tools(tool)
+                .call();
+
+        String answer = callTools.content();
+        chatHistoryService.addMessage(userId, "user", userMessage);
+        chatHistoryService.addMessage(userId, "assistant", answer);
+
+        return answer;
+    }
+
+    //tool 분류 메서드
+    public String classifyTools(String userMassage) {
+
+        String prompt = """
+                [사용자 요청]
+                %s
+                """.formatted(userMassage);
+
+        String system = """
+                너는 사용자 의도를 정확히 분류하는 분류기입니다.
+                가능한 출력 값(따옴표 없이):
+                - schedule
+                - winRate
+                - hotKeyword
+                - cs2News
+                - default
+                
+                [출력 규칙]
+                1. 목록 중 여러 개에 해당할 경우 반점(,)으로 구분해 출력합니다.
+                2. 추가 설명, 문장, 마침표, 따옴표, 괄호, 공백 등은 절대 포함하지 않습니다.
+                3. 반환값이 없을 경우는 존재하지 않습니다.
+                4. 예: schedule
+                5. 예: schedule,hotKeyword
+                
+                [사용자 질문 예시]
+                사용자: 오늘 경기 일정 알려줘 → schedule
+                사용자: FaZe Clan 팀의 승률 알려줘 → winRate
+                사용자: 요즘 제일 핫한 경기 이름 알려줘 → hotKeyword
+                사용자: Counter-Strike 2 패치노트 알려줘 → cs2News
+                사용자: FaZe Clan 팀의 배당률 알려줘 → default
+                사용자: FaZe Clan 팀의 승률과 배당률 알려줘 → winRate,default
+                """;
+
+        CallResponseSpec callTools = chatClient
+                .prompt(prompt)
+                .system(system)
+                .call();
+
+        return callTools.content();
     }
 }

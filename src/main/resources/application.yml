@@ -20,6 +20,10 @@ spring:
   cache:
     type: redis
 
+  rabbitmq:
+    publisher-confirm-type: correlated  # Publisher Confirms 활성화
+    publisher-returns: true  # Publisher Returns 활성화
+
   elasticsearch:
     uris: ${ELASTICSEARCH_URIS}
     connection-timeout: 5s

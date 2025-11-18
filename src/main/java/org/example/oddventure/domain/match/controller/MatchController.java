@@ -66,7 +66,7 @@ public class MatchController {
             @RequestParam(defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<MatchResponse> matches = matchService.searchMatches(condition, pageable);
+        Page<MatchResponse> matches = matchService.elasticSearchMatches(condition, pageable);
         return ApiPageResponse.success(matches, "검색 조건에 맞는 매치 목록을 조회했습니다.");
     }
 }
