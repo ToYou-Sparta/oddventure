@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.TimeZone;
 import org.example.oddventure.domain.ai.dto.ScheduleResponse;
 import org.example.oddventure.domain.ai.tools.ScheduleTools;
 import org.example.oddventure.domain.match.entity.Match;
@@ -27,7 +28,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 public class ScheduleToolsTest {
 
-    private final LocalDate today = LocalDate.now();
+    private final LocalDate fixedToday = LocalDate.of(2025, 1, 1);
     private Match match;
     @Mock
     private MatchRepository matchRepository;
@@ -36,11 +37,13 @@ public class ScheduleToolsTest {
 
     @BeforeEach
     void setUp() {
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
+
         match = Match.builder()
                 .matchName("IEM Katowice 2025")
                 .teamA("FaZe Clan")
                 .teamB("G2 Esports")
-                .startTime(today.atStartOfDay().plusHours(12))
+                .startTime(fixedToday.atStartOfDay().plusHours(12))
                 .build();
     }
 
@@ -87,7 +90,8 @@ public class ScheduleToolsTest {
                 any(LocalDateTime.class))).thenReturn(List.of(match));
 
         // when
-        ScheduleResponse response = scheduleTools.queryScheduleByDate(today.getMonthValue(), today.getDayOfMonth());
+        ScheduleResponse response = scheduleTools.queryScheduleByDate(fixedToday.getMonthValue(),
+                fixedToday.getDayOfMonth());
 
         // then
         assertThat(response).isNotNull();
@@ -113,7 +117,7 @@ public class ScheduleToolsTest {
         verify(matchRepository).findByStartTimeBetweenOrderByStartTimeAsc(startCaptor.capture(), any());
         LocalDateTime startUtc = startCaptor.getValue();
 
-        LocalDateTime startKst = today.atStartOfDay();
+        LocalDateTime startKst = fixedToday.atStartOfDay();
         LocalDateTime expectedUtc = startKst
                 .atZone(ZoneId.of("Asia/Seoul"))
                 .withZoneSameInstant(ZoneOffset.UTC)
