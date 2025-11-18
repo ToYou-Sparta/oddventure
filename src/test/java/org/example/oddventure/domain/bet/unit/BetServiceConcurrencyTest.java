@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+
 @SpringBootTest
 @ActiveProfiles("test")
 public class BetServiceConcurrencyTest extends RedisTestContainerConfig {
@@ -133,14 +134,8 @@ public class BetServiceConcurrencyTest extends RedisTestContainerConfig {
         assertThat(successCount.get() + failCount.get()).isEqualTo(20);
         // 2. DB에 저장된 Bet 엔티티 == 성공 횟수
         assertThat(betCount).isEqualTo(successCount.get());
-        // 3. 포인트는 절대 음수가 될 수 없음
-        assertThat(updatedUser.getPoint()).isGreaterThanOrEqualTo(BigDecimal.ZERO);
-        // 4. 포인트가 실제로 성공 횟수만큼 차감됐는지 “범위 내에서” 검증
-        BigDecimal usedPoint = new BigDecimal("1000").subtract(updatedUser.getPoint());
-        assertThat(usedPoint)
-                .isBetween(
-                        new BigDecimal(successCount.get() * betAmount - 100), // 1회 차이 허용
-                        new BigDecimal(successCount.get() * betAmount + 100)
-                );
+        // 3. 유저의 최종 잔액 == 1000 - (성공 횟수 * 100)
+        assertThat(updatedUser.getPoint()).isEqualByComparingTo(expectedPoint);
+        System.out.println("SUCCESS = " + successCount.get() + ", FAIL = " + failCount.get());
     }
 }
