@@ -86,7 +86,7 @@ services:
 
   # Elsticsearch 검색 엔진
   elasticsearch:
-    image: elasticsearch:9.2.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
     container_name: oddventure-elasticsearch
     restart: unless-stopped
 
@@ -129,7 +129,7 @@ services:
 
   # Elasticsearch 관리 UI
   kibana:
-    image: kibana:9.2.0
+    image: docker.elastic.co/kibana/kibana:7.10.2
     container_name: oddventure-kibana
     restart: unless-stopped
 
