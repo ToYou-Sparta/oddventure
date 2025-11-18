@@ -1,4 +1,4 @@
-package org.example.oddventure.domain.match.messaging;
+package org.example.oddventure.domain.match.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
