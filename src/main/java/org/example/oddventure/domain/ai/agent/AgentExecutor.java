@@ -9,11 +9,7 @@ import org.bsc.langgraph4j.state.Channel;
 import org.bsc.langgraph4j.state.Channels;
 import org.example.oddventure.domain.ai.service.ChatbotService;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import static org.bsc.langgraph4j.StateGraph.END;
 import static org.bsc.langgraph4j.StateGraph.START;
 import static org.bsc.langgraph4j.action.AsyncEdgeAction.edge_async;
@@ -184,6 +180,10 @@ public class AgentExecutor {
         public Map<String, Object> getMid() {
             return this.<Map<String, Object>>value(MID).orElseGet(HashMap::new);
         }
+
+        public Map<String, Object> getOutput() {
+            return this.<Map<String, Object>>value(OUTPUT).orElseGet(HashMap::new);
+        }
     }
 
     //agent workflow를 위한 StateGraph Builder 클래스
@@ -197,14 +197,19 @@ public class AgentExecutor {
         public StateGraph<State> build() throws GraphStateException {
             var shouldContinue = (EdgeAction<State>) state -> {
                 log.info("shouldContinue state: {}", state);
-                //Arrays.stream(answer.split(",")).toList();
-                List<String> intent = new ArrayList<>((List<String>)state.getMid().get("intent"));
-                if (intent.isEmpty()) {
-                    return END; // flow 실행 완료 후 END로 연결, 체이닝 종료
+
+                String intent = (String) state.getMid().get("intent");
+                if (intent.isBlank()) {
+                    return "end"; // flow 실행 완료 후 END로 연결, 체이닝 종료
+                }
+
+                List<String> intentList = new ArrayList<>(Arrays.stream(intent.split(",")).toList());
+                if (intentList.isEmpty()) {
+                    return "end"; // flow 실행 완료 후 END로 연결, 체이닝 종료
                 }
 
                 // intent 내에 툴 중 맨 앞의 agent 추출 후 case 분기 및 실행
-                String current = intent.get(0);
+                String current = intentList.get(0);
                 return switch (current) {
                     case "schedule" -> "scheduleAgent";
                     case "winRate" -> "winRateAgent";
@@ -215,34 +220,49 @@ public class AgentExecutor {
                 };
             };
 
+            Map<String, String> toolList = Map.of(
+                    "scheduleAgent", "scheduleAgent",
+                    "winRateAgent", "winRateAgent",
+                    "hotKeywordAgent", "hotKeywordAgent",
+                    "cs2NewsAgent", "cs2NewsAgent",
+                    "defaultAgent", "defaultAgent",
+                    "end", END
+            );
+
             return new StateGraph<>(State.SCHEMA, State::new)
                     .addEdge(START, "classifyAgent") // classifyAgent 맨 처음 실행, llm을 통한 tool 판단
-                    .addNode("classifyAgent", node_async(AgentExecutor.this::callClassifyAgent)) //노드 추가
+                    .addNode("classifyAgent", node_async(AgentExecutor.this::callClassifyAgent)) // 노드 추가
                     .addConditionalEdges("classifyAgent",
-                            edge_async(shouldContinue),
-                            Map.of(
-                                    "scheduleAgent", "scheduleAgent",
-                                    "winRateAgent", "winRateAgent",
-                                    "hotKeywordAgent", "hotKeywordAgent",
-                                    "cs2NewsAgent", "cs2NewsAgent",
-                                    "defaultAgent", "defaultAgent",
-                                    END, END
-                            )
-                    ) // 분기 결과에 맞는 노드 연결
+                            edge_async(shouldContinue), toolList) // 분기 결과에 맞는 노드 연결
                     .addNode("scheduleAgent", node_async(AgentExecutor.this::callScheduleAgent))
+                    .addConditionalEdges("scheduleAgent",
+                            edge_async(shouldContinue), toolList)
                     .addNode("winRateAgent", node_async(AgentExecutor.this::callWinRateAgent))
+                    .addConditionalEdges("winRateAgent",
+                            edge_async(shouldContinue), toolList)
                     .addNode("hotKeywordAgent", node_async(AgentExecutor.this::callHotKeywordAgent))
+                    .addConditionalEdges("hotKeywordAgent",
+                            edge_async(shouldContinue), toolList)
                     .addNode("cs2NewsAgent", node_async(AgentExecutor.this::callCs2NewsAgent))
-                    .addNode("defaultAgent", node_async(AgentExecutor.this::callDefaultAgent));
+                    .addConditionalEdges("cs2NewsAgent",
+                            edge_async(shouldContinue), toolList)
+                    .addNode("defaultAgent", node_async(AgentExecutor.this::callDefaultAgent))
+                    .addConditionalEdges("defaultAgent",
+                            edge_async(shouldContinue), toolList)
+                    .addNode("end", node_async(state -> {
+                        log.info("output: {}", State.OUTPUT);
+                        return Map.of("output", state.getOutput());}))
+                    .addEdge("end", END);
         }
     }
 
     // agent 호출 완료 시 mid state에서 제거, mid 상태 업데이트
     public Map<String, Object> updateIntentState(State state) {
-        List<String> intent = new ArrayList<>((List<String>)state.getMid().get("intent"));
-        intent.remove(0);
+        String intent = (String) state.getMid().get("intent");
+        List<String> intentList = new ArrayList<>(Arrays.stream(intent.split(",")).toList());
+        intentList.remove(0);
         Map<String, Object> mid = state.getMid();
-        mid.put("intent", intent);
+        mid.put("intent", String.join(",",intentList));
 
         return mid;
     }
