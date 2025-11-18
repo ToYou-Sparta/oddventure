@@ -151,9 +151,8 @@ public class AgentExecutorTest {
         Map<String, Object> input = new HashMap<>();
         Map<String, Object> initData = new HashMap<>();
         input.put("question", "요즘 인기 있는 팀의 승률 알려줘.");
-        input.put("userId", 1);
+        input.put("userId", 1L);
         initData.put(AgentExecutor.State.INPUT, input);
-        AgentExecutor.State state = new AgentExecutor.State(initData);
 
 
         when(chatbotService.replyHotKeyword(any(), any()))
@@ -161,7 +160,7 @@ public class AgentExecutorTest {
         when(chatbotService.replyWinRate(any(), any()))
                 .thenReturn("FaZe Clan의 승률은 70% 입니다.");
         when(chatbotService.classifyTools(any()))
-                .thenReturn(List.of("hotKeyword, winRate"));
+                .thenReturn("hotKeyword,winRate");
 
         var graph = agentExecutor.graphBuilder().build();
         var app = graph.compile();
