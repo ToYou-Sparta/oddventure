@@ -1,4 +1,4 @@
-package org.example.oddventure.domain.match.dto.event;
+package org.example.oddventure.domain.match.event.dto;
 
 import java.time.LocalDateTime;
 import lombok.Builder;

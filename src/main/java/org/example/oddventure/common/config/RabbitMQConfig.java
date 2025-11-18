@@ -34,6 +34,10 @@ public class RabbitMQConfig {
     public static final String ES_SYNC_UPDATED_KEY = "match.es.updated";
     public static final String ES_SYNC_DELETED_KEY = "match.es.deleted";
 
+    // 실시간 알림용
+    public static final String MATCH_NOTIFY_EXCHANGE = "match.notify.exchange";
+    public static final String MATCH_NOTIFY_QUEUE = "match.notify.queue";
+
     @Bean
     public TopicExchange pointExchange() {
         return new TopicExchange(POINT_EXCHANGE);
@@ -131,5 +135,23 @@ public class RabbitMQConfig {
         });
 
         return rabbitTemplate;
+    }
+
+    @Bean
+    public TopicExchange matchNotifyExchange() {
+        return new TopicExchange(MATCH_NOTIFY_EXCHANGE);
+    }
+
+    @Bean
+    public Queue matchNotifyQueue() {
+        return new Queue(MATCH_NOTIFY_QUEUE, true);
+    }
+
+    @Bean
+    public Binding matchNotifyBinding() {
+        return BindingBuilder
+                .bind(matchNotifyQueue())
+                .to(matchNotifyExchange())
+                .with("match.*.*");
     }
 }

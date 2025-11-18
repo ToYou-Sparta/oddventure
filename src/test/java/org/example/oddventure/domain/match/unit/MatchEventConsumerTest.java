@@ -6,9 +6,9 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 
 import java.time.LocalDateTime;
-import org.example.oddventure.domain.match.dto.event.MatchStartEventDto;
 import org.example.oddventure.domain.match.enums.MatchStatus;
 import org.example.oddventure.domain.match.event.MatchEventConsumer;
+import org.example.oddventure.domain.match.event.dto.MatchStartEventDto;
 import org.example.oddventure.domain.match.service.MatchService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

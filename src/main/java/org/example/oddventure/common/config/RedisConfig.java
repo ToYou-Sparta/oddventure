@@ -9,9 +9,8 @@ import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.util.List;
-import org.example.oddventure.domain.ai.subscriber.ChatMessageOutputSubscriber;
-import org.example.oddventure.domain.ai.subscriber.ChatMessageSubscriber;
-import org.example.oddventure.domain.event.RedisSubscriber;
+import org.example.oddventure.domain.ai.pubsub.ChatMessageOutputSubscriber;
+import org.example.oddventure.domain.ai.pubsub.ChatMessageSubscriber;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
@@ -119,15 +118,12 @@ public class RedisConfig {
     @Bean
     public RedisMessageListenerContainer redisMessageListenerContainer(
             RedisConnectionFactory connectionFactory,
-            RedisSubscriber redisSubscriber,
             ChatMessageSubscriber chatMessageSubscriber,
             ChatMessageOutputSubscriber chatMessageOutputSubscriber
     ) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
 
-        container.addMessageListener(redisSubscriber, new PatternTopic("match:*:odds"));
-        container.addMessageListener(redisSubscriber, new PatternTopic("match:*:info"));
         container.addMessageListener(chatMessageSubscriber, new PatternTopic("chat:*:input"));
         container.addMessageListener(chatMessageOutputSubscriber, new PatternTopic("chat:*:output"));
 

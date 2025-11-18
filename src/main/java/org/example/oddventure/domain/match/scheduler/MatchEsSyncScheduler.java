@@ -1,14 +1,15 @@
 package org.example.oddventure.domain.match.scheduler;
 
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.oddventure.domain.match.dto.event.MatchEsSyncEvent;
+import org.example.oddventure.domain.match.document.MatchDocument;
 import org.example.oddventure.domain.match.entity.Match;
 import org.example.oddventure.domain.match.event.MatchEsSyncPublisher;
+import org.example.oddventure.domain.match.event.dto.MatchEsSyncEvent;
 import org.example.oddventure.domain.match.repository.MatchRepository;
 import org.example.oddventure.domain.match.repository.elasticsearch.MatchSearchRepository;
 import org.example.oddventure.domain.match.sync.AdaptiveEsSyncManager;
-import org.example.oddventure.domain.match.document.MatchDocument;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
@@ -16,8 +17,6 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Set;
 
 /**
  * MySQL → Elasticsearch 동기화 스케줄러 (Spring Batch 기반)
@@ -45,8 +44,7 @@ public class MatchEsSyncScheduler {
     private final Job matchEsSyncJob;
 
     /**
-     * MySQL → Elasticsearch 전체 동기화 (Spring Batch Job 실행)
-     * 매일 새벽 3시에 실행 (cron 표현식)
+     * MySQL → Elasticsearch 전체 동기화 (Spring Batch Job 실행) 매일 새벽 3시에 실행 (cron 표현식)
      */
     @Scheduled(cron = "0 0 3 * * *", zone = "Asia/Seoul")
     public void syncAllMatchesToElasticsearch() {
@@ -68,8 +66,7 @@ public class MatchEsSyncScheduler {
     }
 
     /**
-     * 대용량 모드 체크 및 즉시 동기화
-     * 5분마다 실행하여 대용량 모드 감지 시 즉시 동기화
+     * 대용량 모드 체크 및 즉시 동기화 5분마다 실행하여 대용량 모드 감지 시 즉시 동기화
      */
     @Scheduled(fixedDelay = 300000)  // 5분마다 실행
     @Transactional(readOnly = true)

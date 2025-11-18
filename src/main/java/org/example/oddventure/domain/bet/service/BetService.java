@@ -19,8 +19,9 @@ import org.example.oddventure.domain.bet.exception.BetException;
 import org.example.oddventure.domain.bet.repository.BetRepository;
 import org.example.oddventure.domain.bet.service.BetTransactionService.CreateBetData;
 import org.example.oddventure.domain.bet.service.BetTransactionService.DeleteBetData;
-import org.example.oddventure.domain.event.RedisPublisher;
-import org.example.oddventure.domain.match.dto.event.MatchOddsUpdateDto;
+import org.example.oddventure.domain.match.event.MatchNotificationProducer;
+import org.example.oddventure.domain.match.event.NotificationSubscriptionService;
+import org.example.oddventure.domain.match.event.dto.MatchOddsUpdateDto;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.data.domain.Page;
@@ -33,13 +34,14 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class BetService {
 
+    private static final String USER_POINT_LOCK_PREFIX = "LOCK:USER_POINT:";
+    private static final String MATCH_LOCK_PREFIX = "LOCK:MATCH:";
     private final BetRepository betRepository;
-    private final RedisPublisher redisPublisher;
     private final BetEventProducer betEventProducer;
     private final RedissonClient redissonClient;
     private final BetTransactionService betTransactionService;
-    private static final String USER_POINT_LOCK_PREFIX = "LOCK:USER_POINT:";
-    private static final String MATCH_LOCK_PREFIX = "LOCK:MATCH:";
+    private final MatchNotificationProducer matchNotificationProducer;
+    private final NotificationSubscriptionService notificationSubscriptionService;
 
     public BetCreateResponse createBet(Long userId, BetCreateRequest request) {
 
@@ -64,9 +66,11 @@ public class BetService {
             // 4. 락 획득 성공 시, 분리된 트랜잭션 메서드 호출
             CreateBetData data = betTransactionService.createBetInternal(userId, request);
 
-            // 5. 트랜잭션 커밋 성공 후, Redis 이벤트 발행
-            MatchOddsUpdateDto dto = new MatchOddsUpdateDto(data.bet().getMatch().getId(), data.selectedTeamName(), data.odds());
-            redisPublisher.publish("match:" + dto.matchId() + ":odds", dto);
+            // 5. 트랜잭션 커밋 성공 후, RabbitMQ 이벤트 발행
+            notificationSubscriptionService.subscribeUserToMatch(userId, request.matchId());
+            MatchOddsUpdateDto dto = new MatchOddsUpdateDto(data.bet().getMatch().getId(), data.selectedTeamName(),
+                    data.odds());
+            matchNotificationProducer.sendOddsChanged(dto);
 
             return BetCreateResponse.of(data.bet(), data.selectedTeamName(), data.userPointAfter());
 

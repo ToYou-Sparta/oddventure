@@ -2,8 +2,8 @@ package org.example.oddventure.domain.match.event;
 
 import lombok.RequiredArgsConstructor;
 import org.example.oddventure.common.config.RabbitMQConfig;
-import org.example.oddventure.domain.match.dto.event.MatchStartEventDto;
 import org.example.oddventure.domain.match.enums.MatchStatus;
+import org.example.oddventure.domain.match.event.dto.MatchStartEventDto;
 import org.example.oddventure.domain.match.service.MatchService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;

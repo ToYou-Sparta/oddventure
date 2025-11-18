@@ -4,7 +4,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.example.oddventure.common.config.RabbitMQConfig;
-import org.example.oddventure.domain.match.dto.event.MatchStartEventDto;
+import org.example.oddventure.domain.match.event.dto.MatchStartEventDto;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
