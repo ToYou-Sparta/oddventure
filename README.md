@@ -221,8 +221,8 @@
 <details>
 <summary><b>🚀 서비스 플로우</b></summary>
 
-![img_15.png](img_15.png)
-![img_16.png](img_16.png)
+![img_15.png](docs.image/img_15.png)
+![img_16.png](docs.image/img_16.png)
 </details>
 
 <details>
@@ -284,9 +284,9 @@
 | 1,000 | 8,720 | 114 |
 | 10,000 | 25,382 | 392 |
 
-![img_3.png](img_3.png)
+![img_3.png](docs.image/img_3.png)
 
-![img_4.png](img_4.png)
+![img_4.png](docs.image/img_4.png)
 
 **3) 비교 분석**
 
@@ -371,7 +371,7 @@
 | **Scheduler** | 2~4ms | 한 번에 처리 → **순간 부하 집중** |
 | **DelayQueue** | 1~2ms | 매치 단위로 분산 처리 → **부하 스파이크 제거** |
 
-![img_5.png](img_5.png)
+![img_5.png](docs.image/img_5.png)
 
 </aside>
 
@@ -438,7 +438,7 @@
 | **최대 응답시간** | 17,222 ms | **3,000 ms** | **5.7배 ↓** |
 | **느린 쿼리 비율** | 91.6% | **0.03%** | **99.9% 감소** |
 
-![img_6.png](img_6.png)
+![img_6.png](docs.image/img_6.png)
 
 </aside>
 
@@ -502,9 +502,9 @@
 |V3   |캐싱 적용 (@Cacheable)   | 1 UPDATE, 0 SELECT  |30,824ms (Time-out)   | 9   |
 |V4   |Redis INCR 적용   |0 UPDATE, 0 SELECT   |15ms   |2,450     |
 
-![P95 응답시간](img.png)
+![P95 응답시간](docs.image/img.png)
 
-![TPS](img_2.png)
+![TPS](docs.image/img_2.png)
 
 </aside>
 
@@ -631,10 +631,10 @@
 | **총 요청 수** | 11,677건 | 11,782건 | 약 0.9% ↑ |
 | **에러율** | 0% | 0% | 안정적 유지 |
 
-![img_7.png](img_7.png)
-![img_8.png](img_8.png)
-![img_9.png](img_9.png)
-![img_10.png](img_10.png)
+![img_7.png](docs.image/img_7.png)
+![img_8.png](docs.image/img_8.png)
+![img_9.png](docs.image/img_9.png)
+![img_10.png](docs.image/img_10.png)
 
 
 </aside>
@@ -699,7 +699,7 @@
 | **평균 응답시간** | 565ms | **509ms** | **약 10% ↓** |
 | **P95 응답시간** | 750ms | **522ms** | **약 30% ↓** |
 
-![img_11.png](img_11.png)
+![img_11.png](docs.image/img_11.png)
 
 
 **2) JVM 스레드 사용량**
@@ -709,7 +709,7 @@
 | **JVM 활성 스레드 (최대)** | 314개 | **131개** | **약 58% ↓** |
 | **JVM 활성 스레드 (평균)** | 250개 | **130개** | **절반 수준 ↓** |
 
-![img_12.png](img_12.png)
+![img_12.png](docs.image/img_12.png)
 
 </aside>
 
@@ -742,7 +742,7 @@ JVM 활성 스레드 최대 개수가 314개 → **131개** (약 58% 감소)로 
 
 경기 일정 조회(query_schedule) 기능에서 DB에는 분명히 경기 데이터가 존재함에도 챗봇이 "경기가 없습니다"라고 응답하는 현상이 발생
 
-![img_13.png](img_13.png)
+![img_13.png](docs.image/img_13.png)
 
 ---
 
@@ -783,7 +783,7 @@ private List<Match> findMatchesByKstRange(LocalDateTime startKst, LocalDateTime 
 ### 🌱 결과 및 회고 (Outcome & Learnings)
 
 - KST→UTC 변환 이후 경기 일정이 정상적으로 조회됨
-![img_14.png](img_14.png)
+![img_14.png](docs.image/img_14.png)
 
 - 시간대 기준을 혼합해서 사용하는 경우, 동일 날짜임에도 실제 DB 범위가 달라지는 문제가 발생할 수 있음을 인지
 
