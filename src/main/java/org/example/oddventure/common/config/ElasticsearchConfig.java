@@ -12,6 +12,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.elasticsearch.config.AbstractElasticsearchConfiguration;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
 /**
@@ -71,5 +73,11 @@ public class ElasticsearchConfig extends AbstractElasticsearchConfiguration {
                                         .setSocketTimeout(60000)
                         )
         );
+    }
+
+    @Bean(name = {"elasticsearchOperations", "elasticsearchTemplate"})
+    @Primary
+    public ElasticsearchOperations elasticsearchOperations() {
+        return new ElasticsearchRestTemplate(elasticsearchClient());
     }
 }

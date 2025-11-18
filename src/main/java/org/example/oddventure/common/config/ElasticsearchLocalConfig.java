@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.elasticsearch.config.AbstractElasticsearchConfiguration;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
 @Profile({"local", "dev"})
@@ -32,5 +34,10 @@ public class ElasticsearchLocalConfig extends AbstractElasticsearchConfiguration
         return new RestHighLevelClient(
                 RestClient.builder(new HttpHost(host, port, scheme))
         );
+    }
+
+    @Bean(name = {"elasticsearchOperations", "elasticsearchTemplate"})
+    public ElasticsearchOperations elasticsearchOperations() {
+        return new ElasticsearchRestTemplate(elasticsearchClient());
     }
 }
