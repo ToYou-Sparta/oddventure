@@ -26,10 +26,9 @@ import org.example.oddventure.domain.match.dto.request.MatchSearchCondition;
 import org.example.oddventure.domain.match.dto.response.MatchResponse;
 import org.example.oddventure.domain.match.entity.Match;
 import org.example.oddventure.domain.match.enums.MatchStatus;
+import org.example.oddventure.domain.match.event.MatchEsSyncPublisher;
 import org.example.oddventure.domain.match.event.MatchEventProducer;
 import org.example.oddventure.domain.match.event.MatchNotificationProducer;
-import org.example.oddventure.domain.match.event.dto.MatchInfoUpdateDto;
-import org.example.oddventure.domain.match.event.MatchEsSyncPublisher;
 import org.example.oddventure.domain.match.exception.MatchErrorCode;
 import org.example.oddventure.domain.match.exception.MatchException;
 import org.example.oddventure.domain.match.repository.MatchJdbcRepository;
@@ -191,13 +190,14 @@ class MatchServiceTest {
                 .build();
 
         when(matchRepository.findByFetchId(fetchId)).thenReturn(Optional.of(match));
+        doNothing().when(esSyncPublisher).publishMatchUpdated(any());
 
         //when
         matchService.updateStatus(fetchId, status);
 
         //then
         assertThat(match.getStatus()).isEqualTo(status);
-        verify(matchNotificationProducer).sendMatchStatusChanged(any(MatchInfoUpdateDto.class));
+        verify(esSyncPublisher).publishMatchUpdated(any());
     }
 
     @Nested
@@ -346,30 +346,5 @@ class MatchServiceTest {
             // then
             verify(matchRepository).updateViewCount(matchId, viewCount);
         }
-    }
-
-    @Test
-    @DisplayName("매치 상태값 변경 성공")
-    void updateStatus_success() {
-        //given
-        Long fetchId = 1L;
-        MatchStatus status = MatchStatus.ONGOING;
-
-        Match match = Match.builder()
-                .matchName("LCK")
-                .teamA("T1")
-                .teamB("GEN.G")
-                .startTime(LocalDateTime.now().plusDays(1))
-                .build();
-
-        when(matchRepository.findByFetchId(fetchId)).thenReturn(Optional.of(match));
-        doNothing().when(esSyncPublisher).publishMatchUpdated(any());
-
-        //when
-        matchService.updateStatus(fetchId, status);
-
-        //then
-        assertThat(match.getStatus()).isEqualTo(status);
-        verify(esSyncPublisher).publishMatchUpdated(any());
     }
 }
