@@ -42,8 +42,8 @@ const MatchesPage: React.FC = () => {
     try {
       const searchParams = {
         keyword: keyword || undefined,
-        fromDate: fromDate || undefined,
-        toDate: toDate || undefined,
+        fromDate: fromDate ? `${fromDate}T00:00:00` : undefined,
+        toDate: toDate ? `${toDate}T23:59:59` : undefined,
         page: 0,
         size: 50,
       };
