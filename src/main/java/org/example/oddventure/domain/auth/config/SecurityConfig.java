@@ -70,6 +70,7 @@ public class SecurityConfig {
                                 "/api/v1/auth/refresh",
                                 "/actuator/**",
                                 "/ws/**"
+                                "/api/v1/chat/loadtest"
                         ).permitAll()
                         .requestMatchers("/api/v1/admin/**").hasAuthority(UserRole.Authority.ADMIN)
                         .anyRequest().authenticated()

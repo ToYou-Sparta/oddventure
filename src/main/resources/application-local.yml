@@ -25,6 +25,10 @@ spring:
   elasticsearch:
     uris: http://localhost:9200
 
+  threads:
+    virtual:
+      enabled: true
+
 jwt:
   secret:
     key: "${SECRET_KEY}"
