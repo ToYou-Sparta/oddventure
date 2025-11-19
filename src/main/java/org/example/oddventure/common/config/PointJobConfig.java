@@ -89,6 +89,7 @@ public class PointJobConfig {
                 return bet;
             }
 
+            bet.setWin(true);
             BigDecimal point = bet.getBetAmount().multiply(bet.getOddsAtBetting());
             PointAdjustRequest request = PointAdjustRequest.of(point, "배당금 지급");
             userService.adjustUserPoints(bet.getUser().getId(), request);

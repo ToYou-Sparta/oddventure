@@ -27,6 +27,7 @@ import org.example.oddventure.domain.bet.dto.response.BetResponse;
 import org.example.oddventure.domain.bet.enums.SelectedTeam;
 import org.example.oddventure.domain.bet.service.BetService;
 import org.example.oddventure.domain.match.dto.response.MatchBetResponse;
+import org.example.oddventure.domain.match.enums.MatchStatus;
 import org.example.oddventure.domain.user.enums.UserRole;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -140,6 +141,7 @@ public class BetControllerTest extends RestDocsTestSupport {
                 .teamA("T1")
                 .teamB("GEN.G")
                 .startTime(LocalDateTime.now().plusDays(1))
+                .status(MatchStatus.SCHEDULED)
                 .build();
 
         BetResponse betResponse = BetResponse.builder()
@@ -169,6 +171,7 @@ public class BetControllerTest extends RestDocsTestSupport {
                                 fieldWithPath("data.content[].matchBetResponse.teamA").description("팀 A"),
                                 fieldWithPath("data.content[].matchBetResponse.teamB").description("팀 B"),
                                 fieldWithPath("data.content[].matchBetResponse.startTime").description("경기 시작 시간"),
+                                fieldWithPath("data.content[].matchBetResponse.status").description("경기 상태 (SCHEDULED/ONGOING/FINISHED)"),
                                 fieldWithPath("data.content[].selectedTeam").description("선택한 팀"),
                                 fieldWithPath("data.content[].betAmount").description("베팅 금액"),
                                 fieldWithPath("data.content[].oddsAtBetting").description("베팅 시점 배당률"),
