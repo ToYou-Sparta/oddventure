@@ -1324,7 +1324,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "rate(http_server_requests_seconds_count{uri=~\"/api/v1/.*\"}[1m])",
+          "expr": "sum by(uri) (rate(http_server_requests_seconds_count{uri=~\"/api/v1/.*\"}[1m]))",
           "refId": "A",
           "legendFormat": "{{uri}}"
         }
