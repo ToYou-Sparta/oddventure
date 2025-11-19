@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MatchRepositoryImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oddventure</a> &gt; <a href="index.source.html" class="el_package">org.example.oddventure.domain.match.repository</a> &gt; <span class="el_source">MatchRepositoryImpl.java</span></div><h1>MatchRepositoryImpl.java</h1><pre class="source lang-java linenums">package org.example.oddventure.domain.match.repository;
+
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
+import org.example.oddventure.domain.match.dto.projection.MatchProjection;
+import org.example.oddventure.domain.match.dto.request.MatchSearchCondition;
+import org.example.oddventure.domain.match.entity.QMatch;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
+import org.springframework.util.StringUtils;
+
+public class MatchRepositoryImpl implements MatchRepositoryCustom {
+
+    private final JPAQueryFactory queryFactory;
+
+<span class="fc" id="L20">    public MatchRepositoryImpl(JPAQueryFactory queryFactory) {</span>
+<span class="fc" id="L21">        this.queryFactory = queryFactory;</span>
+<span class="fc" id="L22">    }</span>
+
+    @Override
+    public Page&lt;MatchProjection&gt; searchByCondition(MatchSearchCondition condition, Pageable pageable) {
+<span class="fc" id="L26">        QMatch match = QMatch.match;</span>
+<span class="fc" id="L27">        BooleanBuilder builder = new BooleanBuilder();</span>
+
+<span class="fc bfc" id="L29" title="All 2 branches covered.">        if (StringUtils.hasText(condition.keyword())) {</span>
+<span class="fc" id="L30">            builder.and(match.matchName.containsIgnoreCase(condition.keyword())</span>
+<span class="fc" id="L31">                    .or(match.teamA.containsIgnoreCase(condition.keyword()))</span>
+<span class="fc" id="L32">                    .or(match.teamB.containsIgnoreCase(condition.keyword())));</span>
+        }
+
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        if (condition.fromDate() != null) {</span>
+<span class="fc" id="L36">            builder.and(match.startTime.goe(condition.fromDate()));</span>
+        }
+
+<span class="fc bfc" id="L39" title="All 2 branches covered.">        if (condition.toDate() != null) {</span>
+<span class="fc" id="L40">            builder.and(match.startTime.loe(condition.toDate()));</span>
+        }
+
+<span class="fc" id="L43">        List&lt;MatchProjection&gt; matches = queryFactory.select(</span>
+<span class="fc" id="L44">                        Projections.constructor(MatchProjection.class,</span>
+                                match.id,
+                                match.matchName,
+                                match.teamA,
+                                match.teamB,
+                                match.totalAmountA,
+                                match.totalAmountB,
+                                match.startTime,
+                                match.endTime,
+                                match.status,
+                                match.winner,
+                                match.loser,
+                                match.viewCount,
+                                match.createdAt))
+<span class="fc" id="L58">                .from(match)</span>
+<span class="fc" id="L59">                .where(builder)</span>
+<span class="fc" id="L60">                .orderBy(match.startTime.asc(), match.matchName.asc())</span>
+<span class="fc" id="L61">                .offset(pageable.getOffset())</span>
+<span class="fc" id="L62">                .limit(pageable.getPageSize())</span>
+<span class="fc" id="L63">                .fetch();</span>
+
+<span class="fc" id="L65">        JPAQuery&lt;Long&gt; countQuery = queryFactory.select(match.count()).from(match).where(builder);</span>
+
+<span class="fc" id="L67">        return PageableExecutionUtils.getPage(matches, pageable, countQuery::fetchOne);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

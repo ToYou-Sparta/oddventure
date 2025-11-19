@@ -1,0 +1,52 @@
+|===
+|Path|Type|Description
+
+|`+httpStatus+`
+|`+String+`
+|HTTP 상태 코드
+
+|`+code+`
+|`+Number+`
+|응답 코드
+
+|`+success+`
+|`+Boolean+`
+|성공 여부
+
+|`+message+`
+|`+String+`
+|응답 메시지
+
+|`+timestamp+`
+|`+String+`
+|응답 시간
+
+|`+data+`
+|`+Object+`
+|응답 데이터
+
+|`+data.matchId+`
+|`+Number+`
+|수정된 경기 ID
+
+|`+data.matchName+`
+|`+String+`
+|수정된 경기 이름
+
+|`+data.teamA+`
+|`+String+`
+|수정된 A팀 이름
+
+|`+data.teamB+`
+|`+String+`
+|수정된 B팀 이름
+
+|`+data.startTime+`
+|`+String+`
+|수정된 경기 시작 시간
+
+|`+data.status+`
+|`+String+`
+|수정된 경기 상태 (SCHEDULED, ONGOING, FINISHED)
+
+|===

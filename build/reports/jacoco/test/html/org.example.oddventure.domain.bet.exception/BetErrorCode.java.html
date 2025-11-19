@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BetErrorCode.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oddventure</a> &gt; <a href="index.source.html" class="el_package">org.example.oddventure.domain.bet.exception</a> &gt; <span class="el_source">BetErrorCode.java</span></div><h1>BetErrorCode.java</h1><pre class="source lang-java linenums">package org.example.oddventure.domain.bet.exception;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.example.oddventure.common.exception.ErrorCode;
+import org.springframework.http.HttpStatus;
+
+<span class="fc" id="L8">@Getter</span>
+@RequiredArgsConstructor
+public enum BetErrorCode implements ErrorCode {
+
+<span class="fc" id="L12">    MATCH_NOT_EXIST(HttpStatus.NOT_FOUND, &quot;존재하지 않는 매치입니다.&quot;),</span>
+<span class="fc" id="L13">    NOT_ENOUGH_POINTS(HttpStatus.BAD_REQUEST, &quot;보유 포인트가 부족합니다.&quot;),</span>
+<span class="fc" id="L14">    MATCH_NOT_BETTABLE(HttpStatus.BAD_REQUEST, &quot;베팅이 마감되었거나 진행 중인 매치입니다.&quot;),</span>
+<span class="fc" id="L15">    MATCH_NOT_CANCELABLE(HttpStatus.BAD_REQUEST, &quot;취소가 불가능한 매치입니다.&quot;),</span>
+<span class="fc" id="L16">    ODDS_NOT_FOUND(HttpStatus.NOT_FOUND, &quot;존재하지 않는 베팅 항목입니다.&quot;),</span>
+<span class="fc" id="L17">    BET_NOT_FOUND(HttpStatus.NOT_FOUND, &quot;존재하지 않는 베팅 내역입니다.&quot;),</span>
+<span class="fc" id="L18">    PERMISSION_DENIED(HttpStatus.FORBIDDEN, &quot;베팅을 취소할 권한이 없습니다.&quot;),</span>
+<span class="fc" id="L19">    POINT_BATCH_EXCEPTION(HttpStatus.EXPECTATION_FAILED, &quot;포인트 정산 배치 실행 오류&quot;),</span>
+<span class="fc" id="L20">    BET_LOCK_FAILED(HttpStatus.CONFLICT, &quot;다른 요청을 처리 중입니다. 잠시 후 다시 시도해주세요.&quot;);</span>
+
+    private final HttpStatus httpStatus;
+    private final String message;
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

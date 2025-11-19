@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BetTransactionService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oddventure</a> &gt; <a href="index.source.html" class="el_package">org.example.oddventure.domain.bet.service</a> &gt; <span class="el_source">BetTransactionService.java</span></div><h1>BetTransactionService.java</h1><pre class="source lang-java linenums">package org.example.oddventure.domain.bet.service;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import lombok.RequiredArgsConstructor;
+import org.example.oddventure.domain.bet.dto.request.BetCreateRequest;
+import org.example.oddventure.domain.bet.entity.Bet;
+import org.example.oddventure.domain.bet.enums.SelectedTeam;
+import org.example.oddventure.domain.bet.exception.BetErrorCode;
+import org.example.oddventure.domain.bet.exception.BetException;
+import org.example.oddventure.domain.bet.repository.BetRepository;
+import org.example.oddventure.domain.match.entity.Match;
+import org.example.oddventure.domain.match.enums.MatchStatus;
+import org.example.oddventure.domain.match.exception.MatchErrorCode;
+import org.example.oddventure.domain.match.exception.MatchException;
+import org.example.oddventure.domain.match.repository.MatchRepository;
+import org.example.oddventure.domain.user.entity.User;
+import org.example.oddventure.domain.user.exception.UserErrorCode;
+import org.example.oddventure.domain.user.exception.UserException;
+import org.example.oddventure.domain.user.repository.UserRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+/**
+ * [신규 클래스]
+ * 베팅 관련 DB 트랜잭션만을 전담하는 서비스
+ * 분산 락이 획득된 상태에서만 호출되어야 함
+ */
+@Service
+@RequiredArgsConstructor
+public class BetTransactionService {
+
+    // dev BetService에 있던 DB Repository 의존성을 이곳으로 이동
+    private final BetRepository betRepository;
+    private final UserRepository userRepository;
+    private final MatchRepository matchRepository;
+
+    @Transactional
+    public CreateBetData createBetInternal(Long userId, BetCreateRequest request) {
+<span class="fc" id="L40">        User user = userRepository.findById(userId)</span>
+<span class="pc" id="L41">                .orElseThrow(() -&gt; new UserException(UserErrorCode.USER_NOT_FOUND));</span>
+
+<span class="fc" id="L43">        BigDecimal betAmount = BigDecimal.valueOf(request.betAmount());</span>
+
+<span class="fc bfc" id="L45" title="All 2 branches covered.">        if (user.getPoint().compareTo(betAmount) &lt; 0) {</span>
+<span class="fc" id="L46">            throw new BetException(BetErrorCode.NOT_ENOUGH_POINTS);</span>
+        }
+
+<span class="fc" id="L49">        Match match = matchRepository.findById(request.matchId())</span>
+<span class="pc" id="L50">                .orElseThrow(() -&gt; new MatchException(MatchErrorCode.MATCH_NOT_FOUND));</span>
+
+<span class="fc" id="L52">        validateBettable(match);</span>
+<span class="fc" id="L53">        user.minusPoint(betAmount);</span>
+<span class="fc" id="L54">        BigDecimal odds = calculateOdds(match, request.selectedTeam());</span>
+<span class="fc" id="L55">        updateTotalAmount(match, betAmount, request.selectedTeam());</span>
+
+<span class="fc" id="L57">        Bet bet = request.toEntity(user, match, odds);</span>
+<span class="fc" id="L58">        betRepository.save(bet);</span>
+
+<span class="fc" id="L60">        String selectedTeamName = selectedTeamName(match, request.selectedTeam());</span>
+
+<span class="fc" id="L62">        return new CreateBetData(bet, selectedTeamName, user.getPoint(), odds);</span>
+    }
+
+    @Transactional
+    public DeleteBetData deleteBetInternal(Long userId, Long betId) {
+<span class="fc" id="L67">        Bet bet = betRepository.findByIdForDelete(betId)</span>
+<span class="pc" id="L68">                .orElseThrow(() -&gt; new BetException(BetErrorCode.BET_NOT_FOUND));</span>
+
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        if (!bet.getUser().getId().equals(userId)) {</span>
+<span class="fc" id="L71">            throw new BetException(BetErrorCode.PERMISSION_DENIED);</span>
+        }
+
+<span class="fc" id="L74">        Match match = matchRepository.findById(bet.getMatch().getId())</span>
+<span class="pc" id="L75">                .orElseThrow(() -&gt; new MatchException(MatchErrorCode.MATCH_NOT_FOUND));</span>
+<span class="fc" id="L76">        validateCancelable(match.getStatus());</span>
+
+<span class="fc" id="L78">        bet.delete();</span>
+
+<span class="fc" id="L80">        User user = bet.getUser();</span>
+<span class="fc" id="L81">        user.plusPoint(bet.getBetAmount());</span>
+
+<span class="fc" id="L83">        refundTotalAmount(match, bet.getBetAmount(), bet.getSelectedTeam());</span>
+
+<span class="fc" id="L85">        return new DeleteBetData(bet, user);</span>
+    }
+
+    private void validateBettable(Match match) {
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">        if (match.isDeleted()) {</span>
+<span class="nc" id="L90">            throw new BetException(BetErrorCode.MATCH_NOT_EXIST);</span>
+        }
+<span class="fc bfc" id="L92" title="All 2 branches covered.">        if (!match.getStatus().equals(MatchStatus.SCHEDULED)) {</span>
+<span class="fc" id="L93">            throw new BetException(BetErrorCode.MATCH_NOT_BETTABLE);</span>
+        }
+<span class="fc" id="L95">    }</span>
+
+    private void validateCancelable(MatchStatus status) {
+<span class="fc bfc" id="L98" title="All 2 branches covered.">        if (!status.equals(MatchStatus.SCHEDULED)) {</span>
+<span class="fc" id="L99">            throw new BetException(BetErrorCode.MATCH_NOT_CANCELABLE);</span>
+        }
+<span class="fc" id="L101">    }</span>
+
+    private void updateTotalAmount(Match match, BigDecimal amount, SelectedTeam selectedTeam) {
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">        if (selectedTeam.equals(SelectedTeam.Team_A)) {</span>
+<span class="fc" id="L105">            match.plusTeamA(amount);</span>
+<span class="nc bnc" id="L106" title="All 2 branches missed.">        } else if (selectedTeam.equals(SelectedTeam.Team_B)) {</span>
+<span class="nc" id="L107">            match.plusTeamB(amount);</span>
+        }
+<span class="fc" id="L109">    }</span>
+
+    private void refundTotalAmount(Match match, BigDecimal amount, SelectedTeam selectedTeam) {
+<span class="pc bpc" id="L112" title="1 of 2 branches missed.">        if (selectedTeam.equals(SelectedTeam.Team_A)) {</span>
+<span class="fc" id="L113">            match.minusTeamA(amount);</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">        } else if (selectedTeam.equals(SelectedTeam.Team_B)) {</span>
+<span class="nc" id="L115">            match.minusTeamB(amount);</span>
+        }
+<span class="fc" id="L117">    }</span>
+
+    /***
+     * 승 배당률 = 0.9 / 승 금액 비율
+     * 0.9 = 1 - 0.1(수수료)
+     * 승 금액 비율 = 승 총 베팅 금액 / 전체 베팅 금액(승 + 패)
+     * 처음 배당률 지정 로직과
+     * 이후 배당률 조정 로직이 필요하다. (이는 베팅 생성시 호출된다.)
+     * 배당률 조정 로직 구현 시, 유저 비율도 고려하는 가중 조합형 배당률로 구현하는 것이 필요해 보인다.
+     */
+    private BigDecimal calculateOdds(Match match, SelectedTeam selectedTeam) {
+<span class="fc" id="L128">        BigDecimal total = match.getTotalAmountA().add(match.getTotalAmountB());</span>
+<span class="fc" id="L129">        System.out.println(&quot;total: &quot; + total);</span>
+        BigDecimal probability;
+
+<span class="pc bpc" id="L132" title="1 of 2 branches missed.">        if (selectedTeam.equals(SelectedTeam.Team_A)) {</span>
+<span class="fc" id="L133">            probability = match.getTotalAmountA().divide(total, 2, RoundingMode.HALF_UP);</span>
+        } else {
+<span class="nc" id="L135">            probability = match.getTotalAmountB().divide(total, 2, RoundingMode.HALF_UP);</span>
+        }
+
+<span class="fc" id="L138">        System.out.println(&quot;probability: &quot; + probability);</span>
+<span class="fc" id="L139">        return new BigDecimal(&quot;0.9&quot;).divide(probability, 2, RoundingMode.HALF_UP);</span>
+    }
+
+    private String selectedTeamName(Match match, SelectedTeam selectedTeam) {
+<span class="pc bpc" id="L143" title="1 of 2 branches missed.">        if (selectedTeam.equals(SelectedTeam.Team_A)) {</span>
+<span class="fc" id="L144">            return match.getTeamA();</span>
+        } else {
+<span class="nc" id="L146">            return match.getTeamB();</span>
+        }
+    }
+
+<span class="fc" id="L150">    public record CreateBetData(Bet bet, String selectedTeamName, BigDecimal userPointAfter, BigDecimal odds) {}</span>
+<span class="fc" id="L151">    public record DeleteBetData(Bet bet, User user) {}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

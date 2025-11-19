@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="조회수 증가 (Redis INCR)" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-11-19T01:10:20.006Z" hostname="DESKTOP-9Q5JQDP" time="0.001">
+  <properties/>
+  <testcase name="조회수 증가 성공 - Redis INCR 호출" classname="org.example.oddventure.domain.match.unit.MatchServiceTest$IncrementViewCount" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.example.oddventure.domain.ai.integration.Cs2NewsToolsIntegrationTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-11-19T01:10:00.757Z" hostname="DESKTOP-9Q5JQDP" time="0.434">
+  <properties/>
+  <testcase name="Steam API 연속 실패 시 fallback 응답을 반환한다" classname="org.example.oddventure.domain.ai.integration.Cs2NewsToolsIntegrationTest" time="0.434"/>
+  <system-out><![CDATA[2025-11-19T10:10:00.706+09:00  INFO 18272 --- [    Test worker] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [org.example.oddventure.domain.ai.integration.Cs2NewsToolsIntegrationTest]: Cs2NewsToolsIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2025-11-19T10:10:00.754+09:00  INFO 18272 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration org.example.oddventure.OddventureApplication for test class org.example.oddventure.domain.ai.integration.Cs2NewsToolsIntegrationTest
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

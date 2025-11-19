@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JwtUtil.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oddventure</a> &gt; <a href="index.source.html" class="el_package">org.example.oddventure.domain.auth.jwt</a> &gt; <span class="el_source">JwtUtil.java</span></div><h1>JwtUtil.java</h1><pre class="source lang-java linenums">package org.example.oddventure.domain.auth.jwt;
+
+import static org.example.oddventure.domain.auth.jwt.JwtConstants.ACCESS_TOKEN_EXPIRATION;
+import static org.example.oddventure.domain.auth.jwt.JwtConstants.BEARER_PREFIX;
+import static org.example.oddventure.domain.auth.jwt.JwtConstants.CLAIM_USER_ROLE;
+import static org.example.oddventure.domain.auth.jwt.JwtConstants.REFRESH_TOKEN_EXPIRATION;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+import java.security.Key;
+import java.util.Base64;
+import java.util.Date;
+import lombok.extern.slf4j.Slf4j;
+import org.example.oddventure.domain.auth.exception.AuthErrorCode;
+import org.example.oddventure.domain.auth.exception.AuthException;
+import org.example.oddventure.domain.user.enums.UserRole;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+
+<span class="fc" id="L25">@Slf4j(topic = &quot;JwtUtil&quot;)</span>
+@Component
+<span class="fc" id="L27">public class JwtUtil {</span>
+
+<span class="fc" id="L29">    private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;</span>
+
+    @Value(&quot;${jwt.secret.key}&quot;)
+    private String secretKey;
+    private Key key;
+
+    @PostConstruct
+    public void init() {
+<span class="fc" id="L37">        byte[] bytes = Base64.getDecoder().decode(secretKey);</span>
+<span class="fc" id="L38">        key = Keys.hmacShaKeyFor(bytes);</span>
+<span class="fc" id="L39">    }</span>
+
+    /**
+     * JWT 액세스 토큰 생성 메서드
+     *
+     * @param userId   로그인한 사용자의 고유 ID
+     * @param userRole 사용자 권한
+     * @return JWT 토큰 문자열
+     */
+    public String createAccessToken(Long userId, UserRole userRole) {
+<span class="fc" id="L49">        Date date = new Date();</span>
+
+<span class="fc" id="L51">        return Jwts.builder()</span>
+<span class="fc" id="L52">                .setSubject(String.valueOf(userId))</span>
+<span class="fc" id="L53">                .claim(CLAIM_USER_ROLE, userRole)</span>
+<span class="fc" id="L54">                .setExpiration(new Date(date.getTime() + ACCESS_TOKEN_EXPIRATION))</span>
+<span class="fc" id="L55">                .setIssuedAt(date)</span>
+<span class="fc" id="L56">                .signWith(key, signatureAlgorithm)</span>
+<span class="fc" id="L57">                .compact();</span>
+    }
+
+    /**
+     * JWT 리프레시 토큰 생성 메서드
+     *
+     * @param userId 로그인한 사용자의 고유 ID
+     * @return JWT 토큰 문자열
+     */
+    public String createRefreshToken(Long userId) {
+<span class="fc" id="L67">        Date date = new Date();</span>
+<span class="fc" id="L68">        return Jwts.builder()</span>
+<span class="fc" id="L69">                .setSubject(String.valueOf(userId))</span>
+<span class="fc" id="L70">                .setExpiration(new Date(date.getTime() + REFRESH_TOKEN_EXPIRATION))</span>
+<span class="fc" id="L71">                .setIssuedAt(date)</span>
+<span class="fc" id="L72">                .signWith(key, signatureAlgorithm)</span>
+<span class="fc" id="L73">                .compact();</span>
+    }
+
+    /**
+     * Bearer 부분을 제거하는 메서드
+     *
+     * @param tokenValue 원본 토큰 문자열
+     * @return Bearer 접두사가 제거된 순수 JWT 문자열
+     * @throws AuthException 토큰이 null 이거나 'Bearer'로 시작 하지 않는 경우
+     */
+    public String substringToken(String tokenValue) {
+<span class="pc bpc" id="L84" title="2 of 4 branches missed.">        if (StringUtils.hasText(tokenValue) &amp;&amp; tokenValue.startsWith(BEARER_PREFIX)) {</span>
+<span class="fc" id="L85">            return tokenValue.substring(7);</span>
+        }
+<span class="nc" id="L87">        throw new AuthException(AuthErrorCode.TOKEN_NOT_FOUND);</span>
+    }
+
+    /**
+     * payload 부분만 추출하는 메서드
+     *
+     * @param token JWT 문자열
+     * @return Claims 객체
+     */
+    public Claims extractClaims(String token) {
+<span class="fc" id="L97">        return Jwts.parserBuilder()</span>
+<span class="fc" id="L98">                .setSigningKey(key)</span>
+<span class="fc" id="L99">                .build()</span>
+<span class="fc" id="L100">                .parseClaimsJws(token)</span>
+<span class="fc" id="L101">                .getBody();</span>
+    }
+
+    /**
+     * JWT 토큰 유효성 검증 메서드
+     *
+     * @param token 클라이언트가 전달한 JWT 문자열
+     * @return 유효한 토큰이면 true, 그렇지 않으면 false
+     */
+    public boolean validateToken(String token) {
+
+        try {
+<span class="fc" id="L113">            Jwts.parserBuilder()</span>
+<span class="fc" id="L114">                    .setSigningKey(key)</span>
+<span class="fc" id="L115">                    .build()</span>
+<span class="fc" id="L116">                    .parseClaimsJws(token);</span>
+<span class="fc" id="L117">            return true;</span>
+<span class="fc" id="L118">        } catch (JwtException | IllegalArgumentException e) {</span>
+<span class="fc" id="L119">            return false;</span>
+        }
+    }
+
+    /**
+     * JWT 토큰에서 사용자 ID를 추출하는 메서드
+     *
+     * @param token JWT 문자열
+     * @return 토큰의 subject에 저장된 사용자 ID
+     */
+    public Long extractUserId(String token) {
+<span class="fc" id="L130">        return Long.parseLong(extractClaims(token).getSubject());</span>
+    }
+
+    /**
+     * JWT 토큰에서 사용자 권한을 추출하는 메서드
+     *
+     * @param token JWT 문자열
+     * @return 토큰의 userRole 클레임에 저장된 사용자 권한
+     */
+    public UserRole extractUserRole(String token) {
+<span class="fc" id="L140">        return UserRole.valueOf(extractClaims(token).get(CLAIM_USER_ROLE, String.class));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

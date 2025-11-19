@@ -1,0 +1,52 @@
+|===
+|Path|Type|Description
+
+|`+httpStatus+`
+|`+String+`
+|HTTP 상태 코드
+
+|`+code+`
+|`+Number+`
+|응답 코드
+
+|`+success+`
+|`+Boolean+`
+|성공 여부
+
+|`+message+`
+|`+String+`
+|응답 메시지
+
+|`+timestamp+`
+|`+String+`
+|응답 시간
+
+|`+data+`
+|`+Object+`
+|응답 데이터
+
+|`+data.userId+`
+|`+Number+`
+|사용자 ID
+
+|`+data.username+`
+|`+String+`
+|사용자 이름
+
+|`+data.email+`
+|`+String+`
+|사용자 이메일
+
+|`+data.point+`
+|`+Number+`
+|보유 포인트
+
+|`+data.role+`
+|`+String+`
+|사용자 역할
+
+|`+data.createdAt+`
+|`+String+`
+|가입 일시
+
+|===

@@ -1,0 +1,36 @@
+spring:
+  config:
+    import:
+      - "aws-parameterstore:/config/dev/"
+  datasource:
+    url: jdbc:mysql://${db.host}:${db.port:3306}/${db.name}?useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
+    username: ${db.username}
+    password: ${db.password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  data:
+    redis:
+      host: ${redis.host}
+      port: ${redis.port:6379}
+
+  ai:
+    openai:
+      api-key: ${openai.api.key}
+      base-url: ${openai.base.url}
+
+jwt:
+  secret:
+    key: ${jwt.secret.key}
+
+grid:
+  central-data:
+    base-url: ${grid.central.base.url}
+  live-data:
+    base-url: ${grid.live.base.url}
+  api-key: ${grid.api.key}

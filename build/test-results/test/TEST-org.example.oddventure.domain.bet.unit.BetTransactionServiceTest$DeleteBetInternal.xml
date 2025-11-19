@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="베팅 취소 트랜잭션" tests="3" skipped="0" failures="0" errors="0" timestamp="2025-11-19T01:10:11.727Z" hostname="DESKTOP-9Q5JQDP" time="0.007">
+  <properties/>
+  <testcase name="실패 - 베팅 소유자가 아님" classname="org.example.oddventure.domain.bet.unit.BetTransactionServiceTest$DeleteBetInternal" time="0.003"/>
+  <testcase name="성공 - 포인트가 환불되고 베팅 금액이 복구된다" classname="org.example.oddventure.domain.bet.unit.BetTransactionServiceTest$DeleteBetInternal" time="0.002"/>
+  <testcase name="실패 - 취소 불가능한 매치 (FINISHED)" classname="org.example.oddventure.domain.bet.unit.BetTransactionServiceTest$DeleteBetInternal" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

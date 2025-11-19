@@ -1,0 +1,7 @@
+[source,json,options="nowrap"]
+----
+{
+  "amount" : 5000,
+  "reason" : "베팅 승리 보상"
+}
+----

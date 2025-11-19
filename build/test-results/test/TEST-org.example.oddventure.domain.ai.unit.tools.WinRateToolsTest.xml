@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.example.oddventure.domain.ai.unit.tools.WinRateToolsTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2025-11-19T01:10:02.160Z" hostname="DESKTOP-9Q5JQDP" time="0.009">
+  <properties/>
+  <testcase name="두 팀 비교 모드로 승률을 계산한다" classname="org.example.oddventure.domain.ai.unit.tools.WinRateToolsTest" time="0.007"/>
+  <testcase name="팀명이 모두 null이면 에러 응답을 반환한다" classname="org.example.oddventure.domain.ai.unit.tools.WinRateToolsTest" time="0.001"/>
+  <testcase name="단일 팀 승률을 계산한다" classname="org.example.oddventure.domain.ai.unit.tools.WinRateToolsTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

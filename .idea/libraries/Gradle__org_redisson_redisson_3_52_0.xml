@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Gradle: org.redisson:redisson:3.52.0" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="org.redisson" artifactId="redisson" version="3.52.0" baseVersion="3.52.0" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.redisson/redisson/3.52.0/401c751ddbfc8b7118bf1e905c9e41d914bf0a5e/redisson-3.52.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

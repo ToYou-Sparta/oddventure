@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Gradle: org.bsc.langgraph4j:langgraph4j-spring-ai:1.7.2" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="org.bsc.langgraph4j" artifactId="langgraph4j-spring-ai" version="1.7.2" baseVersion="1.7.2" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.bsc.langgraph4j/langgraph4j-spring-ai/1.7.2/4556adde06fbc339e8f2f19ce05c8d4e321c27bc/langgraph4j-spring-ai-1.7.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

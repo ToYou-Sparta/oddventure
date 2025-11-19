@@ -1,0 +1,96 @@
+|===
+|Path|Type|Description
+
+|`+httpStatus+`
+|`+String+`
+|HTTP 상태 코드
+
+|`+code+`
+|`+Number+`
+|응답 코드
+
+|`+success+`
+|`+Boolean+`
+|성공 여부
+
+|`+message+`
+|`+String+`
+|응답 메시지
+
+|`+timestamp+`
+|`+String+`
+|응답 시간
+
+|`+data+`
+|`+Object+`
+|응답 데이터
+
+|`+data.content[].matchId+`
+|`+Number+`
+|매치 ID
+
+|`+data.content[].matchName+`
+|`+String+`
+|매치명
+
+|`+data.content[].teamA+`
+|`+String+`
+|팀 A
+
+|`+data.content[].teamB+`
+|`+String+`
+|팀 B
+
+|`+data.content[].totalAmountA+`
+|`+Number+`
+|팀 A 베팅 총액
+
+|`+data.content[].totalAmountB+`
+|`+Number+`
+|팀 B 베팅 총액
+
+|`+data.content[].startTime+`
+|`+String+`
+|매치 시작 시간
+
+|`+data.content[].endTime+`
+|`+String+`
+|매치 종료 시간
+
+|`+data.content[].status+`
+|`+String+`
+|매치 상태
+
+|`+data.content[].winner+`
+|`+String+`
+|승리 팀
+
+|`+data.content[].loser+`
+|`+String+`
+|패배 팀
+
+|`+data.content[].viewCount+`
+|`+Number+`
+|조회수
+
+|`+data.content[].createdAt+`
+|`+String+`
+|생성일시
+
+|`+data.totalElements+`
+|`+Number+`
+|전체 데이터 개수
+
+|`+data.totalPages+`
+|`+Number+`
+|총 페이지 수
+
+|`+data.size+`
+|`+Number+`
+|페이지당 데이터 개수
+
+|`+data.number+`
+|`+Number+`
+|현재 페이지 번호
+
+|===

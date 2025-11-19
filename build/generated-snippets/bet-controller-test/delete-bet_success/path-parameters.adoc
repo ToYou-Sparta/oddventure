@@ -1,0 +1,8 @@
+.+/api/v1/bets/{betId}+
+|===
+|Parameter|Description
+
+|`+betId+`
+|베팅 ID
+
+|===

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RedisConfig.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oddventure</a> &gt; <a href="index.source.html" class="el_package">org.example.oddventure.common.config</a> &gt; <span class="el_source">RedisConfig.java</span></div><h1>RedisConfig.java</h1><pre class="source lang-java linenums">package org.example.oddventure.common.config;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import java.util.List;
+import org.example.oddventure.domain.ai.pubsub.ChatMessageOutputSubscriber;
+import org.example.oddventure.domain.ai.pubsub.ChatMessageSubscriber;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.CacheManager;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.cache.RedisCacheConfiguration;
+import org.springframework.data.redis.cache.RedisCacheManager;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.PatternTopic;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+@Configuration
+@EnableRedisRepositories
+<span class="fc" id="L37">public class RedisConfig {</span>
+
+    @Value(&quot;${spring.data.redis.port}&quot;)
+    private int port;
+
+    @Value(&quot;${spring.data.redis.host}&quot;)
+    private String host;
+
+    @Bean
+    public RedisConnectionFactory redisConnectionFactory() {
+<span class="fc" id="L47">        return new LettuceConnectionFactory(host, port);</span>
+    }
+
+    // 응답용 ObjectMapper (HTTP 응답, @class 없음)
+    @Bean
+    public ObjectMapper objectMapper() {
+<span class="fc" id="L53">        ObjectMapper objectMapper = new ObjectMapper();</span>
+<span class="fc" id="L54">        objectMapper.registerModule(new JavaTimeModule());</span>
+<span class="fc" id="L55">        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);</span>
+<span class="fc" id="L56">        return objectMapper;</span>
+    }
+
+    // Redis 캐싱용 ObjectMapper (@class 포함)
+    @Bean(&quot;redisObjectMapper&quot;)
+    public ObjectMapper redisObjectMapper() {
+<span class="fc" id="L62">        ObjectMapper objectMapper = new ObjectMapper();</span>
+<span class="fc" id="L63">        objectMapper.registerModule(new JavaTimeModule());</span>
+<span class="fc" id="L64">        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);</span>
+<span class="fc" id="L65">        objectMapper.registerModule(pageModule());</span>
+
+        // Redis 캐싱에만 타입 정보 추가
+<span class="fc" id="L68">        objectMapper.activateDefaultTyping(</span>
+                LaissezFaireSubTypeValidator.instance,
+                ObjectMapper.DefaultTyping.NON_FINAL,
+                com.fasterxml.jackson.annotation.JsonTypeInfo.As.PROPERTY
+        );
+
+<span class="fc" id="L74">        return objectMapper;</span>
+    }
+
+    // CacheManager (@Cacheable 어노테이션용)
+    @Bean
+    public CacheManager cacheManager(
+            RedisConnectionFactory redisConnectionFactory,
+            @Qualifier(&quot;redisObjectMapper&quot;) ObjectMapper redisObjectMapper) {
+
+<span class="fc" id="L83">        GenericJackson2JsonRedisSerializer serializer =</span>
+                new GenericJackson2JsonRedisSerializer(redisObjectMapper);
+
+        RedisCacheConfiguration config = RedisCacheConfiguration
+<span class="fc" id="L87">                .defaultCacheConfig()</span>
+<span class="fc" id="L88">                .serializeValuesWith(</span>
+<span class="fc" id="L89">                        RedisSerializationContext.SerializationPair.fromSerializer(serializer)</span>
+                );
+
+<span class="fc" id="L92">        return RedisCacheManager.builder(redisConnectionFactory)</span>
+<span class="fc" id="L93">                .cacheDefaults(config)</span>
+<span class="fc" id="L94">                .build();</span>
+    }
+
+    // Redis용 ObjectMapper를 주입받아 RedisTemplate 생성
+    @Bean
+    public RedisTemplate&lt;String, Object&gt; redisTemplate(
+            RedisConnectionFactory redisConnectionFactory,
+            @Qualifier(&quot;redisObjectMapper&quot;) ObjectMapper redisObjectMapper) {
+<span class="fc" id="L102">        RedisTemplate&lt;String, Object&gt; redisTemplate = new RedisTemplate&lt;&gt;();</span>
+<span class="fc" id="L103">        redisTemplate.setConnectionFactory(redisConnectionFactory);</span>
+
+<span class="fc" id="L105">        GenericJackson2JsonRedisSerializer serializer =</span>
+                new GenericJackson2JsonRedisSerializer(redisObjectMapper);
+
+<span class="fc" id="L108">        redisTemplate.setKeySerializer(new StringRedisSerializer());</span>
+<span class="fc" id="L109">        redisTemplate.setValueSerializer(serializer);</span>
+<span class="fc" id="L110">        redisTemplate.setHashKeySerializer(new StringRedisSerializer());</span>
+<span class="fc" id="L111">        redisTemplate.setHashValueSerializer(serializer);</span>
+
+<span class="fc" id="L113">        return redisTemplate;</span>
+    }
+
+    // --- Redis Pub/Sub 설정 ---
+
+    @Bean
+    public RedisMessageListenerContainer redisMessageListenerContainer(
+            RedisConnectionFactory connectionFactory,
+            ChatMessageSubscriber chatMessageSubscriber,
+            ChatMessageOutputSubscriber chatMessageOutputSubscriber
+    ) {
+<span class="fc" id="L124">        RedisMessageListenerContainer container = new RedisMessageListenerContainer();</span>
+<span class="fc" id="L125">        container.setConnectionFactory(connectionFactory);</span>
+
+<span class="fc" id="L127">        container.addMessageListener(chatMessageSubscriber, new PatternTopic(&quot;chat:*:input&quot;));</span>
+<span class="fc" id="L128">        container.addMessageListener(chatMessageOutputSubscriber, new PatternTopic(&quot;chat:*:output&quot;));</span>
+
+<span class="fc" id="L130">        return container;</span>
+    }
+
+    // --- Page/Sort Mixin Helper ---
+
+    // PageImpl, PageRequest, Sort 역직렬화를 위한 Jackson Mixin 모듈
+    private Module pageModule() {
+<span class="fc" id="L137">        SimpleModule module = new SimpleModule();</span>
+<span class="fc" id="L138">        module.setMixInAnnotation(PageImpl.class, PageImplMixin.class);</span>
+<span class="fc" id="L139">        module.setMixInAnnotation(PageRequest.class, PageRequestMixin.class);</span>
+<span class="fc" id="L140">        module.setMixInAnnotation(Sort.class, SortMixin.class);</span>
+<span class="fc" id="L141">        return module;</span>
+    }
+
+    // PageImpl 역직렬화용 Mixin
+    private abstract static class PageImplMixin&lt;T&gt; {
+        @JsonCreator
+        PageImplMixin(
+                @JsonProperty(&quot;content&quot;) List&lt;T&gt; content,
+                @JsonProperty(&quot;pageable&quot;) Pageable pageable,
+<span class="nc" id="L150">                @JsonProperty(&quot;totalElements&quot;) long totalElements) {</span>
+<span class="nc" id="L151">        }</span>
+    }
+
+    // PageRequest 역직렬화용 Mixin
+    private abstract static class PageRequestMixin {
+        @JsonCreator
+        static PageRequest of(
+                @JsonProperty(&quot;page&quot;) int page,
+                @JsonProperty(&quot;size&quot;) int size,
+                @JsonProperty(&quot;sort&quot;) Sort sort) {
+<span class="nc" id="L161">            return PageRequest.of(page, size, sort);</span>
+        }
+    }
+
+    // Sort 역직렬화용 Mixin (unsorted 처리 포함)
+    private abstract static class SortMixin {
+        @JsonCreator
+        static Sort by(@JsonProperty(&quot;orders&quot;) List&lt;Sort.Order&gt; orders) {
+<span class="nc bnc" id="L169" title="All 4 branches missed.">            if (orders == null || orders.isEmpty()) {</span>
+<span class="nc" id="L170">                return Sort.unsorted();</span>
+            }
+<span class="nc" id="L172">            return Sort.by(orders);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

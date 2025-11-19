@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Gradle: org.bsc.langgraph4j:spring-ai-agent-archetype:maven-archetype:1.7.2" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="org.bsc.langgraph4j" artifactId="spring-ai-agent-archetype" version="1.7.2" baseVersion="1.7.2" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.bsc.langgraph4j/spring-ai-agent-archetype/1.7.2/1f2e8e40c7645888a06c0bf252ae150fcce97bf0/spring-ai-agent-archetype-1.7.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

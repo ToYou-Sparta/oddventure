@@ -1,0 +1,32 @@
+|===
+|Path|Type|Description
+
+|`+httpStatus+`
+|`+String+`
+|HTTP 상태 코드
+
+|`+code+`
+|`+Number+`
+|응답 코드
+
+|`+success+`
+|`+Boolean+`
+|성공 여부
+
+|`+message+`
+|`+String+`
+|오류 메시지
+
+|`+data+`
+|`+Null+`
+|에러 응답의 경우 항상 null
+
+|`+timestamp+`
+|`+String+`
+|응답 시간
+
+|`+requestUrl+`
+|`+String+`
+|요청 URL
+
+|===

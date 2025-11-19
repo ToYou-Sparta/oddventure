@@ -1,0 +1,84 @@
+|===
+|Path|Type|Description
+
+|`+httpStatus+`
+|`+String+`
+|HTTP 상태 코드
+
+|`+code+`
+|`+Number+`
+|응답 코드
+
+|`+success+`
+|`+Boolean+`
+|성공 여부
+
+|`+message+`
+|`+String+`
+|응답 메시지
+
+|`+timestamp+`
+|`+String+`
+|응답 시간
+
+|`+data+`
+|`+Object+`
+|응답 데이터
+
+|`+data.content[].betId+`
+|`+Number+`
+|베팅 ID
+
+|`+data.content[].matchBetResponse.matchId+`
+|`+Number+`
+|경기 ID
+
+|`+data.content[].matchBetResponse.teamA+`
+|`+String+`
+|팀 A
+
+|`+data.content[].matchBetResponse.teamB+`
+|`+String+`
+|팀 B
+
+|`+data.content[].matchBetResponse.startTime+`
+|`+String+`
+|경기 시작 시간
+
+|`+data.content[].selectedTeam+`
+|`+String+`
+|선택한 팀
+
+|`+data.content[].betAmount+`
+|`+Number+`
+|베팅 금액
+
+|`+data.content[].oddsAtBetting+`
+|`+Number+`
+|베팅 시점 배당률
+
+|`+data.content[].isWin+`
+|`+Boolean+`
+|베팅 성공 여부
+
+|`+data.content[].createdAt+`
+|`+String+`
+|베팅 생성 시간
+
+|`+data.totalElements+`
+|`+Number+`
+|전체 데이터 개수
+
+|`+data.totalPages+`
+|`+Number+`
+|총 페이지 수
+
+|`+data.size+`
+|`+Number+`
+|페이지 당 데이터 개수
+
+|`+data.number+`
+|`+Number+`
+|현재 페이지 번호
+
+|===

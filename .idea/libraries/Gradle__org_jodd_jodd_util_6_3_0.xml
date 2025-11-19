@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Gradle: org.jodd:jodd-util:6.3.0" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="org.jodd" artifactId="jodd-util" version="6.3.0" baseVersion="6.3.0" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jodd/jodd-util/6.3.0/1568f4d0f60dee75c8881fb0ebe44f0ab9fa3b38/jodd-util-6.3.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

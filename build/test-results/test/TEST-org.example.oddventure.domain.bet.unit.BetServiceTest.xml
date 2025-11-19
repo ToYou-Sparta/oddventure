@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.example.oddventure.domain.bet.unit.BetServiceTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2025-11-19T01:10:11.269Z" hostname="DESKTOP-9Q5JQDP" time="0.457">
+  <properties/>
+  <testcase name="베팅 삭제에 성공하면 포인트가 환불되고 베팅 금액이 감소된다." classname="org.example.oddventure.domain.bet.unit.BetServiceTest" time="0.442"/>
+  <testcase name="베팅을 생성 성공하면 유저 포인트가 차감되고 베팅 금액이 저장된다." classname="org.example.oddventure.domain.bet.unit.BetServiceTest" time="0.004"/>
+  <testcase name="베팅 정산에 성공한다." classname="org.example.oddventure.domain.bet.unit.BetServiceTest" time="0.002"/>
+  <testcase name="베팅 내역 조회에 성공한다." classname="org.example.oddventure.domain.bet.unit.BetServiceTest" time="0.009"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

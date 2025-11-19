@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AdaptiveEsSyncManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oddventure</a> &gt; <a href="index.source.html" class="el_package">org.example.oddventure.domain.match.sync</a> &gt; <span class="el_source">AdaptiveEsSyncManager.java</span></div><h1>AdaptiveEsSyncManager.java</h1><pre class="source lang-java linenums">package org.example.oddventure.domain.match.sync;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Component;
+
+import java.time.Duration;
+import java.util.concurrent.atomic.AtomicInteger;
+
+/**
+ * 대용량 데이터 유입을 감지하는 컴포넌트
+ */
+<span class="fc" id="L14">@Slf4j</span>
+@Component
+@RequiredArgsConstructor
+public class AdaptiveEsSyncManager {
+
+    private final RedisTemplate&lt;String, Object&gt; redisTemplate;
+
+    // 임계값 설정
+    private static final int BULK_THRESHOLD = 100;  // 1분에 100건 이상이면 대용량으로 간주
+    private static final int TIME_WINDOW_SECONDS = 60;  // 1분 시간 윈도우
+    private static final String COUNTER_KEY = &quot;es:sync:counter&quot;;
+    private static final String BULK_MODE_KEY = &quot;es:sync:bulk_mode&quot;;
+
+    // 로컬 카운터 (성능 최적화)
+    private final AtomicInteger localCounter = new AtomicInteger(0);
+
+    /**
+     * 동기화 이벤트 발생 시 호출
+     * @return true: RabbitMQ 사용, false: 사용안함
+     */
+    public boolean shouldUseRabbitMQ() {
+        // 대용량 모드인지 확인
+<span class="nc" id="L36">        Boolean isBulkMode = (Boolean) redisTemplate.opsForValue().get(BULK_MODE_KEY);</span>
+
+<span class="nc bnc" id="L38" title="All 2 branches missed.">        if (Boolean.TRUE.equals(isBulkMode)) {</span>
+<span class="nc" id="L39">            log.debug(&quot;대용량 모드 활성화 상태&quot;);</span>
+<span class="nc" id="L40">            return false;</span>
+        }
+
+        // 로컬 카운터 증가
+<span class="nc" id="L44">        int currentCount = localCounter.incrementAndGet();</span>
+
+        // 10건마다 Redis 동기화 (성능 최적화)
+<span class="nc bnc" id="L47" title="All 2 branches missed.">        if (currentCount % 10 == 0) {</span>
+<span class="nc" id="L48">            Long redisCount = redisTemplate.opsForValue().increment(COUNTER_KEY);</span>
+<span class="nc" id="L49">            redisTemplate.expire(COUNTER_KEY, Duration.ofSeconds(TIME_WINDOW_SECONDS));</span>
+
+            // 임계값 초과 시 대용량 모드 활성화
+<span class="nc bnc" id="L52" title="All 4 branches missed.">            if (redisCount != null &amp;&amp; redisCount &gt;= BULK_THRESHOLD) {</span>
+<span class="nc" id="L53">                activateBulkMode();</span>
+<span class="nc" id="L54">                return false;</span>
+            }
+        }
+
+<span class="nc" id="L58">        return true;</span>
+    }
+
+    /**
+     * 대용량 모드 활성화
+     */
+    private void activateBulkMode() {
+<span class="nc" id="L65">        redisTemplate.opsForValue().set(BULK_MODE_KEY, true);</span>
+<span class="nc" id="L66">        localCounter.set(0);</span>
+<span class="nc" id="L67">        redisTemplate.delete(COUNTER_KEY);</span>
+
+<span class="nc" id="L69">        log.warn(&quot;=== 대용량 모드 활성화 ===&quot;);</span>
+<span class="nc" id="L70">    }</span>
+
+    /**
+     * 대용량 모드 비활성화
+     */
+    public void deactivateBulkMode() {
+<span class="nc" id="L76">        redisTemplate.delete(BULK_MODE_KEY);</span>
+<span class="nc" id="L77">        redisTemplate.delete(COUNTER_KEY);</span>
+<span class="nc" id="L78">        localCounter.set(0);</span>
+
+<span class="nc" id="L80">        log.info(&quot;=== 대용량 모드 비활성화 ===&quot;);</span>
+<span class="nc" id="L81">    }</span>
+
+    /**
+     * 현재 대용량 모드 여부 확인
+     */
+    public boolean isBulkMode() {
+<span class="fc" id="L87">        Boolean isBulkMode = (Boolean) redisTemplate.opsForValue().get(BULK_MODE_KEY);</span>
+<span class="fc" id="L88">        return Boolean.TRUE.equals(isBulkMode);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

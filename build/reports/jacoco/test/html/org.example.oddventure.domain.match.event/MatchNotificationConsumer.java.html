@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MatchNotificationConsumer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oddventure</a> &gt; <a href="index.source.html" class="el_package">org.example.oddventure.domain.match.event</a> &gt; <span class="el_source">MatchNotificationConsumer.java</span></div><h1>MatchNotificationConsumer.java</h1><pre class="source lang-java linenums">package org.example.oddventure.domain.match.event;
+
+import static org.example.oddventure.common.config.RabbitMQConfig.MATCH_NOTIFY_QUEUE;
+
+import java.util.Set;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.example.oddventure.domain.match.event.dto.MatchNotificationDto;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Component;
+
+<span class="fc" id="L13">@Slf4j</span>
+@Component
+@RequiredArgsConstructor
+public class MatchNotificationConsumer {
+
+    private final SimpMessagingTemplate messagingTemplate;
+    private final NotificationSubscriptionService subscriptionService;
+
+    @RabbitListener(queues = MATCH_NOTIFY_QUEUE)
+    public void consume(MatchNotificationDto dto) {
+<span class="fc bfc" id="L23" title="All 2 branches covered.">        if (dto.category().equals(&quot;odds&quot;)) {</span>
+<span class="fc" id="L24">            notifyOddsSubscribers(dto);</span>
+        } else {
+<span class="fc" id="L26">            String destination = &quot;/topic/matches/&quot; + dto.matchId() + &quot;/status&quot;;</span>
+
+<span class="fc" id="L28">            messagingTemplate.convertAndSend(destination, dto.payload());</span>
+<span class="fc" id="L29">            log.info(&quot;[RabbitMQ:MatchStatus] matchId={}, destination={}, payload={}&quot;, dto.matchId(), destination,</span>
+<span class="fc" id="L30">                    dto.payload());</span>
+        }
+<span class="fc" id="L32">    }</span>
+
+    // 배당률 변경은 구독한 유저에게만 전송
+    private void notifyOddsSubscribers(MatchNotificationDto dto) {
+<span class="fc" id="L36">        Set&lt;Long&gt; subscribers = subscriptionService.getSubscribers(dto.matchId());</span>
+
+<span class="fc bfc" id="L38" title="All 2 branches covered.">        if (subscribers.isEmpty()) {</span>
+<span class="fc" id="L39">            log.warn(&quot;[RabbitMQ:Odds] 알림을 받을 구독자가 없습니다.&quot;);</span>
+<span class="fc" id="L40">            return;</span>
+        }
+
+<span class="fc bfc" id="L43" title="All 2 branches covered.">        for (Long userId : subscribers) {</span>
+<span class="fc" id="L44">            String destination = &quot;/user/&quot; + userId + &quot;/queue/matches/&quot; + dto.matchId() + &quot;/odds&quot;;</span>
+
+<span class="fc" id="L46">            messagingTemplate.convertAndSend(destination, dto.payload());</span>
+<span class="fc" id="L47">        }</span>
+
+<span class="fc" id="L49">        log.info(&quot;[RabbitMQ:Odds] matchId={}, sent to {} subscribers, payload={}&quot;, dto.matchId(), subscribers.size(),</span>
+<span class="fc" id="L50">                dto.payload());</span>
+<span class="fc" id="L51">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

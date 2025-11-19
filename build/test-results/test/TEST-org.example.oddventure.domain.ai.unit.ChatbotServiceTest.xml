@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.example.oddventure.domain.ai.unit.ChatbotServiceTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2025-11-19T01:10:01.817Z" hostname="DESKTOP-9Q5JQDP" time="0.194">
+  <properties/>
+  <testcase name="일반 대화 시 히스토리를 포함해 응답을 생성한다" classname="org.example.oddventure.domain.ai.unit.ChatbotServiceTest" time="0.188"/>
+  <testcase name="tool 분류 메서드가 정상 작동한다." classname="org.example.oddventure.domain.ai.unit.ChatbotServiceTest" time="0.002"/>
+  <testcase name="툴 적용 메서드가 정상 작동한다." classname="org.example.oddventure.domain.ai.unit.ChatbotServiceTest" time="0.004"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

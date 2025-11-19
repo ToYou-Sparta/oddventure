@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AgentExecutor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oddventure</a> &gt; <a href="index.source.html" class="el_package">org.example.oddventure.domain.ai.agent</a> &gt; <span class="el_source">AgentExecutor.java</span></div><h1>AgentExecutor.java</h1><pre class="source lang-java linenums">package org.example.oddventure.domain.ai.agent;
+
+import lombok.extern.slf4j.Slf4j;
+import org.bsc.langgraph4j.GraphStateException;
+import org.bsc.langgraph4j.StateGraph;
+import org.bsc.langgraph4j.action.EdgeAction;
+import org.bsc.langgraph4j.state.AgentState;
+import org.bsc.langgraph4j.state.Channel;
+import org.bsc.langgraph4j.state.Channels;
+import org.example.oddventure.domain.ai.service.ChatbotService;
+import org.springframework.stereotype.Service;
+import java.util.*;
+import static org.bsc.langgraph4j.StateGraph.END;
+import static org.bsc.langgraph4j.StateGraph.START;
+import static org.bsc.langgraph4j.action.AsyncEdgeAction.edge_async;
+import static org.bsc.langgraph4j.action.AsyncNodeAction.node_async;
+
+// llm의 사고 흐름 (workflow, state graph) 구축 service
+<span class="fc" id="L19">@Slf4j</span>
+@Service
+public class AgentExecutor {
+
+    private final ChatbotService chatbotService;
+
+<span class="fc" id="L25">    public AgentExecutor(ChatbotService chatbotService) {</span>
+<span class="fc" id="L26">        this.chatbotService = chatbotService;</span>
+<span class="fc" id="L27">    }</span>
+
+    public Map&lt;String, Object&gt; callClassifyAgent(State state) {
+<span class="fc" id="L30">        log.info(&quot;callClassifyAgent: {}&quot;, state);</span>
+
+<span class="fc" id="L32">        var query = (String) state.getInput().get(&quot;question&quot;);</span>
+<span class="fc" id="L33">        Object answer = chatbotService.classifyTools(query);</span>
+<span class="fc" id="L34">        Map&lt;String, Object&gt; mid = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L35">        mid.put(&quot;intent&quot;, answer);</span>
+
+<span class="fc" id="L37">        log.info(&quot;Classify Agent Output: {}&quot;, mid);</span>
+
+<span class="fc" id="L39">        return Map.of(State.MID, mid);</span>
+    }
+
+    /**
+     * Schedule Agent을 호출해 match에 기반한 경기 일정 제공.
+     *
+     * @param state workflow의 현재 상태 전달
+     * @return output에 경기 일정 답변 포함해 update
+     */
+    public Map&lt;String, Object&gt; callScheduleAgent(State state) {
+<span class="fc" id="L49">        log.info(&quot;callScheduleAgent: {}&quot;, state);</span>
+
+<span class="fc" id="L51">        var query = (String) state.getInput().get(&quot;question&quot;);</span>
+<span class="fc" id="L52">        Long userId = (Long) state.getInput().get(&quot;userId&quot;);</span>
+
+<span class="fc" id="L54">        Object answer = chatbotService.replySchedule(userId, query);</span>
+<span class="fc" id="L55">        Map&lt;String, Object&gt; output = new HashMap&lt;&gt;(state.getOutput());</span>
+<span class="fc" id="L56">        output.put(&quot;schedule&quot;, answer);</span>
+
+<span class="fc" id="L58">        log.info(&quot;Schedule Agent Output: {}&quot;, output);</span>
+
+<span class="fc" id="L60">        return Map.of(State.OUTPUT, output, State.MID, updateIntentState(state));</span>
+    }
+
+    /**
+     * WinRate Agent을 호출해 match에 기반한 경기 승률 제공.
+     *
+     * @param state workflow의 현재 상태 전달
+     * @return output에 승률 답변 포함해 update
+     */
+    public Map&lt;String, Object&gt; callWinRateAgent(State state) {
+<span class="fc" id="L70">        log.info(&quot;callWinRateAgent: {}&quot;, state);</span>
+
+<span class="fc" id="L72">        var query = (String) state.getInput().get(&quot;question&quot;);</span>
+<span class="fc" id="L73">        Long userId = (Long) state.getInput().get(&quot;userId&quot;);</span>
+
+<span class="fc" id="L75">        Object answer = chatbotService.replyWinRate(userId, query);</span>
+<span class="fc" id="L76">        Map&lt;String, Object&gt; output = new HashMap&lt;&gt;(state.getOutput());</span>
+<span class="fc" id="L77">        output.put(&quot;winRate&quot;, answer);</span>
+
+<span class="fc" id="L79">        log.info(&quot;WinRate Agent Output: {}&quot;, output);</span>
+
+<span class="fc" id="L81">        return Map.of(State.OUTPUT, output, State.MID, updateIntentState(state));</span>
+    }
+
+    /**
+     * HotKeyword Agent을 호출해 match에 기반한 경기 인기검색어 제공.
+     *
+     * @param state workflow의 현재 상태 전달
+     * @return output에 승률 답변 포함해 update
+     */
+    public Map&lt;String, Object&gt; callHotKeywordAgent(State state) {
+<span class="fc" id="L91">        log.info(&quot;callHotKeywordAgent: {}&quot;, state);</span>
+
+<span class="fc" id="L93">        var query = (String) state.getInput().get(&quot;question&quot;);</span>
+<span class="fc" id="L94">        Long userId = (Long) state.getInput().get(&quot;userId&quot;);</span>
+
+<span class="fc" id="L96">        Object answer = chatbotService.replyHotKeyword(userId, query);</span>
+<span class="fc" id="L97">        Map&lt;String, Object&gt; output = new HashMap&lt;&gt;(state.getOutput());</span>
+<span class="fc" id="L98">        output.put(&quot;hotKeyword&quot;, answer);</span>
+
+<span class="fc" id="L100">        log.info(&quot;HotKeyword Agent Output: {}&quot;, output);</span>
+
+<span class="fc" id="L102">        return Map.of(State.OUTPUT, output, State.MID, updateIntentState(state));</span>
+    }
+
+    /**
+     * CS2News Agent을 호출해 match에 기반한 경기 뉴스 제공.
+     *
+     * @param state workflow의 현재 상태 전달
+     * @return output에 승률 답변 포함해 update
+     */
+    public Map&lt;String, Object&gt; callCs2NewsAgent(State state) {
+<span class="fc" id="L112">        log.info(&quot;callCS2NewsAgent: {}&quot;, state);</span>
+
+<span class="fc" id="L114">        var query = (String) state.getInput().get(&quot;question&quot;);</span>
+<span class="fc" id="L115">        Long userId = (Long) state.getInput().get(&quot;userId&quot;);</span>
+
+<span class="fc" id="L117">        Object answer = chatbotService.replyCs2News(userId, query);</span>
+<span class="fc" id="L118">        Map&lt;String, Object&gt; output = new HashMap&lt;&gt;(state.getOutput());</span>
+<span class="fc" id="L119">        output.put(&quot;cs2News&quot;, answer);</span>
+
+<span class="fc" id="L121">        log.info(&quot;CS2News Agent Output: {}&quot;, output);</span>
+
+<span class="fc" id="L123">        return Map.of(State.OUTPUT, output, State.MID, updateIntentState(state));</span>
+    }
+
+    public Map&lt;String, Object&gt; callDefaultAgent(State state) {
+<span class="fc" id="L127">        log.info(&quot;callDefaultAgent: {}&quot;, state);</span>
+
+<span class="fc" id="L129">        var query = (String) state.getInput().get(&quot;question&quot;);</span>
+<span class="fc" id="L130">        Long userId = (Long) state.getInput().get(&quot;userId&quot;);</span>
+
+<span class="fc" id="L132">        Object answer = chatbotService.reply(userId, query);</span>
+<span class="fc" id="L133">        Map&lt;String, Object&gt; output = new HashMap&lt;&gt;(state.getOutput());</span>
+<span class="fc" id="L134">        output.put(&quot;default&quot;, answer);</span>
+
+<span class="fc" id="L136">        log.info(&quot;default Agent Output: {}&quot;, output);</span>
+
+<span class="fc" id="L138">        return Map.of(State.OUTPUT, output, State.MID, updateIntentState(state));</span>
+    }
+
+    /**
+     * workflow graph Builder 제공
+     *
+     * @return GraphBuilder 객체 반환
+     */
+    public GraphBuilder graphBuilder() {
+<span class="fc" id="L147">        return new GraphBuilder();</span>
+    }
+
+    /**
+     * workflow의 상태
+     * (입력, 중간, 출력)
+     */
+    public static class State extends AgentState {
+        public static final String INPUT = &quot;input&quot;;
+        public static final String MID = &quot;mid&quot;;
+        public static final String OUTPUT = &quot;output&quot;;
+
+<span class="fc" id="L159">        static Map&lt;String, Channel&lt;?&gt;&gt; SCHEMA = Map.of(</span>
+<span class="fc" id="L160">                INPUT, Channels.&lt;Map&lt;String, Object&gt;&gt;base(() -&gt; new HashMap&lt;&gt;()),</span>
+<span class="fc" id="L161">                OUTPUT, Channels.&lt;Map&lt;String, Object&gt;&gt;base(() -&gt; new HashMap&lt;&gt;()),</span>
+<span class="fc" id="L162">                MID, Channels.&lt;Map&lt;String, Object&gt;&gt;base(() -&gt; new HashMap&lt;&gt;())</span>
+        );
+
+        /**
+         * input, output data 주입을 통해 state 구축
+         * input = 사용자 질문
+         * output = flow를 거친 후 반환하는 최종 답변
+         *
+         * @param initData state 데이터 초기화
+         */
+        public State(Map&lt;String, Object&gt; initData) {
+<span class="fc" id="L173">            super(initData);</span>
+<span class="fc" id="L174">        }</span>
+
+        public Map&lt;String, Object&gt; getInput() {
+<span class="fc" id="L177">            return this.&lt;Map&lt;String, Object&gt;&gt;value(INPUT).orElseGet(HashMap::new);</span>
+        }
+
+        public Map&lt;String, Object&gt; getMid() {
+<span class="fc" id="L181">            return this.&lt;Map&lt;String, Object&gt;&gt;value(MID).orElseGet(HashMap::new);</span>
+        }
+
+        public Map&lt;String, Object&gt; getOutput() {
+<span class="fc" id="L185">            return this.&lt;Map&lt;String, Object&gt;&gt;value(OUTPUT).orElseGet(HashMap::new);</span>
+        }
+    }
+
+    //agent workflow를 위한 StateGraph Builder 클래스
+<span class="fc" id="L190">    public class GraphBuilder {</span>
+        /**
+         * 노드 정의와 실행을 위한 workflow graph 구축
+         *
+         * @return 생성된 StateGraph 반환
+         * @throws GraphStateException If 그래프 미생성 시 예외
+         */
+        public StateGraph&lt;State&gt; build() throws GraphStateException {
+<span class="fc" id="L198">            var shouldContinue = (EdgeAction&lt;State&gt;) state -&gt; {</span>
+<span class="fc" id="L199">                log.info(&quot;shouldContinue state: {}&quot;, state);</span>
+
+<span class="fc" id="L201">                String intent = (String) state.getMid().get(&quot;intent&quot;);</span>
+<span class="fc bfc" id="L202" title="All 2 branches covered.">                if (intent.isBlank()) {</span>
+<span class="fc" id="L203">                    return &quot;end&quot;; // flow 실행 완료 후 END로 연결, 체이닝 종료</span>
+                }
+
+<span class="fc" id="L206">                List&lt;String&gt; intentList = new ArrayList&lt;&gt;(Arrays.stream(intent.split(&quot;,&quot;)).toList());</span>
+<span class="pc bpc" id="L207" title="1 of 2 branches missed.">                if (intentList.isEmpty()) {</span>
+<span class="nc" id="L208">                    return &quot;end&quot;; // flow 실행 완료 후 END로 연결, 체이닝 종료</span>
+                }
+
+                // intent 내에 툴 중 맨 앞의 agent 추출 후 case 분기 및 실행
+<span class="fc" id="L212">                String current = intentList.get(0);</span>
+<span class="pc bpc" id="L213" title="4 of 6 branches missed.">                return switch (current) {</span>
+<span class="nc" id="L214">                    case &quot;schedule&quot; -&gt; &quot;scheduleAgent&quot;;</span>
+<span class="fc" id="L215">                    case &quot;winRate&quot; -&gt; &quot;winRateAgent&quot;;</span>
+<span class="fc" id="L216">                    case &quot;hotKeyword&quot; -&gt; &quot;hotKeywordAgent&quot;;</span>
+<span class="nc" id="L217">                    case &quot;cs2News&quot; -&gt; &quot;cs2NewsAgent&quot;;</span>
+<span class="nc" id="L218">                    case &quot;default&quot; -&gt; &quot;defaultAgent&quot;;</span>
+<span class="nc" id="L219">                    default -&gt; throw new IllegalStateException(&quot;Unexpected value: &quot; + current);</span>
+                };
+            };
+
+<span class="fc" id="L223">            Map&lt;String, String&gt; toolList = Map.of(</span>
+                    &quot;scheduleAgent&quot;, &quot;scheduleAgent&quot;,
+                    &quot;winRateAgent&quot;, &quot;winRateAgent&quot;,
+                    &quot;hotKeywordAgent&quot;, &quot;hotKeywordAgent&quot;,
+                    &quot;cs2NewsAgent&quot;, &quot;cs2NewsAgent&quot;,
+                    &quot;defaultAgent&quot;, &quot;defaultAgent&quot;,
+                    &quot;end&quot;, END
+            );
+
+<span class="fc" id="L232">            return new StateGraph&lt;&gt;(State.SCHEMA, State::new)</span>
+<span class="fc" id="L233">                    .addEdge(START, &quot;classifyAgent&quot;) // classifyAgent 맨 처음 실행, llm을 통한 tool 판단</span>
+<span class="fc" id="L234">                    .addNode(&quot;classifyAgent&quot;, node_async(AgentExecutor.this::callClassifyAgent)) // 노드 추가</span>
+<span class="fc" id="L235">                    .addConditionalEdges(&quot;classifyAgent&quot;,</span>
+<span class="fc" id="L236">                            edge_async(shouldContinue), toolList) // 분기 결과에 맞는 노드 연결</span>
+<span class="fc" id="L237">                    .addNode(&quot;scheduleAgent&quot;, node_async(AgentExecutor.this::callScheduleAgent))</span>
+<span class="fc" id="L238">                    .addConditionalEdges(&quot;scheduleAgent&quot;,</span>
+<span class="fc" id="L239">                            edge_async(shouldContinue), toolList)</span>
+<span class="fc" id="L240">                    .addNode(&quot;winRateAgent&quot;, node_async(AgentExecutor.this::callWinRateAgent))</span>
+<span class="fc" id="L241">                    .addConditionalEdges(&quot;winRateAgent&quot;,</span>
+<span class="fc" id="L242">                            edge_async(shouldContinue), toolList)</span>
+<span class="fc" id="L243">                    .addNode(&quot;hotKeywordAgent&quot;, node_async(AgentExecutor.this::callHotKeywordAgent))</span>
+<span class="fc" id="L244">                    .addConditionalEdges(&quot;hotKeywordAgent&quot;,</span>
+<span class="fc" id="L245">                            edge_async(shouldContinue), toolList)</span>
+<span class="fc" id="L246">                    .addNode(&quot;cs2NewsAgent&quot;, node_async(AgentExecutor.this::callCs2NewsAgent))</span>
+<span class="fc" id="L247">                    .addConditionalEdges(&quot;cs2NewsAgent&quot;,</span>
+<span class="fc" id="L248">                            edge_async(shouldContinue), toolList)</span>
+<span class="fc" id="L249">                    .addNode(&quot;defaultAgent&quot;, node_async(AgentExecutor.this::callDefaultAgent))</span>
+<span class="fc" id="L250">                    .addConditionalEdges(&quot;defaultAgent&quot;,</span>
+<span class="fc" id="L251">                            edge_async(shouldContinue), toolList)</span>
+<span class="fc" id="L252">                    .addNode(&quot;end&quot;, node_async(state -&gt; {</span>
+<span class="nc" id="L253">                        log.info(&quot;output: {}&quot;, State.OUTPUT);</span>
+<span class="nc" id="L254">                        return Map.of(&quot;output&quot;, state.getOutput());}))</span>
+<span class="fc" id="L255">                    .addEdge(&quot;end&quot;, END);</span>
+        }
+    }
+
+    // agent 호출 완료 시 mid state에서 제거, mid 상태 업데이트
+    public Map&lt;String, Object&gt; updateIntentState(State state) {
+<span class="fc" id="L261">        String intent = (String) state.getMid().get(&quot;intent&quot;);</span>
+<span class="fc" id="L262">        List&lt;String&gt; intentList = new ArrayList&lt;&gt;(Arrays.stream(intent.split(&quot;,&quot;)).toList());</span>
+<span class="fc" id="L263">        intentList.remove(0);</span>
+<span class="fc" id="L264">        Map&lt;String, Object&gt; mid = state.getMid();</span>
+<span class="fc" id="L265">        mid.put(&quot;intent&quot;, String.join(&quot;,&quot;,intentList));</span>
+
+<span class="fc" id="L267">        return mid;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

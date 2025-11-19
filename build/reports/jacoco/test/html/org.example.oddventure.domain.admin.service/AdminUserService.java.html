@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AdminUserService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oddventure</a> &gt; <a href="index.source.html" class="el_package">org.example.oddventure.domain.admin.service</a> &gt; <span class="el_source">AdminUserService.java</span></div><h1>AdminUserService.java</h1><pre class="source lang-java linenums">package org.example.oddventure.domain.admin.service;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.example.oddventure.domain.admin.dto.response.UserAdminResponse;
+import org.example.oddventure.domain.admin.exception.AdminErrorCode;
+import org.example.oddventure.domain.admin.exception.AdminException;
+import org.example.oddventure.domain.user.entity.User;
+import org.example.oddventure.domain.user.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+<span class="fc" id="L15">@Slf4j</span>
+@Service
+@RequiredArgsConstructor
+public class AdminUserService {
+
+    private final UserRepository userRepository;
+
+    // 전체 사용자 목록 조회
+    @Transactional(readOnly = true)
+    public Page&lt;UserAdminResponse&gt; getAllUsers(String email, String username, Pageable pageable) {
+<span class="fc" id="L25">        Page&lt;User&gt; users = userRepository.findBySearchConditions(email, username, pageable);</span>
+<span class="fc" id="L26">        return users.map(UserAdminResponse::from);</span>
+    }
+
+    // 사용자 상세 조회
+    @Transactional(readOnly = true)
+    public UserAdminResponse getUserDetails(Long userId) {
+<span class="fc" id="L32">        User user = userRepository.findById(userId)</span>
+<span class="fc" id="L33">                .orElseThrow(() -&gt; new AdminException(AdminErrorCode.USER_NOT_FOUND));</span>
+
+<span class="fc" id="L35">        return UserAdminResponse.from(user);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

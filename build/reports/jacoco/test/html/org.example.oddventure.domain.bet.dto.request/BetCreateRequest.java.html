@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BetCreateRequest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oddventure</a> &gt; <a href="index.source.html" class="el_package">org.example.oddventure.domain.bet.dto.request</a> &gt; <span class="el_source">BetCreateRequest.java</span></div><h1>BetCreateRequest.java</h1><pre class="source lang-java linenums">package org.example.oddventure.domain.bet.dto.request;
+
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import java.math.BigDecimal;
+import org.example.oddventure.domain.bet.entity.Bet;
+import org.example.oddventure.domain.bet.enums.SelectedTeam;
+import org.example.oddventure.domain.match.entity.Match;
+import org.example.oddventure.domain.user.entity.User;
+
+<span class="fc" id="L11">public record BetCreateRequest(</span>
+
+        @NotNull(message = &quot;경기 ID는 필수 입력 값입니다.&quot;)
+        Long matchId,
+
+        @NotNull(message = &quot;베팅할 팀을 선택해야 합니다.&quot;)
+        SelectedTeam selectedTeam,
+
+        @Positive(message = &quot;베팅 금액은 0보다 커야 합니다.&quot;)
+        Long betAmount
+) {
+    public Bet toEntity(User user, Match match, BigDecimal odds) {
+<span class="fc" id="L23">        return Bet.builder()</span>
+<span class="fc" id="L24">                .user(user)</span>
+<span class="fc" id="L25">                .match(match)</span>
+<span class="fc" id="L26">                .selectedTeam(selectedTeam)</span>
+<span class="fc" id="L27">                .betAmount(BigDecimal.valueOf(betAmount))</span>
+<span class="fc" id="L28">                .oddsAtBetting(odds)</span>
+<span class="fc" id="L29">                .build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

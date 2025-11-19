@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AdminMatchController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oddventure</a> &gt; <a href="index.source.html" class="el_package">org.example.oddventure.domain.admin.controller</a> &gt; <span class="el_source">AdminMatchController.java</span></div><h1>AdminMatchController.java</h1><pre class="source lang-java linenums">package org.example.oddventure.domain.admin.controller;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.example.oddventure.common.dto.response.ApiResponse;
+import org.example.oddventure.domain.admin.dto.request.MatchUpdateRequest;
+import org.example.oddventure.domain.admin.dto.response.MatchCreateAdminResponse;
+import org.example.oddventure.domain.admin.dto.response.MatchUpdateAdminResponse;
+import org.example.oddventure.domain.admin.service.AdminMatchService;
+import org.example.oddventure.domain.match.scheduler.MatchEsSyncScheduler;
+import org.example.oddventure.domain.match.service.MatchService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping(&quot;/api/v1/admin/matches&quot;)
+public class AdminMatchController {
+
+    private final AdminMatchService adminMatchService;
+    private final MatchService matchService;
+    private final MatchEsSyncScheduler matchEsSyncScheduler;
+
+    // 매치 생성
+    @PostMapping
+    public ResponseEntity&lt;ApiResponse&lt;MatchCreateAdminResponse&gt;&gt; createMatch() {
+<span class="fc" id="L27">        MatchCreateAdminResponse response = adminMatchService.createMatch();</span>
+<span class="fc" id="L28">        return ApiResponse.created(response, &quot;매치가 생성되었습니다.&quot;);</span>
+    }
+
+    // 매치 상태 수정
+    @PatchMapping(&quot;/{matchId}&quot;)
+    public ResponseEntity&lt;ApiResponse&lt;MatchUpdateAdminResponse&gt;&gt; updateMatchStatus(
+            @PathVariable Long matchId,
+            @Valid @RequestBody MatchUpdateRequest request
+    ) {
+<span class="fc" id="L37">        MatchUpdateAdminResponse response = matchService.updateMatch(matchId, request);</span>
+<span class="fc" id="L38">        return ApiResponse.success(response, &quot;매치 정보가 수정되었습니다.&quot;);</span>
+    }
+
+    // 매치 결과 연동
+    @PatchMapping(&quot;/fetch/{fetchId}&quot;)
+    public ResponseEntity&lt;ApiResponse&lt;Void&gt;&gt; createMatchResult(@PathVariable Long fetchId) {
+<span class="nc" id="L44">        adminMatchService.createMatchResult(fetchId);</span>
+<span class="nc" id="L45">        return ApiResponse.success(&quot;매치 결과가 연동되었습니다.&quot;);</span>
+    }
+
+    // 데이터 수동 동기화
+    @PostMapping(&quot;/sync-elasticsearch&quot;)
+    public ResponseEntity&lt;ApiResponse&lt;Void&gt;&gt; syncElasticsearch() {
+<span class="nc" id="L51">        matchEsSyncScheduler.syncAllMatchesToElasticsearch();</span>
+<span class="nc" id="L52">        return ApiResponse.success(&quot;Elasticsearch 동기화가 시작되었습니다.&quot;);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

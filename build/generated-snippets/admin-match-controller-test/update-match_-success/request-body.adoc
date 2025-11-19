@@ -1,0 +1,10 @@
+[source,json,options="nowrap"]
+----
+{
+  "matchName" : "LCK",
+  "teamA" : "New Team A",
+  "teamB" : "New Team B",
+  "startTime" : "2025-11-21T10:09:59",
+  "status" : "ONGOING"
+}
+----

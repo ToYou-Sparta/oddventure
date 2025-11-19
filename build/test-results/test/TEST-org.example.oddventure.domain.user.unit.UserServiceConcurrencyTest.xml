@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.example.oddventure.domain.user.unit.UserServiceConcurrencyTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-11-19T01:10:20.464Z" hostname="DESKTOP-9Q5JQDP" time="0.438">
+  <properties/>
+  <testcase name="동시에 100명이 10포인트씩 지급 요청 시 1000포인트가 정확히 적립된다 (분산 락)" classname="org.example.oddventure.domain.user.unit.UserServiceConcurrencyTest" time="0.438"/>
+  <system-out><![CDATA[2025-11-19T10:10:20.463+09:00  INFO 18272 --- [    Test worker] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [org.example.oddventure.domain.user.unit.UserServiceConcurrencyTest]: UserServiceConcurrencyTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2025-11-19T10:10:20.464+09:00  INFO 18272 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration org.example.oddventure.OddventureApplication for test class org.example.oddventure.domain.user.unit.UserServiceConcurrencyTest
+Hibernate: insert into users (created_at,is_deleted,deleted_at,email,password,point,updated_at,user_role,username,id) values (?,?,?,?,?,?,?,?,?,default)
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.474+09:00  INFO 18272 --- [ool-24-thread-5] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=10.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.479+09:00  INFO 18272 --- [ol-24-thread-27] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=20.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.483+09:00  INFO 18272 --- [ol-24-thread-10] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=30.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.488+09:00  INFO 18272 --- [ool-24-thread-1] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=40.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.492+09:00  INFO 18272 --- [ool-24-thread-1] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=50.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.496+09:00  INFO 18272 --- [ool-24-thread-1] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=60.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.501+09:00  INFO 18272 --- [ool-24-thread-4] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=70.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.506+09:00  INFO 18272 --- [ool-24-thread-6] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=80.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.510+09:00  INFO 18272 --- [ool-24-thread-6] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=90.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.514+09:00  INFO 18272 --- [ool-24-thread-6] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=100.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.519+09:00  INFO 18272 --- [ool-24-thread-6] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=110.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.523+09:00  INFO 18272 --- [ool-24-thread-6] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=120.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.527+09:00  INFO 18272 --- [ool-24-thread-6] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=130.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.531+09:00  INFO 18272 --- [ol-24-thread-14] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=140.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.536+09:00  INFO 18272 --- [ol-24-thread-14] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=150.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.540+09:00  INFO 18272 --- [ol-24-thread-16] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=160.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.545+09:00  INFO 18272 --- [ol-24-thread-16] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=170.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.549+09:00  INFO 18272 --- [ol-24-thread-16] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=180.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.554+09:00  INFO 18272 --- [ol-24-thread-20] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=190.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.558+09:00  INFO 18272 --- [ol-24-thread-19] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=200.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.562+09:00  INFO 18272 --- [ol-24-thread-21] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=210.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.566+09:00  INFO 18272 --- [ol-24-thread-24] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=220.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.571+09:00  INFO 18272 --- [ol-24-thread-22] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=230.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.575+09:00  INFO 18272 --- [ol-24-thread-22] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=240.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.581+09:00  INFO 18272 --- [ol-24-thread-22] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=250.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.586+09:00  INFO 18272 --- [ol-24-thread-22] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=260.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.592+09:00  INFO 18272 --- [ool-24-thread-7] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=270.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.596+09:00  INFO 18272 --- [ol-24-thread-28] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=280.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.600+09:00  INFO 18272 --- [ol-24-thread-28] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=290.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.604+09:00  INFO 18272 --- [ol-24-thread-28] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=300.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.609+09:00  INFO 18272 --- [ol-24-thread-28] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=310.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.613+09:00  INFO 18272 --- [ol-24-thread-32] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=320.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.617+09:00  INFO 18272 --- [ol-24-thread-31] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=330.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.621+09:00  INFO 18272 --- [ol-24-thread-31] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=340.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.625+09:00  INFO 18272 --- [ol-24-thread-31] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=350.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.630+09:00  INFO 18272 --- [ol-24-thread-31] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=360.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.635+09:00  INFO 18272 --- [ol-24-thread-31] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=370.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.640+09:00  INFO 18272 --- [ool-24-thread-1] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=380.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.644+09:00  INFO 18272 --- [ool-24-thread-1] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=390.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.648+09:00  INFO 18272 --- [ool-24-thread-1] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=400.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.653+09:00  INFO 18272 --- [ool-24-thread-3] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=410.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.657+09:00  INFO 18272 --- [ool-24-thread-3] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=420.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.661+09:00  INFO 18272 --- [ool-24-thread-3] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=430.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.665+09:00  INFO 18272 --- [ool-24-thread-2] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=440.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.669+09:00  INFO 18272 --- [ool-24-thread-2] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=450.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.674+09:00  INFO 18272 --- [ol-24-thread-15] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=460.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.678+09:00  INFO 18272 --- [ol-24-thread-14] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=470.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.683+09:00  INFO 18272 --- [ol-24-thread-14] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=480.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.687+09:00  INFO 18272 --- [ol-24-thread-18] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=490.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.692+09:00  INFO 18272 --- [ol-24-thread-16] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=500.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.695+09:00  INFO 18272 --- [ol-24-thread-20] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=510.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.699+09:00  INFO 18272 --- [ol-24-thread-20] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=520.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.703+09:00  INFO 18272 --- [ol-24-thread-20] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=530.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.707+09:00  INFO 18272 --- [ol-24-thread-20] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=540.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.711+09:00  INFO 18272 --- [ol-24-thread-20] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=550.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.715+09:00  INFO 18272 --- [ol-24-thread-23] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=560.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.719+09:00  INFO 18272 --- [ol-24-thread-26] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=570.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.723+09:00  INFO 18272 --- [ol-24-thread-22] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=580.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.728+09:00  INFO 18272 --- [ool-24-thread-7] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=590.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.731+09:00  INFO 18272 --- [ool-24-thread-7] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=600.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.736+09:00  INFO 18272 --- [ol-24-thread-30] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=610.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.740+09:00  INFO 18272 --- [ool-24-thread-5] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=620.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.744+09:00  INFO 18272 --- [ol-24-thread-28] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=630.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.748+09:00  INFO 18272 --- [ol-24-thread-28] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=640.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.751+09:00  INFO 18272 --- [ol-24-thread-28] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=650.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.756+09:00  INFO 18272 --- [ol-24-thread-28] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=660.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.759+09:00  INFO 18272 --- [ol-24-thread-28] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=670.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.764+09:00  INFO 18272 --- [ol-24-thread-11] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=680.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.768+09:00  INFO 18272 --- [ol-24-thread-31] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=690.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.772+09:00  INFO 18272 --- [ool-24-thread-4] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=700.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.776+09:00  INFO 18272 --- [ool-24-thread-8] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=710.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.780+09:00  INFO 18272 --- [ool-24-thread-1] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=720.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.784+09:00  INFO 18272 --- [ol-24-thread-12] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=730.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.787+09:00  INFO 18272 --- [ol-24-thread-13] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=740.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.792+09:00  INFO 18272 --- [ool-24-thread-3] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=750.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.796+09:00  INFO 18272 --- [ool-24-thread-6] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=760.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.800+09:00  INFO 18272 --- [ool-24-thread-2] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=770.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.804+09:00  INFO 18272 --- [ol-24-thread-15] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=780.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.809+09:00  INFO 18272 --- [ol-24-thread-17] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=790.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.813+09:00  INFO 18272 --- [ol-24-thread-14] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=800.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.817+09:00  INFO 18272 --- [ol-24-thread-18] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=810.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.821+09:00  INFO 18272 --- [ol-24-thread-16] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=820.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.825+09:00  INFO 18272 --- [ol-24-thread-19] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=830.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.830+09:00  INFO 18272 --- [ol-24-thread-21] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=840.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.834+09:00  INFO 18272 --- [ol-24-thread-24] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=850.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.838+09:00  INFO 18272 --- [ol-24-thread-25] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=860.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.842+09:00  INFO 18272 --- [ol-24-thread-20] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=870.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.846+09:00  INFO 18272 --- [ol-24-thread-23] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=880.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.851+09:00  INFO 18272 --- [ol-24-thread-26] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=890.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.855+09:00  INFO 18272 --- [ol-24-thread-22] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=900.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.859+09:00  INFO 18272 --- [ol-24-thread-29] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=910.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.863+09:00  INFO 18272 --- [ool-24-thread-7] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=920.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.867+09:00  INFO 18272 --- [ol-24-thread-30] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=930.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.871+09:00  INFO 18272 --- [ool-24-thread-5] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=940.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.875+09:00  INFO 18272 --- [ol-24-thread-32] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=950.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.878+09:00  INFO 18272 --- [ol-24-thread-27] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=960.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.884+09:00  INFO 18272 --- [ol-24-thread-10] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=970.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.888+09:00  INFO 18272 --- [ool-24-thread-9] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=980.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.892+09:00  INFO 18272 --- [ol-24-thread-28] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=990.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:20.896+09:00  INFO 18272 --- [ol-24-thread-11] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=10, reason='동시성 테스트', finalBalance=1000.00
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: delete from users where id=?
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

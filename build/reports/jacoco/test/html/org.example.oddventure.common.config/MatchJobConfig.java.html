@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MatchJobConfig.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oddventure</a> &gt; <a href="index.source.html" class="el_package">org.example.oddventure.common.config</a> &gt; <span class="el_source">MatchJobConfig.java</span></div><h1>MatchJobConfig.java</h1><pre class="source lang-java linenums">package org.example.oddventure.common.config;
+
+import lombok.RequiredArgsConstructor;
+import org.example.oddventure.domain.admin.service.AdminMatchService;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.Step;
+import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.PlatformTransactionManager;
+
+@Configuration
+@RequiredArgsConstructor
+public class MatchJobConfig {
+
+    private final JobRepository jobRepository;
+    private final PlatformTransactionManager transactionManager;
+    private final AdminMatchService adminMatchService;
+
+    @Bean
+    public Job matchScheduleJob() {
+<span class="fc" id="L25">        return new JobBuilder(&quot;matchScheduleJob&quot;, jobRepository)</span>
+<span class="fc" id="L26">                .start(matchScheduleStep())</span>
+<span class="fc" id="L27">                .build();</span>
+    }
+
+    @Bean
+    public Step matchScheduleStep() {
+<span class="fc" id="L32">        return new StepBuilder(&quot;matchScheduleStep&quot;, jobRepository)</span>
+<span class="fc" id="L33">                .tasklet((contribution, chunkContext) -&gt; {</span>
+<span class="nc" id="L34">                    adminMatchService.createMatch();</span>
+<span class="nc" id="L35">                    return RepeatStatus.FINISHED;</span>
+                }, transactionManager)
+<span class="fc" id="L37">                .build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

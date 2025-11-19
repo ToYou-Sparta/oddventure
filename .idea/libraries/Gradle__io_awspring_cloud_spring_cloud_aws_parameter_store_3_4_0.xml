@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Gradle: io.awspring.cloud:spring-cloud-aws-parameter-store:3.4.0" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="io.awspring.cloud" artifactId="spring-cloud-aws-parameter-store" version="3.4.0" baseVersion="3.4.0" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.awspring.cloud/spring-cloud-aws-parameter-store/3.4.0/f1627e5b5ab5880fe09d963d6309324c5a466b31/spring-cloud-aws-parameter-store-3.4.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

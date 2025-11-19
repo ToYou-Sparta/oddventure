@@ -1,0 +1,1460 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="b30c7106-8c5e-47f0-8351-a5ecacc4f0c6" name="Changes" comment="test: ScheduleTools 테스트 UTC/KST 환경 차이로 인한 불안정성 해결" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="oddventure" type="f1a62948:ProjectNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="oddventure" type="f1a62948:ProjectNode" />
+                <item name="Dependencies" type="6de06a37:ExternalSystemViewDefaultContributor$MyDependenciesNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Enum" />
+        <option value="package-info" />
+        <option value="Interface" />
+        <option value="JavaScript File" />
+        <option value="Record" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="FormatOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="gh-pages" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;history&quot;: [
+    {
+      &quot;state&quot;: &quot;OPEN&quot;
+    }
+  ],
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;
+  }
+}</component>
+  <component name="GitHubPullRequestState">{
+  &quot;prStates&quot;: [
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86tpCR7&quot;,
+        &quot;number&quot;: 1
+      },
+      &quot;lastSeen&quot;: 1760443173506
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86tpNnv&quot;,
+        &quot;number&quot;: 3
+      },
+      &quot;lastSeen&quot;: 1760505381502
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86tpSGS&quot;,
+        &quot;number&quot;: 4
+      },
+      &quot;lastSeen&quot;: 1760505405241
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86tqIKf&quot;,
+        &quot;number&quot;: 5
+      },
+      &quot;lastSeen&quot;: 1760505412334
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86t0z4E&quot;,
+        &quot;number&quot;: 13
+      },
+      &quot;lastSeen&quot;: 1760518542700
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86t3ZXx&quot;,
+        &quot;number&quot;: 18
+      },
+      &quot;lastSeen&quot;: 1760602385104
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86uB-tT&quot;,
+        &quot;number&quot;: 22
+      },
+      &quot;lastSeen&quot;: 1760614471460
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86uBfDR&quot;,
+        &quot;number&quot;: 21
+      },
+      &quot;lastSeen&quot;: 1760674472443
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86t2Hnt&quot;,
+        &quot;number&quot;: 14
+      },
+      &quot;lastSeen&quot;: 1760684619495
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86uOaZB&quot;,
+        &quot;number&quot;: 27
+      },
+      &quot;lastSeen&quot;: 1760695908373
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86uIkA3&quot;,
+        &quot;number&quot;: 26
+      },
+      &quot;lastSeen&quot;: 1760920712037
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86uS0LV&quot;,
+        &quot;number&quot;: 30
+      },
+      &quot;lastSeen&quot;: 1760922060936
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86ueGus&quot;,
+        &quot;number&quot;: 35
+      },
+      &quot;lastSeen&quot;: 1760930474571
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86uHsyZ&quot;,
+        &quot;number&quot;: 24
+      },
+      &quot;lastSeen&quot;: 1760939548821
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86uhbcN&quot;,
+        &quot;number&quot;: 39
+      },
+      &quot;lastSeen&quot;: 1760939983692
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86uea--&quot;,
+        &quot;number&quot;: 36
+      },
+      &quot;lastSeen&quot;: 1761048220369
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86uIDnr&quot;,
+        &quot;number&quot;: 25
+      },
+      &quot;lastSeen&quot;: 1761202869846
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86vDGvy&quot;,
+        &quot;number&quot;: 47
+      },
+      &quot;lastSeen&quot;: 1761209017415
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86vNxnC&quot;,
+        &quot;number&quot;: 51
+      },
+      &quot;lastSeen&quot;: 1761214955820
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86uyNSi&quot;,
+        &quot;number&quot;: 44
+      },
+      &quot;lastSeen&quot;: 1761270121062
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86vPxM-&quot;,
+        &quot;number&quot;: 52
+      },
+      &quot;lastSeen&quot;: 1761270306585
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86vZg14&quot;,
+        &quot;number&quot;: 55
+      },
+      &quot;lastSeen&quot;: 1761278905652
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86vai9F&quot;,
+        &quot;number&quot;: 59
+      },
+      &quot;lastSeen&quot;: 1761552707202
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86vRsO3&quot;,
+        &quot;number&quot;: 54
+      },
+      &quot;lastSeen&quot;: 1761553351853
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86vZ31a&quot;,
+        &quot;number&quot;: 56
+      },
+      &quot;lastSeen&quot;: 1761553352824
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86vwaJ2&quot;,
+        &quot;number&quot;: 60
+      },
+      &quot;lastSeen&quot;: 1761553397384
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86v0Irh&quot;,
+        &quot;number&quot;: 61
+      },
+      &quot;lastSeen&quot;: 1761553413499
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86v1E6u&quot;,
+        &quot;number&quot;: 62
+      },
+      &quot;lastSeen&quot;: 1761569072558
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86v4dVL&quot;,
+        &quot;number&quot;: 63
+      },
+      &quot;lastSeen&quot;: 1761569097815
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86wKOVe&quot;,
+        &quot;number&quot;: 69
+      },
+      &quot;lastSeen&quot;: 1761717168818
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86wHtfL&quot;,
+        &quot;number&quot;: 67
+      },
+      &quot;lastSeen&quot;: 1761717169651
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86wSbRl&quot;,
+        &quot;number&quot;: 70
+      },
+      &quot;lastSeen&quot;: 1761723540061
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86wTMGc&quot;,
+        &quot;number&quot;: 71
+      },
+      &quot;lastSeen&quot;: 1761723563707
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86wjQ0G&quot;,
+        &quot;number&quot;: 73
+      },
+      &quot;lastSeen&quot;: 1761823154589
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86u1FsE&quot;,
+        &quot;number&quot;: 45
+      },
+      &quot;lastSeen&quot;: 1762164981025
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86wxEK-&quot;,
+        &quot;number&quot;: 76
+      },
+      &quot;lastSeen&quot;: 1762165165689
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86xIwhb&quot;,
+        &quot;number&quot;: 78
+      },
+      &quot;lastSeen&quot;: 1762165280501
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86xGAra&quot;,
+        &quot;number&quot;: 77
+      },
+      &quot;lastSeen&quot;: 1762428607313
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86xOgee&quot;,
+        &quot;number&quot;: 80
+      },
+      &quot;lastSeen&quot;: 1762428644269
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86xyPx5&quot;,
+        &quot;number&quot;: 83
+      },
+      &quot;lastSeen&quot;: 1762428769239
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86yFlrG&quot;,
+        &quot;number&quot;: 86
+      },
+      &quot;lastSeen&quot;: 1762775668026
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86wnsIt&quot;,
+        &quot;number&quot;: 75
+      },
+      &quot;lastSeen&quot;: 1762860106375
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86yZI9W&quot;,
+        &quot;number&quot;: 88
+      },
+      &quot;lastSeen&quot;: 1762860456718
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86yHSkL&quot;,
+        &quot;number&quot;: 87
+      },
+      &quot;lastSeen&quot;: 1762861919842
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86yaNGB&quot;,
+        &quot;number&quot;: 90
+      },
+      &quot;lastSeen&quot;: 1762862142923
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86xXDLR&quot;,
+        &quot;number&quot;: 82
+      },
+      &quot;lastSeen&quot;: 1762928206273
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86zMDfW&quot;,
+        &quot;number&quot;: 93
+      },
+      &quot;lastSeen&quot;: 1763031809092
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86zMw2S&quot;,
+        &quot;number&quot;: 95
+      },
+      &quot;lastSeen&quot;: 1763031835866
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86y6CER&quot;,
+        &quot;number&quot;: 91
+      },
+      &quot;lastSeen&quot;: 1763034703397
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86zNukv&quot;,
+        &quot;number&quot;: 97
+      },
+      &quot;lastSeen&quot;: 1763036016484
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86zN-35&quot;,
+        &quot;number&quot;: 98
+      },
+      &quot;lastSeen&quot;: 1763037319952
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86zO948&quot;,
+        &quot;number&quot;: 99
+      },
+      &quot;lastSeen&quot;: 1763092059214
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86zXH_L&quot;,
+        &quot;number&quot;: 100
+      },
+      &quot;lastSeen&quot;: 1763092109921
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86zXVTS&quot;,
+        &quot;number&quot;: 102
+      },
+      &quot;lastSeen&quot;: 1763097238673
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86zXM1_&quot;,
+        &quot;number&quot;: 101
+      },
+      &quot;lastSeen&quot;: 1763097240324
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86zXwLd&quot;,
+        &quot;number&quot;: 103
+      },
+      &quot;lastSeen&quot;: 1763109424780
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86zb0IQ&quot;,
+        &quot;number&quot;: 110
+      },
+      &quot;lastSeen&quot;: 1763119514123
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86zsHf6&quot;,
+        &quot;number&quot;: 115
+      },
+      &quot;lastSeen&quot;: 1763347132775
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86zxjSq&quot;,
+        &quot;number&quot;: 121
+      },
+      &quot;lastSeen&quot;: 1763355505458
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86zLpyl&quot;,
+        &quot;number&quot;: 92
+      },
+      &quot;lastSeen&quot;: 1763355506078
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86zyfog&quot;,
+        &quot;number&quot;: 125
+      },
+      &quot;lastSeen&quot;: 1763363297115
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86zynvQ&quot;,
+        &quot;number&quot;: 126
+      },
+      &quot;lastSeen&quot;: 1763364135415
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86zx4-X&quot;,
+        &quot;number&quot;: 123
+      },
+      &quot;lastSeen&quot;: 1763384542282
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86z3wkt&quot;,
+        &quot;number&quot;: 129
+      },
+      &quot;lastSeen&quot;: 1763452874881
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86ztxyI&quot;,
+        &quot;number&quot;: 117
+      },
+      &quot;lastSeen&quot;: 1763454290935
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86zyr4X&quot;,
+        &quot;number&quot;: 127
+      },
+      &quot;lastSeen&quot;: 1763454307716
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI860ArVD&quot;,
+        &quot;number&quot;: 134
+      },
+      &quot;lastSeen&quot;: 1763454317057
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI86z_aij&quot;,
+        &quot;number&quot;: 131
+      },
+      &quot;lastSeen&quot;: 1763464361105
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI860CFlg&quot;,
+        &quot;number&quot;: 135
+      },
+      &quot;lastSeen&quot;: 1763477330045
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI860IBHl&quot;,
+        &quot;number&quot;: 138
+      },
+      &quot;lastSeen&quot;: 1763477937238
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI860I48s&quot;,
+        &quot;number&quot;: 139
+      },
+      &quot;lastSeen&quot;: 1763478876442
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI860GyBG&quot;,
+        &quot;number&quot;: 137
+      },
+      &quot;lastSeen&quot;: 1763480350863
+    },
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQCIoI860Ffsl&quot;,
+        &quot;number&quot;: 136
+      },
+      &quot;lastSeen&quot;: 1763480590684
+    }
+  ]
+}</component>
+  <component name="GithubProjectSettings">
+    <option name="branchProtectionPatterns">
+      <list>
+        <option value="dev" />
+      </list>
+    </option>
+  </component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/ToYou-Sparta/oddventure.git&quot;,
+    &quot;accountId&quot;: &quot;70b470e4-59a5-4168-a2cf-e9c25ba2ce25&quot;
+  },
+  &quot;recentNewPullRequestHead&quot;: {
+    &quot;server&quot;: {
+      &quot;useHttp&quot;: false,
+      &quot;host&quot;: &quot;github.com&quot;,
+      &quot;port&quot;: null,
+      &quot;suffix&quot;: null
+    },
+    &quot;owner&quot;: &quot;ToYou-Sparta&quot;,
+    &quot;repository&quot;: &quot;oddventure&quot;
+  }
+}</component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
+  <component name="OptimizeOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="DEPENDENCY_CHECKER_PROBLEMS_TAB" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 3
+}</component>
+  <component name="ProjectId" id="343LkibNAiEdc4rmWGqj0monqM0" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Gradle.AdminControllerTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.AdminServiceTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.AdminServiceTest.updateMatch_Success.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.AuthControllerTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.AuthControllerTest.login.executor&quot;: &quot;Debug&quot;,
+    &quot;Gradle.AuthControllerTest.logout.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.AuthControllerTest.refresh_success.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.AuthControllerTest.signup.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.AuthControllerTest.signup_fail_exists_email.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.AuthControllerTest.signup_success.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.AuthServiceTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.AuthServiceTest.login_success.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.AuthServiceTest.signup_success.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.BetControllerTest.createBet_success.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.BetControllerTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.BetServiceConcurrencyTest.createBet_ConcurrencyTest_SuccessAndFailure.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.BetServiceTest.createBet_success.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.BetServiceTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Build oddventure.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ChatControllerTest.chatbotReply_success.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ChatControllerTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ChatControllerTest.reply_success.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ChatHistoryServiceTest.addMessage.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ChatHistoryServiceTest.addMessage_success.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ChatHistoryServiceTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ChatHistoryServiceTest.getRecentMessages_success.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ChatbotControllerTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ChatbotServiceTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ChatbotServiceTest.reply_general.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ChatbotServiceTest.reply_success.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Cs2NewsToolsRetryTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Cs2NewsToolsRetryTest.retry_and_fallback_are_triggered.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Cs2NewsToolsTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Cs2NewsToolsTest.queryCs2News_success.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Download Sources.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.HotKeywordToolsTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.HotKeywordToolsTest.queryHotKeywords_success.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.HotkeywordServiceTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.HotkeywordServiceTest.인기_검색어_Top5를_조회할_수_있다.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.JwtAuthenticationFilterTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.JwtUtilTest (1).executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.JwtUtilTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.JwtUtilTest.validateToken_fail.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.MatchControllerTest (1).executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.MatchControllerTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.MatchControllerTest.getMatch.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.MatchControllerTest.getMatchDetail_success.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.MatchControllerTest.getMatches.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.MatchControllerTest.searchMatches.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.MatchNotificationConsumerTest.consume.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.MatchNotificationConsumerTest.consume_odds_withSubscribers.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.MatchNotificationConsumerTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.MatchNotificationIntegrationTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.MatchNotificationIntegrationTest.match_notification_flow.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.MatchRepositoryTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.MatchRepositoryTest.incrementViewCount.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.MatchRepositoryTest.searchByCondition.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.MatchRepositoryTest.searchByCondition_orderBy.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.MatchServiceTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.MatchServiceTest.getMatch.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.MatchServiceTest.getMatch_matchNotFound.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.MatchServiceTest.getMatch_success.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.MatchServiceTest.searchMatches.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.MatchServiceTest.updateStatus_success.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.OddventureApplicationTests.contextLoads.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.PasswordValidatorTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.PasswordValidatorTest.tooShortPassword.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ScheduleToolsTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ScheduleToolsTest.querySchedule_kstToUtc.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ScheduleToolsTest.querySchedule_success.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.SecurityConfigTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.SecurityConfigTest.testPasswordEncoding.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.UserControllerTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.UserControllerTest.getMyProfile_Success.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.UserServiceTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.WinRateToolsTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.oddventure 빌드.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.소스 다운로드.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;Spring Boot.OddventureApplication.executor&quot;: &quot;Run&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/sparta/Project/oddventure&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;프로젝트&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;rearrange.code.on.save&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;terminal&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mysql&quot;,
+      &quot;mysql_aurora&quot;
+    ]
+  }
+}</component>
+  <component name="ReactorSettings">
+    <option name="notificationShown" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="org.example.oddventure.domain.ai.dto" />
+      <recent name="org.example.oddventure.domain.auth.dto.request" />
+      <recent name="org.example.oddventure.domain.auth.dto.response" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\sparta\Project\oddventure\src\test\java\org\example\oddventure\domain\auth\unit" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="org.example.oddventure.domain.ai.service" />
+      <recent name="org.example.oddventure.domain.match.dto.projection" />
+      <recent name="org.example.oddventure.common.config" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Spring Boot.OddventureApplication">
+    <configuration name="AuthServiceTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;org.example.oddventure.domain.auth.unit.AuthServiceTest&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="AuthServiceTest.signup_success" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;org.example.oddventure.domain.auth.unit.AuthServiceTest.signup_success&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="BetControllerTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;org.example.oddventure.domain.bet.unit.BetControllerTest&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="MatchControllerTest (1)" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;org.example.oddventure.domain.match.unit.MatchControllerTest&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="MatchControllerTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;org.example.oddventure.domain.match.controller.MatchControllerTest&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="OddventureApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="ACTIVE_PROFILES" value="local" />
+      <module name="oddventure_main" />
+      <option name="SHORTEN_COMMAND_LINE" value="ARGS_FILE" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="org.example.oddventure.OddventureApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="OddventureApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="oddventure.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="org.example.oddventure.OddventureApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <option name="SHORTEN_COMMAND_LINE" value="ARGS_FILE" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Gradle.AuthServiceTest" />
+      <item itemvalue="Gradle.AuthServiceTest.signup_success" />
+      <item itemvalue="Gradle.BetControllerTest" />
+      <item itemvalue="Gradle.MatchControllerTest" />
+      <item itemvalue="Gradle.MatchControllerTest (1)" />
+      <item itemvalue="Spring Boot.OddventureApplication" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Gradle.MatchControllerTest (1)" />
+        <item itemvalue="Gradle.MatchControllerTest" />
+        <item itemvalue="Gradle.BetControllerTest" />
+        <item itemvalue="Gradle.AuthServiceTest.signup_success" />
+        <item itemvalue="Gradle.AuthServiceTest" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.27397.103" />
+        <option value="bundled-js-predefined-d6986cc7102b-3aa1da707db6-JavaScript-IU-252.27397.103" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b30c7106-8c5e-47f0-8351-a5ecacc4f0c6" name="Changes" comment="" />
+      <created>1760437453892</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1760437453892</updated>
+      <workItem from="1760437455102" duration="4182000" />
+      <workItem from="1760441805750" duration="2976000" />
+      <workItem from="1760491741607" duration="23424000" />
+      <workItem from="1760578522484" duration="24639000" />
+      <workItem from="1760667813419" duration="12150000" />
+      <workItem from="1760684228591" duration="16005000" />
+      <workItem from="1760781582248" duration="9797000" />
+      <workItem from="1760869253379" duration="75000" />
+      <workItem from="1760869371556" duration="60000" />
+      <workItem from="1760869447760" duration="400000" />
+      <workItem from="1760869859508" duration="8931000" />
+      <workItem from="1760915811594" duration="34182000" />
+      <workItem from="1761024642183" duration="30000" />
+      <workItem from="1761029972764" duration="10630000" />
+      <workItem from="1761048019712" duration="9000" />
+      <workItem from="1761048209671" duration="671000" />
+      <workItem from="1761132839990" duration="681000" />
+      <workItem from="1761179312566" duration="35204000" />
+      <workItem from="1761262559666" duration="82000" />
+      <workItem from="1761262962426" duration="9999000" />
+      <workItem from="1761469633575" duration="2093000" />
+      <workItem from="1761520936630" duration="31523000" />
+      <workItem from="1761565237575" duration="5862000" />
+      <workItem from="1761603063860" duration="15489000" />
+      <workItem from="1761633754795" duration="11033000" />
+      <workItem from="1761715700421" duration="9310000" />
+      <workItem from="1761788851583" duration="4817000" />
+      <workItem from="1761805633955" duration="291000" />
+      <workItem from="1761821815514" duration="1903000" />
+      <workItem from="1761876348005" duration="8606000" />
+      <workItem from="1762133893557" duration="15619000" />
+      <workItem from="1762223971604" duration="12989000" />
+      <workItem from="1762251112816" duration="888000" />
+      <workItem from="1762252052539" duration="3813000" />
+      <workItem from="1762297580545" duration="7273000" />
+      <workItem from="1762319578132" duration="17632000" />
+      <workItem from="1762396934675" duration="12520000" />
+      <workItem from="1762480205363" duration="20973000" />
+      <workItem from="1762691292692" duration="5613000" />
+      <workItem from="1762731348865" duration="17885000" />
+      <workItem from="1762817879277" duration="6517000" />
+      <workItem from="1762860047847" duration="2143000" />
+      <workItem from="1762862402904" duration="110000" />
+      <workItem from="1762912392966" duration="5208000" />
+      <workItem from="1762932864163" duration="1000" />
+      <workItem from="1762942222636" duration="2984000" />
+      <workItem from="1762997542230" duration="2981000" />
+      <workItem from="1763011942525" duration="664000" />
+      <workItem from="1763013161891" duration="17000" />
+      <workItem from="1763014352179" duration="5000" />
+      <workItem from="1763014385905" duration="2591000" />
+      <workItem from="1763018026416" duration="10713000" />
+      <workItem from="1763083579003" duration="7739000" />
+      <workItem from="1763115111869" duration="4493000" />
+      <workItem from="1763246074082" duration="13779000" />
+      <workItem from="1763278553261" duration="6298000" />
+      <workItem from="1763337201312" duration="22541000" />
+      <workItem from="1763423443181" duration="48709000" />
+      <workItem from="1763481523661" duration="23000" />
+      <workItem from="1763481835435" duration="5234000" />
+      <workItem from="1763512099090" duration="1334000" />
+    </task>
+    <task id="LOCAL-00034" summary="Merge branch 'dev'">
+      <option name="closed" value="true" />
+      <created>1761274833682</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1761274833682</updated>
+    </task>
+    <task id="LOCAL-00035" summary="Merge branch 'dev'">
+      <option name="closed" value="true" />
+      <created>1761544799149</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1761544799149</updated>
+    </task>
+    <task id="LOCAL-00036" summary="fix: refresh token 재발급 시 user role 누락 오류 수정">
+      <option name="closed" value="true" />
+      <created>1761551636981</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1761551636981</updated>
+    </task>
+    <task id="LOCAL-00037" summary="merge branch 'dev'">
+      <option name="closed" value="true" />
+      <created>1761552110118</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1761552110118</updated>
+    </task>
+    <task id="LOCAL-00038" summary="merge branch 'dev'">
+      <option name="closed" value="true" />
+      <created>1761553248292</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1761553248292</updated>
+    </task>
+    <task id="LOCAL-00039" summary="merge branch 'dev'">
+      <option name="closed" value="true" />
+      <created>1761553484021</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1761553484021</updated>
+    </task>
+    <task id="LOCAL-00040" summary="feat: Redis Pub/Sub 기반 실시간 알림 기능 구현">
+      <option name="closed" value="true" />
+      <created>1761570055349</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1761570055349</updated>
+    </task>
+    <task id="LOCAL-00041" summary="test: RedisPublisher mock 추가">
+      <option name="closed" value="true" />
+      <created>1761635175198</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1761635175198</updated>
+    </task>
+    <task id="LOCAL-00042" summary="test: RedisPublisher mock 추가">
+      <option name="closed" value="true" />
+      <created>1761723940221</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1761723940221</updated>
+    </task>
+    <task id="LOCAL-00043" summary="fix: redis 환경 변수 설정 수정">
+      <option name="closed" value="true" />
+      <created>1761724450558</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1761724450558</updated>
+    </task>
+    <task id="LOCAL-00044" summary="fix: redis 환경 변수 설정 수정">
+      <option name="closed" value="true" />
+      <created>1761724711901</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1761724711901</updated>
+    </task>
+    <task id="LOCAL-00045" summary="fix: GitHub Actions 테스트 환경에서 Redis 연결 실패 해결">
+      <option name="closed" value="true" />
+      <created>1761725252047</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1761725252047</updated>
+    </task>
+    <task id="LOCAL-00046" summary="chore(config): add application-local.yml">
+      <option name="closed" value="true" />
+      <created>1761725444284</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1761725444284</updated>
+    </task>
+    <task id="LOCAL-00047" summary="fix: ci.yml redis 환경 변수 설정 수정">
+      <option name="closed" value="true" />
+      <created>1761725702351</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1761725702351</updated>
+    </task>
+    <task id="LOCAL-00048" summary="fix: ci.yml redis 환경 변수 설정 수정">
+      <option name="closed" value="true" />
+      <created>1761725816546</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1761725816546</updated>
+    </task>
+    <task id="LOCAL-00049" summary="feat: AI 챗봇 및 승률 예측 기능 통합 구현">
+      <option name="closed" value="true" />
+      <created>1762245776426</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1762245776426</updated>
+    </task>
+    <task id="LOCAL-00050" summary="feat: CoT 와 React 패턴 적용">
+      <option name="closed" value="true" />
+      <created>1762481741914</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1762481741914</updated>
+    </task>
+    <task id="LOCAL-00051" summary="refactor: UTC ↔ KST 변환 로직 추가, few-shot 프롬프트에 추가">
+      <option name="closed" value="true" />
+      <created>1762500537338</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1762500537338</updated>
+    </task>
+    <task id="LOCAL-00052" summary="refactor: HowKeywordTools, Cs2NewsTools 추가 &amp; 테스트 코드 작성">
+      <option name="closed" value="true" />
+      <created>1762774758822</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1762774758822</updated>
+    </task>
+    <task id="LOCAL-00053" summary="refactor: HowKeywordTools, Cs2NewsTools 추가 &amp; 테스트 코드 작성">
+      <option name="closed" value="true" />
+      <created>1762774860278</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1762774860278</updated>
+    </task>
+    <task id="LOCAL-00054" summary="fix: ChatbotControllerTest에 test profile 추가 활성화">
+      <option name="closed" value="true" />
+      <created>1762776435251</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1762776435251</updated>
+    </task>
+    <task id="LOCAL-00055" summary="fix: ChatController 클래스명 변경">
+      <option name="closed" value="true" />
+      <created>1762776996676</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1762776996676</updated>
+    </task>
+    <task id="LOCAL-00056" summary="refactor: 테스트용 Redis 발행 코드 추가">
+      <option name="closed" value="true" />
+      <created>1762826607566</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1762826607566</updated>
+    </task>
+    <task id="LOCAL-00057" summary="merge branch 'dev'">
+      <option name="closed" value="true" />
+      <created>1762861500748</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1762861500748</updated>
+    </task>
+    <task id="LOCAL-00058" summary="fix: searchMatches_success 요청 필드 누락 수정">
+      <option name="closed" value="true" />
+      <created>1762928113187</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1762928113187</updated>
+    </task>
+    <task id="LOCAL-00059" summary="feat: 챗봇 가상 스레드 부하 테스트 엔드포인트 및 k6 스크립트 추가">
+      <option name="closed" value="true" />
+      <created>1763299518531</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1763299518531</updated>
+    </task>
+    <task id="LOCAL-00060" summary="refactor: Steam API 안정성 강화를 위한 Resilience4j Retry + fallback 적용">
+      <option name="closed" value="true" />
+      <created>1763362702580</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1763362702580</updated>
+    </task>
+    <task id="LOCAL-00061" summary="test: Cs2NewTools 통합 테스트 코드 작성">
+      <option name="closed" value="true" />
+      <created>1763364361326</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1763364361326</updated>
+    </task>
+    <task id="LOCAL-00062" summary="refactor: Redis Pub/Sub 기반 알림 시스템을 RabbitMQ 기반으로 전환">
+      <option name="closed" value="true" />
+      <created>1763452348888</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1763452348888</updated>
+    </task>
+    <task id="LOCAL-00063" summary="fix: 불필요한 통합 테스트 코드 삭제">
+      <option name="closed" value="true" />
+      <created>1763453102791</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1763453102791</updated>
+    </task>
+    <task id="LOCAL-00064" summary="fix: 불필요한 gradle 삭제">
+      <option name="closed" value="true" />
+      <created>1763453434414</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1763453434414</updated>
+    </task>
+    <task id="LOCAL-00065" summary="fix: 미사용 클래스 삭제">
+      <option name="closed" value="true" />
+      <created>1763454029586</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1763454029586</updated>
+    </task>
+    <task id="LOCAL-00066" summary="fix: 미사용 클래스 삭제">
+      <option name="closed" value="true" />
+      <created>1763454167134</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1763454167134</updated>
+    </task>
+    <task id="LOCAL-00067" summary="fix: 미사용 클래스 삭제">
+      <option name="closed" value="true" />
+      <created>1763454751431</created>
+      <option name="number" value="00067" />
+      <option name="presentableId" value="LOCAL-00067" />
+      <option name="project" value="LOCAL" />
+      <updated>1763454751431</updated>
+    </task>
+    <task id="LOCAL-00068" summary="fix: 병합 시 생성된 중복 메서드 삭제">
+      <option name="closed" value="true" />
+      <created>1763455277607</created>
+      <option name="number" value="00068" />
+      <option name="presentableId" value="LOCAL-00068" />
+      <option name="project" value="LOCAL" />
+      <updated>1763455277607</updated>
+    </task>
+    <task id="LOCAL-00069" summary="test: BetService 동시성 테스트를 CI 환경에 맞게 안정화">
+      <option name="closed" value="true" />
+      <created>1763457285417</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
+      <option name="project" value="LOCAL" />
+      <updated>1763457285417</updated>
+    </task>
+    <task id="LOCAL-00070" summary="test: BetService 동시성 CI환경 테스트">
+      <option name="closed" value="true" />
+      <created>1763458036727</created>
+      <option name="number" value="00070" />
+      <option name="presentableId" value="LOCAL-00070" />
+      <option name="project" value="LOCAL" />
+      <updated>1763458036727</updated>
+    </task>
+    <task id="LOCAL-00071" summary="test: BetService 동시성 CI환경 테스트">
+      <option name="closed" value="true" />
+      <created>1763458333307</created>
+      <option name="number" value="00071" />
+      <option name="presentableId" value="LOCAL-00071" />
+      <option name="project" value="LOCAL" />
+      <updated>1763458333307</updated>
+    </task>
+    <task id="LOCAL-00072" summary="test: BetService 동시성 CI환경 테스트">
+      <option name="closed" value="true" />
+      <created>1763458797947</created>
+      <option name="number" value="00072" />
+      <option name="presentableId" value="LOCAL-00072" />
+      <option name="project" value="LOCAL" />
+      <updated>1763458797947</updated>
+    </task>
+    <task id="LOCAL-00073" summary="test: RabbitAutoConfiguration 테스트에서 exclude">
+      <option name="closed" value="true" />
+      <created>1763459869051</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1763459869051</updated>
+    </task>
+    <task id="LOCAL-00074" summary="test: 테스트">
+      <option name="closed" value="true" />
+      <created>1763460395913</created>
+      <option name="number" value="00074" />
+      <option name="presentableId" value="LOCAL-00074" />
+      <option name="project" value="LOCAL" />
+      <updated>1763460395913</updated>
+    </task>
+    <task id="LOCAL-00075" summary="test: 테스트">
+      <option name="closed" value="true" />
+      <created>1763460721137</created>
+      <option name="number" value="00075" />
+      <option name="presentableId" value="LOCAL-00075" />
+      <option name="project" value="LOCAL" />
+      <updated>1763460721137</updated>
+    </task>
+    <task id="LOCAL-00076" summary="test: 테스트">
+      <option name="closed" value="true" />
+      <created>1763464638611</created>
+      <option name="number" value="00076" />
+      <option name="presentableId" value="LOCAL-00076" />
+      <option name="project" value="LOCAL" />
+      <updated>1763464638611</updated>
+    </task>
+    <task id="LOCAL-00077" summary="test: 테스트">
+      <option name="closed" value="true" />
+      <created>1763464932068</created>
+      <option name="number" value="00077" />
+      <option name="presentableId" value="LOCAL-00077" />
+      <option name="project" value="LOCAL" />
+      <updated>1763464932068</updated>
+    </task>
+    <task id="LOCAL-00078" summary="test: 테스트">
+      <option name="closed" value="true" />
+      <created>1763465312839</created>
+      <option name="number" value="00078" />
+      <option name="presentableId" value="LOCAL-00078" />
+      <option name="project" value="LOCAL" />
+      <updated>1763465312839</updated>
+    </task>
+    <task id="LOCAL-00079" summary="fix: 잘못된 병합으로 유입된 과거 코드 및 설정 파일 제거">
+      <option name="closed" value="true" />
+      <created>1763478560784</created>
+      <option name="number" value="00079" />
+      <option name="presentableId" value="LOCAL-00079" />
+      <option name="project" value="LOCAL" />
+      <updated>1763478560784</updated>
+    </task>
+    <task id="LOCAL-00080" summary="test: ScheduleTools 테스트 UTC/KST 환경 차이로 인한 불안정성 해결">
+      <option name="closed" value="true" />
+      <created>1763479270515</created>
+      <option name="number" value="00080" />
+      <option name="presentableId" value="LOCAL-00080" />
+      <option name="project" value="LOCAL" />
+      <updated>1763479270515</updated>
+    </task>
+    <task id="LOCAL-00081" summary="test: ScheduleTools 테스트 UTC/KST 환경 차이로 인한 불안정성 해결">
+      <option name="closed" value="true" />
+      <created>1763479953532</created>
+      <option name="number" value="00081" />
+      <option name="presentableId" value="LOCAL-00081" />
+      <option name="project" value="LOCAL" />
+      <updated>1763479953532</updated>
+    </task>
+    <task id="LOCAL-00082" summary="test: ScheduleTools 테스트 UTC/KST 환경 차이로 인한 불안정성 해결">
+      <option name="closed" value="true" />
+      <created>1763480324461</created>
+      <option name="number" value="00082" />
+      <option name="presentableId" value="LOCAL-00082" />
+      <option name="project" value="LOCAL" />
+      <updated>1763480324461</updated>
+    </task>
+    <option name="localTasksCounter" value="83" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="origin/dev" />
+                </option>
+              </RecentGroup>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="feat/refresh-token-and-withdraw-auth" />
+                </option>
+              </RecentGroup>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="chore(config): add application-local.yml" />
+    <MESSAGE value="fix: ci.yml redis 환경 변수 설정 수정" />
+    <MESSAGE value="feat: AI 챗봇 및 승률 예측 기능 통합 구현" />
+    <MESSAGE value="feat: CoT 와 React 패턴 적용" />
+    <MESSAGE value="refactor: UTC ↔ KST 변환 로직 추가, few-shot 프롬프트에 추가" />
+    <MESSAGE value="refactor: HowKeywordTools, Cs2NewsTools 추가 &amp; 테스트 코드 작성" />
+    <MESSAGE value="fix: ChatbotControllerTest에 test profile 추가 활성화" />
+    <MESSAGE value="fix: ChatController 클래스명 변경" />
+    <MESSAGE value="refactor: 테스트용 Redis 발행 코드 추가" />
+    <MESSAGE value="merge branch 'dev'" />
+    <MESSAGE value="fix: searchMatches_success 요청 필드 누락 수정" />
+    <MESSAGE value="feat: 챗봇 가상 스레드 부하 테스트 엔드포인트 및 k6 스크립트 추가" />
+    <MESSAGE value="refactor: Steam API 안정성 강화를 위한 Resilience4j Retry + fallback 적용" />
+    <MESSAGE value="test: Cs2NewTools 통합 테스트 코드 작성" />
+    <MESSAGE value="refactor: Redis Pub/Sub 기반 알림 시스템을 RabbitMQ 기반으로 전환" />
+    <MESSAGE value="fix: 불필요한 통합 테스트 코드 삭제" />
+    <MESSAGE value="fix: 불필요한 gradle 삭제" />
+    <MESSAGE value="fix: 미사용 클래스 삭제" />
+    <MESSAGE value="fix: 병합 시 생성된 중복 메서드 삭제" />
+    <MESSAGE value="test: BetService 동시성 테스트를 CI 환경에 맞게 안정화" />
+    <MESSAGE value="test: BetService 동시성 CI환경 테스트" />
+    <MESSAGE value="test: RabbitAutoConfiguration 테스트에서 exclude" />
+    <MESSAGE value="test: 테스트" />
+    <MESSAGE value="fix: 잘못된 병합으로 유입된 과거 코드 및 설정 파일 제거" />
+    <MESSAGE value="test: ScheduleTools 테스트 UTC/KST 환경 차이로 인한 불안정성 해결" />
+    <option name="LAST_COMMIT_MESSAGE" value="test: ScheduleTools 테스트 UTC/KST 환경 차이로 인한 불안정성 해결" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>

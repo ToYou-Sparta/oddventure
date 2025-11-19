@@ -1,0 +1,11 @@
+[source,json,options="nowrap"]
+----
+{
+  "httpStatus" : "OK",
+  "code" : 200,
+  "success" : true,
+  "message" : "비밀번호 변경에 성공했습니다.",
+  "data" : null,
+  "timestamp" : "2025-11-19T10:10:20.4300918"
+}
+----

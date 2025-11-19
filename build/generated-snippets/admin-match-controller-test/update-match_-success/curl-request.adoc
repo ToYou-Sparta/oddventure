@@ -1,0 +1,12 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/api/v1/admin/matches/1?_csrf=PGddjj6jppuOCCK0NXEQhq6kkk95xnMBwzhIcL3BnrrkyjylCAU56g6VlfqjMUfWBVwktc-Svy5IpUEspw4rQYrxqoPX_V-c' -i -X PATCH \
+    -H 'Content-Type: application/json;charset=UTF-8' \
+    -d '{
+  "matchName" : "LCK",
+  "teamA" : "New Team A",
+  "teamB" : "New Team B",
+  "startTime" : "2025-11-21T10:09:59",
+  "status" : "ONGOING"
+}'
+----

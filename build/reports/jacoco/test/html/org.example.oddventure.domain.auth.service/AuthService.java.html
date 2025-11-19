@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuthService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oddventure</a> &gt; <a href="index.source.html" class="el_package">org.example.oddventure.domain.auth.service</a> &gt; <span class="el_source">AuthService.java</span></div><h1>AuthService.java</h1><pre class="source lang-java linenums">package org.example.oddventure.domain.auth.service;
+
+import static org.example.oddventure.domain.auth.jwt.JwtConstants.REFRESH_TOKEN_PREFIX;
+
+import java.time.Duration;
+import lombok.RequiredArgsConstructor;
+import org.example.oddventure.domain.auth.dto.request.LoginRequest;
+import org.example.oddventure.domain.auth.dto.request.SignupRequest;
+import org.example.oddventure.domain.auth.dto.request.WithdrawRequest;
+import org.example.oddventure.domain.auth.dto.response.AccessTokenResponse;
+import org.example.oddventure.domain.auth.dto.response.LoginResponse;
+import org.example.oddventure.domain.auth.dto.response.SignupResponse;
+import org.example.oddventure.domain.auth.exception.AuthErrorCode;
+import org.example.oddventure.domain.auth.exception.AuthException;
+import org.example.oddventure.domain.auth.jwt.JwtConstants;
+import org.example.oddventure.domain.auth.jwt.JwtUtil;
+import org.example.oddventure.domain.user.entity.User;
+import org.example.oddventure.domain.user.exception.UserErrorCode;
+import org.example.oddventure.domain.user.exception.UserException;
+import org.example.oddventure.domain.user.repository.UserRepository;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+public class AuthService {
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
+    private final RedisTemplate&lt;String, String&gt; redisTemplate;
+
+    @Transactional
+    public SignupResponse signup(SignupRequest request) {
+<span class="fc bfc" id="L37" title="All 2 branches covered.">        if (userRepository.existsByEmail((request.email()))) {</span>
+<span class="fc" id="L38">            throw new UserException(UserErrorCode.ALREADY_EXIST_EMAIL);</span>
+        }
+
+<span class="fc" id="L41">        String encodedPassword = passwordEncoder.encode(request.password());</span>
+<span class="fc" id="L42">        User user = User.builder()</span>
+<span class="fc" id="L43">                .username(request.username())</span>
+<span class="fc" id="L44">                .email(request.email())</span>
+<span class="fc" id="L45">                .password(encodedPassword)</span>
+<span class="fc" id="L46">                .build();</span>
+<span class="fc" id="L47">        User savedUser = userRepository.save(user);</span>
+
+<span class="fc" id="L49">        return SignupResponse.from(savedUser);</span>
+    }
+
+    @Transactional(readOnly = true)
+    public LoginResponse login(LoginRequest request) {
+<span class="fc" id="L54">        User user = userRepository.findByEmail(request.email())</span>
+<span class="fc" id="L55">                .orElseThrow(() -&gt; new AuthException(AuthErrorCode.INVALID_CREDENTIALS));</span>
+
+<span class="fc bfc" id="L57" title="All 2 branches covered.">        if (!passwordEncoder.matches(request.password(), user.getPassword())) {</span>
+<span class="fc" id="L58">            throw new AuthException(AuthErrorCode.INVALID_CREDENTIALS);</span>
+        }
+
+<span class="fc" id="L61">        String accessToken = jwtUtil.createAccessToken(user.getId(), user.getUserRole());</span>
+<span class="fc" id="L62">        String refreshToken = jwtUtil.createRefreshToken(user.getId());</span>
+
+<span class="fc" id="L64">        redisTemplate.opsForValue().set(</span>
+<span class="fc" id="L65">                REFRESH_TOKEN_PREFIX + user.getId(),</span>
+                refreshToken,
+<span class="fc" id="L67">                Duration.ofMillis(JwtConstants.REFRESH_TOKEN_EXPIRATION)</span>
+        );
+
+<span class="fc" id="L70">        return LoginResponse.of(accessToken, refreshToken);</span>
+    }
+
+    @Transactional
+    public void logout(Long userId) {
+<span class="fc" id="L75">        redisTemplate.delete(REFRESH_TOKEN_PREFIX + userId);</span>
+<span class="fc" id="L76">    }</span>
+
+    @Transactional
+    public void withdraw(Long userId, WithdrawRequest request) {
+<span class="fc" id="L80">        User user = userRepository.findById(userId)</span>
+<span class="pc" id="L81">                .orElseThrow(() -&gt; new UserException(UserErrorCode.USER_NOT_FOUND));</span>
+
+<span class="fc bfc" id="L83" title="All 2 branches covered.">        if (!passwordEncoder.matches(request.password(), user.getPassword())) {</span>
+<span class="fc" id="L84">            throw new UserException(UserErrorCode.PASSWORD_INCORRECT);</span>
+        }
+
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        if (user.isDeleted()) {</span>
+<span class="fc" id="L88">            throw new UserException(UserErrorCode.ALREADY_WITHDRAWN);</span>
+        }
+
+<span class="fc" id="L91">        user.delete();</span>
+<span class="fc" id="L92">        redisTemplate.delete(REFRESH_TOKEN_PREFIX + userId);</span>
+<span class="fc" id="L93">    }</span>
+
+    public AccessTokenResponse refresh(String refreshToken) {
+<span class="pc bpc" id="L96" title="1 of 4 branches missed.">        if (refreshToken == null || !jwtUtil.validateToken(refreshToken)) {</span>
+<span class="fc" id="L97">            throw new AuthException(AuthErrorCode.TOKEN_INVALID);</span>
+        }
+
+<span class="fc" id="L100">        Long userId = jwtUtil.extractUserId(refreshToken);</span>
+<span class="fc" id="L101">        String storedToken = redisTemplate.opsForValue().get(REFRESH_TOKEN_PREFIX + userId);</span>
+
+<span class="pc bpc" id="L103" title="1 of 4 branches missed.">        if (storedToken == null || !storedToken.equals(refreshToken)) {</span>
+<span class="fc" id="L104">            throw new AuthException(AuthErrorCode.REFRESH_TOKEN_MISMATCH);</span>
+        }
+
+<span class="fc" id="L107">        User user = userRepository.findById(userId)</span>
+<span class="pc" id="L108">                .orElseThrow(() -&gt; new UserException(UserErrorCode.USER_NOT_FOUND));</span>
+
+<span class="fc" id="L110">        String newAccessToken = jwtUtil.createAccessToken(userId, user.getUserRole());</span>
+
+<span class="fc" id="L112">        return AccessTokenResponse.of(newAccessToken);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

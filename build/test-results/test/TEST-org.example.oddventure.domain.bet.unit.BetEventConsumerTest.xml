@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.example.oddventure.domain.bet.unit.BetEventConsumerTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-11-19T01:10:03.770Z" hostname="DESKTOP-9Q5JQDP" time="0.003">
+  <properties/>
+  <testcase name="포인트 이벤트를 소비하여 포인트를 지급에 성공한다." classname="org.example.oddventure.domain.bet.unit.BetEventConsumerTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,9 @@
+[source,bash]
+----
+$ echo '{
+  "matchId" : 1,
+  "selectedTeam" : "Team_A",
+  "betAmount" : 1000
+}' | http POST 'http://localhost:8080/api/v1/bets' \
+    'Content-Type:application/json;charset=UTF-8'
+----

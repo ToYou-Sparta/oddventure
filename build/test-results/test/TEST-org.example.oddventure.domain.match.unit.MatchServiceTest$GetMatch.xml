@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="경기 상세 조회 (캐시 적용)" tests="2" skipped="0" failures="0" errors="0" timestamp="2025-11-19T01:10:20.008Z" hostname="DESKTOP-9Q5JQDP" time="0.004">
+  <properties/>
+  <testcase name="경기 상세 조회 실패 - findById 실패 시 MatchException 발생" classname="org.example.oddventure.domain.match.unit.MatchServiceTest$GetMatch" time="0.003"/>
+  <testcase name="경기 상세 조회 성공" classname="org.example.oddventure.domain.match.unit.MatchServiceTest$GetMatch" time="0.001"/>
+  <system-out><![CDATA[2025-11-19T10:10:20.009+09:00  INFO 18272 --- [    Test worker] o.e.o.domain.match.service.MatchService  : getMatch for matchId: 1
+2025-11-19T10:10:20.011+09:00  INFO 18272 --- [    Test worker] o.e.o.domain.match.service.MatchService  : getMatch for matchId: 1
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

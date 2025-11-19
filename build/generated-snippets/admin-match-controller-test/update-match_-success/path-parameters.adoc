@@ -1,0 +1,8 @@
+.+/api/v1/admin/matches/{matchId}+
+|===
+|Parameter|Description
+
+|`+matchId+`
+|수정할 경기 ID
+
+|===

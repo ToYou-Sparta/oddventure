@@ -1,0 +1,15 @@
+[source,http,options="nowrap"]
+----
+PATCH /api/v1/admin/matches/1?_csrf=PGddjj6jppuOCCK0NXEQhq6kkk95xnMBwzhIcL3BnrrkyjylCAU56g6VlfqjMUfWBVwktc-Svy5IpUEspw4rQYrxqoPX_V-c HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Content-Length: 146
+Host: localhost:8080
+
+{
+  "matchName" : "LCK",
+  "teamA" : "New Team A",
+  "teamB" : "New Team B",
+  "startTime" : "2025-11-21T10:09:59",
+  "status" : "ONGOING"
+}
+----

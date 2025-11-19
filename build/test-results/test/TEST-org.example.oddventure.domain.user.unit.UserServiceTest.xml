@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.example.oddventure.domain.user.unit.UserServiceTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2025-11-19T01:10:20.903Z" hostname="DESKTOP-9Q5JQDP" time="0.066">
+  <properties/>
+  <testcase name="프로필 수정 성공 - 이메일 변경" classname="org.example.oddventure.domain.user.unit.UserServiceTest" time="0.057"/>
+  <testcase name="사용자 프로필 조회 성공" classname="org.example.oddventure.domain.user.unit.UserServiceTest" time="0.0"/>
+  <testcase name="프로필 수정 실패 - 이메일 중복" classname="org.example.oddventure.domain.user.unit.UserServiceTest" time="0.001"/>
+  <testcase name="프로필 수정 성공 - 이메일 변경 없음" classname="org.example.oddventure.domain.user.unit.UserServiceTest" time="0.005"/>
+  <testcase name="비밀번호 변경 성공" classname="org.example.oddventure.domain.user.unit.UserServiceTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

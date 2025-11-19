@@ -1,0 +1,9 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/api/v1/users/me?_csrf=AeaGOC7V3Pjq7fz-J1rwz7cmlIiJzasN_h8bSxhFix_MhPcGZ9XgDUjg7snH3s3OQ3fE-tERuent-sggzikuLnl9ui7-5sRn' -i -X PATCH \
+    -H 'Content-Type: application/json;charset=UTF-8' \
+    -d '{
+  "username" : "newName",
+  "email" : "new@email.com"
+}'
+----

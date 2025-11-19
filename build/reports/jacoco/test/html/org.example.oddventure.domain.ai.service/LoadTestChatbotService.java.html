@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LoadTestChatbotService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oddventure</a> &gt; <a href="index.source.html" class="el_package">org.example.oddventure.domain.ai.service</a> &gt; <span class="el_source">LoadTestChatbotService.java</span></div><h1>LoadTestChatbotService.java</h1><pre class="source lang-java linenums">package org.example.oddventure.domain.ai.service;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class LoadTestChatbotService {
+
+    private static final long LATENCY_MS = 500L;
+
+    public String reply(String userMessage) {
+        try {
+<span class="nc" id="L14">            Thread.sleep(LATENCY_MS);</span>
+<span class="nc" id="L15">        } catch (InterruptedException e) {</span>
+<span class="nc" id="L16">            Thread.currentThread().interrupt();</span>
+<span class="nc" id="L17">        }</span>
+
+<span class="nc" id="L19">        return &quot;[loadtest] 실제 Groq 호출 없이 생성된 테스트 응답입니다. :&quot; + userMessage;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

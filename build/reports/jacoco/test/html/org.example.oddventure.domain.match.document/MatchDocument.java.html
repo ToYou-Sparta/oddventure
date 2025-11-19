@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MatchDocument.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oddventure</a> &gt; <a href="index.source.html" class="el_package">org.example.oddventure.domain.match.document</a> &gt; <span class="el_source">MatchDocument.java</span></div><h1>MatchDocument.java</h1><pre class="source lang-java linenums">package org.example.oddventure.domain.match.document;
+
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.*;
+import org.example.oddventure.domain.match.entity.Match;
+import org.springframework.data.elasticsearch.annotations.DateFormat;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+/**
+ * Elasticsearch에 저장되는 Match 문서
+ * MySQL의 Match 엔티티랑 별도
+ */
+
+@Document(indexName = &quot;matches&quot;)
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
+public class MatchDocument {
+
+    @Id
+    private String id;
+
+    @Field(type = FieldType.Long)
+    private Long fetchId;
+
+    @Field(type = FieldType.Text, analyzer = &quot;standard&quot;, searchAnalyzer = &quot;standard&quot;)
+    private String matchName;
+
+    @Field(type = FieldType.Text, analyzer = &quot;standard&quot;, searchAnalyzer = &quot;standard&quot;)
+    private String teamA;
+
+    @Field(type = FieldType.Text, analyzer = &quot;standard&quot;, searchAnalyzer = &quot;standard&quot;)
+    private String teamB;
+
+    @Field(type = FieldType.Double)
+    private BigDecimal totalAmountA;
+
+    @Field(type = FieldType.Double)
+    private BigDecimal totalAmountB;
+
+    @Field(type = FieldType.Date, format = DateFormat.date_hour_minute_second)
+    private LocalDateTime startTime;
+
+    @Field(type = FieldType.Date, format = DateFormat.date_hour_minute_second)
+    private LocalDateTime endTime;
+
+    @Field(type = FieldType.Keyword)
+    private String status;
+
+    @Field(type = FieldType.Keyword)
+    private String winner;
+
+    @Field(type = FieldType.Keyword)
+    private String loser;
+
+    @Field(type = FieldType.Long)
+    private Long viewCount;
+
+    @Field(type = FieldType.Date, format = DateFormat.date_hour_minute_second)
+    private LocalDateTime createdAt;
+
+    /**
+     * MySQL Match 엔티티를 Elasticsearch Document로 변환
+     */
+    public static MatchDocument from(Match match) {
+<span class="fc" id="L74">        return MatchDocument.builder()</span>
+<span class="fc" id="L75">                .id(String.valueOf(match.getId()))  // MySQL ID를 문자열로 변환</span>
+<span class="fc" id="L76">                .fetchId(match.getFetchId())</span>
+<span class="fc" id="L77">                .matchName(match.getMatchName())</span>
+<span class="fc" id="L78">                .teamA(match.getTeamA())</span>
+<span class="fc" id="L79">                .teamB(match.getTeamB())</span>
+<span class="fc" id="L80">                .totalAmountA(match.getTotalAmountA())</span>
+<span class="fc" id="L81">                .totalAmountB(match.getTotalAmountB())</span>
+<span class="fc" id="L82">                .startTime(match.getStartTime())</span>
+<span class="fc" id="L83">                .endTime(match.getEndTime())</span>
+<span class="fc" id="L84">                .status(match.getStatus().name())</span>
+<span class="fc" id="L85">                .winner(match.getWinner())</span>
+<span class="fc" id="L86">                .loser(match.getLoser())</span>
+<span class="fc" id="L87">                .viewCount(match.getViewCount())</span>
+<span class="fc" id="L88">                .createdAt(match.getCreatedAt())</span>
+<span class="fc" id="L89">                .build();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

@@ -1,0 +1,12 @@
+|===
+|Path|Type|Description
+
+|`+amount+`
+|`+Number+`
+|조정할 포인트 (양수: 지급)
+
+|`+reason+`
+|`+String+`
+|조정 사유 (로그 기록용)
+
+|===

@@ -1,0 +1,16 @@
+[source,json,options="nowrap"]
+----
+{
+  "httpStatus" : "OK",
+  "code" : 200,
+  "success" : true,
+  "message" : "포인트 지급에 성공했습니다.",
+  "data" : {
+    "userId" : 1,
+    "username" : "testuser",
+    "adjustedAmount" : 5000,
+    "finalBalance" : 6000
+  },
+  "timestamp" : "2025-11-19T10:10:00.1041411"
+}
+----

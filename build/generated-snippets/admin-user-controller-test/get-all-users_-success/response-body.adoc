@@ -1,0 +1,24 @@
+[source,json,options="nowrap"]
+----
+{
+  "httpStatus" : "OK",
+  "code" : 200,
+  "success" : true,
+  "message" : "사용자 목록 조회에 성공했습니다.",
+  "data" : {
+    "content" : [ {
+      "userId" : 1,
+      "username" : "testuser1",
+      "email" : "test1@email.com",
+      "point" : 1000,
+      "role" : "ROLE_USER",
+      "createdAt" : "2025-11-19T10:10:00.0003251"
+    } ],
+    "totalElements" : 1,
+    "totalPages" : 1,
+    "size" : 5,
+    "number" : 0
+  },
+  "timestamp" : "2025-11-19T10:10:00.0239609"
+}
+----

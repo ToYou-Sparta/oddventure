@@ -1,0 +1,18 @@
+[source,json,options="nowrap"]
+----
+{
+  "httpStatus" : "CREATED",
+  "code" : 201,
+  "success" : true,
+  "message" : "회원가입이 완료되었습니다.",
+  "data" : {
+    "userId" : 1,
+    "username" : "hello",
+    "email" : "hello@naver.com",
+    "role" : "ROLE_USER",
+    "point" : 1000,
+    "createdAt" : "2025-11-19T10:10:02.7811686"
+  },
+  "timestamp" : "2025-11-19T10:10:02.8011933"
+}
+----

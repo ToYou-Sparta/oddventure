@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - UserControllerTest</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>UserControllerTest</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/org.example.oddventure.domain.user.unit.html">org.example.oddventure.domain.user.unit</a> &gt; UserControllerTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">3</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">0.061s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="tab-container">
+<ul class="tabLinks">
+<li>
+<a href="#">Tests</a>
+</li>
+<li>
+<a href="#">Standard output</a>
+</li>
+</ul>
+<div class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Method name</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">GET /me - 내 프로필 조회 API</td>
+<td class="success">getMyProfile_Success()</td>
+<td class="success">0.022s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">PATCH /me - 내 프로필 수정 API</td>
+<td class="success">updateMyProfile_Success()</td>
+<td class="success">0.018s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">PATCH /password - 비밀번호 변경 API</td>
+<td class="success">updatePassword_Success()</td>
+<td class="success">0.021s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>2025-11-19T10:10:20.144+09:00  INFO 18272 --- [    Test worker] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [org.example.oddventure.domain.user.unit.UserControllerTest]: UserControllerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2025-11-19T10:10:20.182+09:00  INFO 18272 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration org.example.oddventure.OddventureApplication for test class org.example.oddventure.domain.user.unit.UserControllerTest
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.5.6)
+
+2025-11-19T10:10:20.196+09:00  INFO 18272 --- [    Test worker] o.e.o.d.user.unit.UserControllerTest     : Starting UserControllerTest using Java 21.0.9 with PID 18272 (started by Main in C:\sparta\Project\oddventure)
+2025-11-19T10:10:20.196+09:00  INFO 18272 --- [    Test worker] o.e.o.d.user.unit.UserControllerTest     : No active profile set, falling back to 1 default profile: &quot;default&quot;
+2025-11-19T10:10:20.342+09:00  INFO 18272 --- [    Test worker] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
+2025-11-19T10:10:20.362+09:00  WARN 18272 --- [    Test worker] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 80dbfec9-be03-40b2-82b3-3268edd93b3a
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-11-19T10:10:20.362+09:00  INFO 18272 --- [    Test worker] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-11-19T10:10:20.394+09:00  INFO 18272 --- [    Test worker] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2025-11-19T10:10:20.394+09:00  INFO 18272 --- [    Test worker] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2025-11-19T10:10:20.394+09:00  INFO 18272 --- [    Test worker] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2025-11-19T10:10:20.398+09:00  INFO 18272 --- [    Test worker] o.e.o.d.user.unit.UserControllerTest     : Started UserControllerTest in 0.214 seconds (process running for 40.015)
+2025-11-19T10:10:20.399+09:00  INFO 18272 --- [    Test worker] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2025-11-19T10:10:20.401+09:00  INFO 18272 --- [    Test worker] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2025-11-19T10:10:20.401+09:00  INFO 18272 --- [    Test worker] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2025-11-19T10:10:20.422+09:00  INFO 18272 --- [    Test worker] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2025-11-19T10:10:20.422+09:00  INFO 18272 --- [    Test worker] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2025-11-19T10:10:20.422+09:00  INFO 18272 --- [    Test worker] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2025-11-19T10:10:20.444+09:00  INFO 18272 --- [    Test worker] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2025-11-19T10:10:20.444+09:00  INFO 18272 --- [    Test worker] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2025-11-19T10:10:20.444+09:00  INFO 18272 --- [    Test worker] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="https://www.gradle.org">Gradle 8.14.3</a> at 2025. 11. 19. 오전 10:10:24</p>
+</div>
+</div>
+</body>
+</html>

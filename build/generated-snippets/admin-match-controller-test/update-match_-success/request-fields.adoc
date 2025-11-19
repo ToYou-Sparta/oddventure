@@ -1,0 +1,24 @@
+|===
+|Path|Type|Description
+
+|`+matchName+`
+|`+String+`
+|변경할 경기 이름 (선택적)
+
+|`+teamA+`
+|`+String+`
+|변경할 A팀 이름 (선택적)
+
+|`+teamB+`
+|`+String+`
+|변경할 B팀 이름 (선택적)
+
+|`+startTime+`
+|`+String+`
+|변경할 경기 시작 시간 (선택적)
+
+|`+status+`
+|`+String+`
+|변경할 경기 상태 (선택적)
+
+|===

@@ -1,0 +1,15 @@
+[source,json,options="nowrap"]
+----
+{
+  "httpStatus" : "OK",
+  "code" : 200,
+  "success" : true,
+  "message" : "베팅이 취소되었습니다.",
+  "data" : {
+    "betId" : 1,
+    "refundAmount" : 1000,
+    "userPointAfter" : 0
+  },
+  "timestamp" : "2025-11-19T10:10:03.7217441"
+}
+----

@@ -1,0 +1,24 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 201 Created
+Content-Type: application/json;charset=UTF-8
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+Content-Length: 238
+
+{
+  "httpStatus" : "CREATED",
+  "code" : 201,
+  "success" : true,
+  "message" : "매치가 생성되었습니다.",
+  "data" : {
+    "totalMatches" : 1,
+    "fetchIds" : [ 1 ]
+  },
+  "timestamp" : "2025-11-19T10:09:58.7873267"
+}
+----

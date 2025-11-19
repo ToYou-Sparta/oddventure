@@ -1,0 +1,8 @@
+.+/api/v1/admin/users/{userId}+
+|===
+|Parameter|Description
+
+|`+userId+`
+|조회할 사용자 ID
+
+|===

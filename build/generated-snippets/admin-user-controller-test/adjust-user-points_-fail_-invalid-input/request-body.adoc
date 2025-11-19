@@ -1,0 +1,7 @@
+[source,json,options="nowrap"]
+----
+{
+  "amount" : 5000,
+  "reason" : ""
+}
+----

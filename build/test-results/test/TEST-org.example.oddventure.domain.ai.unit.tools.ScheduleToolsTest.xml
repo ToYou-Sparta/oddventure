@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.example.oddventure.domain.ai.unit.tools.ScheduleToolsTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2025-11-19T01:10:02.071Z" hostname="DESKTOP-9Q5JQDP" time="0.088">
+  <properties/>
+  <testcase name="일정이 있으면 정상 응답을 반환한다" classname="org.example.oddventure.domain.ai.unit.tools.ScheduleToolsTest" time="0.079"/>
+  <testcase name="KST(사용자 입력) 시간대를 UTC(DB 저장)로 변환하여 조회한다" classname="org.example.oddventure.domain.ai.unit.tools.ScheduleToolsTest" time="0.005"/>
+  <testcase name="일정이 없으면 noMatch 응답을 반환한다" classname="org.example.oddventure.domain.ai.unit.tools.ScheduleToolsTest" time="0.001"/>
+  <testcase name="M월 d일 요청 시 해당 날짜의 일정을 조회한다" classname="org.example.oddventure.domain.ai.unit.tools.ScheduleToolsTest" time="0.001"/>
+  <system-out><![CDATA[조회된 경기 수: 1
+조회된 경기 수: 1
+조회된 경기 수: 0
+조회된 경기 수: 1
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

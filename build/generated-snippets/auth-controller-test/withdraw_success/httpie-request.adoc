@@ -1,0 +1,7 @@
+[source,bash]
+----
+$ echo '{
+  "password" : "hello123!@#"
+}' | http DELETE 'http://localhost:8080/api/v1/auth/withdraw' \
+    'Content-Type:application/json;charset=UTF-8'
+----

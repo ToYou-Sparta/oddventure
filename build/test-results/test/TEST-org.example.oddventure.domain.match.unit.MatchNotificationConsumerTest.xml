@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.example.oddventure.domain.match.unit.MatchNotificationConsumerTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2025-11-19T01:10:16.437Z" hostname="DESKTOP-9Q5JQDP" time="0.079">
+  <properties/>
+  <testcase name="매치 상태 변경 이벤트 발생 시 모든 사용자에게 알림이 전송된다" classname="org.example.oddventure.domain.match.unit.MatchNotificationConsumerTest" time="0.078"/>
+  <testcase name="배당률 변경 이벤트 발생 시 베팅한 사용자들에게만 알림이 전송된다" classname="org.example.oddventure.domain.match.unit.MatchNotificationConsumerTest" time="0.001"/>
+  <system-out><![CDATA[2025-11-19T10:10:16.508+09:00  INFO 18272 --- [    Test worker] o.e.o.d.m.e.MatchNotificationConsumer    : [RabbitMQ:MatchStatus] matchId=123, destination=/topic/matches/123/status, payload=MatchInfoUpdateDto[matchId=123, matchName=Galaxy Battle Phase 5, teamA=Novaq, teamB=Premdesant, startTime=2025-11-19T10:10:16.505521800, status=ONGOING]
+2025-11-19T10:10:16.516+09:00  INFO 18272 --- [    Test worker] o.e.o.d.m.e.MatchNotificationConsumer    : [RabbitMQ:Odds] matchId=123, sent to 2 subscribers, payload=MatchOddsUpdateDto[matchId=123, selectedTeam=Novaq, odds=1.5]
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

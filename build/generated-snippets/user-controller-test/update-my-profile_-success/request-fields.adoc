@@ -1,0 +1,12 @@
+|===
+|Path|Type|Description
+
+|`+username+`
+|`+String+`
+|변경할 사용자 이름 (2~10자, 선택적)
+
+|`+email+`
+|`+String+`
+|변경할 이메일 (형식 준수, 선택적)
+
+|===

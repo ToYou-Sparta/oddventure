@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RabbitMQConfig.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oddventure</a> &gt; <a href="index.source.html" class="el_package">org.example.oddventure.common.config</a> &gt; <span class="el_source">RabbitMQConfig.java</span></div><h1>RabbitMQConfig.java</h1><pre class="source lang-java linenums">package org.example.oddventure.common.config;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.DirectExchange;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.QueueBuilder;
+import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+<span class="fc" id="L17">@Slf4j</span>
+@Configuration
+<span class="fc" id="L19">public class RabbitMQConfig {</span>
+    public static final String DELAY_EXCHANGE = &quot;match.delay.exchange&quot;;
+    public static final String DELAY_QUEUE = &quot;match.delay.queue&quot;;
+    public static final String DLX_EXCHANGE = &quot;match.dlx.exchange&quot;;
+    public static final String REAL_QUEUE = &quot;match.real.queue&quot;;
+    public static final String DELAY_ROUTING_KEY = &quot;match.delay&quot;;
+    public static final String REAL_ROUTING_KEY = &quot;match.real&quot;;
+    public static final String POINT_EXCHANGE = &quot;bet.point.exchange&quot;;
+    public static final String POINT_QUEUE = &quot;bet.point.queue&quot;;
+    public static final String POINT_ROUTING_KEY = &quot;bet.point.adjust&quot;;
+
+    // Elasticsearch 동기화용
+    public static final String ES_SYNC_EXCHANGE = &quot;match.es.sync.exchange&quot;;
+    public static final String ES_SYNC_QUEUE = &quot;match.es.sync.queue&quot;;
+    public static final String ES_SYNC_CREATED_KEY = &quot;match.es.created&quot;;
+    public static final String ES_SYNC_UPDATED_KEY = &quot;match.es.updated&quot;;
+    public static final String ES_SYNC_DELETED_KEY = &quot;match.es.deleted&quot;;
+
+    // 실시간 알림용
+    public static final String MATCH_NOTIFY_EXCHANGE = &quot;match.notify.exchange&quot;;
+    public static final String MATCH_NOTIFY_QUEUE = &quot;match.notify.queue&quot;;
+
+    @Bean
+    public TopicExchange pointExchange() {
+<span class="fc" id="L43">        return new TopicExchange(POINT_EXCHANGE);</span>
+    }
+
+    @Bean
+    public Queue pointQueue() {
+<span class="fc" id="L48">        return new Queue(POINT_QUEUE, true);</span>
+    }
+
+    @Bean
+    public Binding pointBinding() {
+<span class="fc" id="L53">        return BindingBuilder</span>
+<span class="fc" id="L54">                .bind(pointQueue())</span>
+<span class="fc" id="L55">                .to(pointExchange())</span>
+<span class="fc" id="L56">                .with(POINT_ROUTING_KEY);</span>
+    }
+
+    @Bean
+    public DirectExchange delayExchange() {
+<span class="fc" id="L61">        return new DirectExchange(DELAY_EXCHANGE);</span>
+    }
+
+    @Bean
+    public DirectExchange dlxExchange() {
+<span class="fc" id="L66">        return new DirectExchange(DLX_EXCHANGE);</span>
+    }
+
+    @Bean
+    public Queue delayQueue() {
+<span class="fc" id="L71">        return QueueBuilder.durable(DELAY_QUEUE)</span>
+<span class="fc" id="L72">                .withArgument(&quot;x-dead-letter-exchange&quot;, DLX_EXCHANGE)</span>
+<span class="fc" id="L73">                .withArgument(&quot;x-dead-letter-routing-key&quot;, REAL_ROUTING_KEY)</span>
+<span class="fc" id="L74">                .build();</span>
+    }
+
+    @Bean
+    public Queue realQueue() {
+<span class="fc" id="L79">        return QueueBuilder.durable(REAL_QUEUE).build();</span>
+    }
+
+    @Bean
+    public Binding delayBinding() {
+<span class="fc" id="L84">        return BindingBuilder.bind(delayQueue()).to(delayExchange()).with(&quot;match.delay&quot;);</span>
+    }
+
+    @Bean
+    public Binding realBinding() {
+<span class="fc" id="L89">        return BindingBuilder.bind(realQueue())</span>
+<span class="fc" id="L90">                .to(dlxExchange())</span>
+<span class="fc" id="L91">                .with(REAL_ROUTING_KEY);</span>
+    }
+
+    // Elasticsearch 동기화용 Exchange
+    @Bean
+    public TopicExchange esSyncExchange() {
+<span class="fc" id="L97">        return new TopicExchange(ES_SYNC_EXCHANGE);</span>
+    }
+
+    // Elasticsearch 동기화용 Queue (메시지 손실 방지 설정)
+    @Bean
+    public Queue esSyncQueue() {
+<span class="fc" id="L103">        return QueueBuilder.durable(ES_SYNC_QUEUE)</span>
+<span class="fc" id="L104">                .maxLength(10000L)  // 최대 큐 크기 설정 (1만건)</span>
+<span class="fc" id="L105">                .overflow(QueueBuilder.Overflow.rejectPublish)  // 초과 시 publish 거부 (메시지 손실 방지)</span>
+<span class="fc" id="L106">                .build();</span>
+    }
+
+    // Elasticsearch 동기화용 Binding (match.es.* 패턴 모두 수신)
+    @Bean
+    public Binding esSyncBinding() {
+<span class="fc" id="L112">        return BindingBuilder</span>
+<span class="fc" id="L113">                .bind(esSyncQueue())</span>
+<span class="fc" id="L114">                .to(esSyncExchange())</span>
+<span class="fc" id="L115">                .with(&quot;match.es.*&quot;);</span>
+    }
+
+    @Bean
+    public MessageConverter jsonMessageConverter() {
+<span class="fc" id="L120">        return new Jackson2JsonMessageConverter();</span>
+    }
+
+    @Bean
+    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
+<span class="fc" id="L125">        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);</span>
+<span class="fc" id="L126">        rabbitTemplate.setMessageConverter(jsonMessageConverter());</span>
+
+        // Publisher Confirms 활성화 (메시지 전송 성공 확인)
+<span class="fc" id="L129">        rabbitTemplate.setMandatory(true);</span>
+
+        // Publisher Returns 처리 (라우팅 실패 시)
+<span class="fc" id="L132">        rabbitTemplate.setReturnsCallback(returned -&gt; {</span>
+<span class="nc" id="L133">            log.error(&quot;메시지 라우팅 실패 - exchange: {}, routingKey: {}, replyText: {}&quot;,</span>
+<span class="nc" id="L134">                    returned.getExchange(), returned.getRoutingKey(), returned.getReplyText());</span>
+<span class="nc" id="L135">        });</span>
+
+<span class="fc" id="L137">        return rabbitTemplate;</span>
+    }
+
+    @Bean
+    public TopicExchange matchNotifyExchange() {
+<span class="fc" id="L142">        return new TopicExchange(MATCH_NOTIFY_EXCHANGE);</span>
+    }
+
+    @Bean
+    public Queue matchNotifyQueue() {
+<span class="fc" id="L147">        return new Queue(MATCH_NOTIFY_QUEUE, true);</span>
+    }
+
+    @Bean
+    public Binding matchNotifyBinding() {
+<span class="fc" id="L152">        return BindingBuilder</span>
+<span class="fc" id="L153">                .bind(matchNotifyQueue())</span>
+<span class="fc" id="L154">                .to(matchNotifyExchange())</span>
+<span class="fc" id="L155">                .with(&quot;match.*.*&quot;);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

@@ -1,0 +1,8 @@
+[source,json,options="nowrap"]
+----
+{
+  "keyword" : "",
+  "fromDate" : null,
+  "toDate" : null
+}
+----

@@ -1,0 +1,12 @@
+[source,http,options="nowrap"]
+----
+POST /api/v1/admin/users/1/points?_csrf=iG6W44S319BPaf1YLL7wpBewuQv64hd9oX5Z3sF4m43xHb0vuwjw17SCsrNiXZhgFZPEliaClGnL0SFQmRg6vKUZrbXHLowe HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Content-Length: 41
+Host: localhost:8080
+
+{
+  "amount" : 5000,
+  "reason" : ""
+}
+----

@@ -1,0 +1,46 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+  ai:
+    openai:
+      api-key: ${API_KEY}
+      base-url: ${BASE_URL}
+      chat:
+        options:
+          model: llama-3.3-70b-versatile
+          temperature: 0.0
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST:localhost}
+      port: ${SPRING_DATA_REDIS_PORT:6379}
+      timeout: 6000
+  cloud:
+    aws:
+      credentials:
+        access-key: test-key
+        secret-key: test-secret
+      region:
+        static: ap-northeast-2
+  batch:
+    job:
+      enabled: false
+  elasticsearch:
+    uris: http://localhost:9200
+
+jwt:
+  secret:
+    key: dGVzdC1zZWNyZXQta2V5LWZvci10ZXN0aW5nLWp3dC10b2tlbi1nZW5lcmF0aW9uLW1pbmltdW0tMzItYnl0ZXM=
+
+grid:
+  central-data:
+    base-url: dummy
+  live-data:
+    base-url: dummy
+  api-key: dummy

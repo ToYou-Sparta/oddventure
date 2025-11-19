@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AdminMatchService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oddventure</a> &gt; <a href="index.source.html" class="el_package">org.example.oddventure.domain.admin.service</a> &gt; <span class="el_source">AdminMatchService.java</span></div><h1>AdminMatchService.java</h1><pre class="source lang-java linenums">package org.example.oddventure.domain.admin.service;
+
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.example.oddventure.domain.admin.dto.response.MatchCreateAdminResponse;
+import org.example.oddventure.domain.grid.dto.MatchResultDto;
+import org.example.oddventure.domain.grid.dto.MatchScheduleDto;
+import org.example.oddventure.domain.grid.service.GridService;
+import org.example.oddventure.domain.match.dto.MatchCreateDto;
+import org.example.oddventure.domain.match.service.MatchService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+<span class="fc" id="L15">@Slf4j</span>
+@Service
+@RequiredArgsConstructor
+public class AdminMatchService {
+
+    private final GridService gridService;
+    private final MatchService matchService;
+
+    // 매치 생성
+    @Transactional
+    public MatchCreateAdminResponse createMatch() {
+<span class="nc" id="L26">        List&lt;MatchScheduleDto&gt; fetchResponses = gridService.fetchMatchSchedules();</span>
+
+<span class="nc" id="L28">        List&lt;MatchCreateDto&gt; matchCreateDtoList = matchService.createMatch(fetchResponses);</span>
+
+<span class="nc" id="L30">        List&lt;Long&gt; fetchIds = matchCreateDtoList.stream().map(MatchCreateDto::fetchId).toList();</span>
+<span class="nc" id="L31">        log.info(&quot;total count: {}, fetchIds: {}&quot;, fetchIds.size(), fetchIds);</span>
+<span class="nc" id="L32">        return MatchCreateAdminResponse.of(fetchIds);</span>
+    }
+
+    // 매치 결과 연동
+    @Transactional
+    public void createMatchResult(Long fetchId) {
+<span class="nc" id="L38">        MatchResultDto dto = gridService.fetchMatchResult(fetchId);</span>
+
+<span class="nc" id="L40">        matchService.updateMatchResult(fetchId, dto.winner(), dto.loser());</span>
+<span class="nc" id="L41">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

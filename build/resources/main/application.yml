@@ -1,0 +1,83 @@
+spring:
+  application:
+    name: oddventure
+
+  # Job 자동 실행 비활성화
+  batch:
+    job:
+      enabled: false
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  cache:
+    type: redis
+
+  rabbitmq:
+    publisher-confirm-type: correlated  # Publisher Confirms 활성화
+    publisher-returns: true  # Publisher Returns 활성화
+
+  elasticsearch:
+    uris: ${ELASTICSEARCH_URIS}
+    connection-timeout: 5s
+    socket-timeout: 30s
+
+  ai:
+    openai:
+      chat:
+        options:
+          model: llama-3.3-70b-versatile
+          temperature: 0.0
+
+  cloud:
+    aws:
+      region:
+        static: ap-northeast-2
+      credentials:
+        instance-profile: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+      base-path: /actuator
+
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true  # histogram 버킷 생성 (percentile 계산용)
+    tags:
+      application: ${spring.application.name} # 여러 서비스 운영서 어떤 메트릭인지 식별
+
+  # Tomcat 메트릭 활성화
+  server:
+    tomcat:
+      mbeanregistry:
+        enabled: true
+
+resilience4j:
+  retry:
+    instances:
+      steamNews:
+        maxAttempts: 3
+        waitDuration: 500ms
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2     # 500ms → 1s → 2s
+        enableRandomizedWait: true
+        retryExceptions:
+          - org.springframework.web.client.HttpServerErrorException
+          - org.springframework.web.client.ResourceAccessException
+          - java.net.SocketTimeoutException

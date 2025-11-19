@@ -1,0 +1,16 @@
+|===
+|Path|Type|Description
+
+|`+matchId+`
+|`+Number+`
+|경기 ID
+
+|`+selectedTeam+`
+|`+String+`
+|선택한 팀
+
+|`+betAmount+`
+|`+Number+`
+|베팅 금액
+
+|===

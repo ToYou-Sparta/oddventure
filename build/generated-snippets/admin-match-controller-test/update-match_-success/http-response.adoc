@@ -1,0 +1,28 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+Content-Length: 363
+
+{
+  "httpStatus" : "OK",
+  "code" : 200,
+  "success" : true,
+  "message" : "매치 정보가 수정되었습니다.",
+  "data" : {
+    "matchId" : 1,
+    "matchName" : "LCK",
+    "teamA" : "New Team A",
+    "teamB" : "New Team B",
+    "startTime" : "2025-11-21T10:09:59",
+    "status" : "ONGOING"
+  },
+  "timestamp" : "2025-11-19T10:09:59.2967345"
+}
+----

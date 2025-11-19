@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - PointJobConfigTest</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>PointJobConfigTest</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/org.example.oddventure.domain.match.batch.html">org.example.oddventure.domain.match.batch</a> &gt; PointJobConfigTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">1</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">0.121s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="tab-container">
+<ul class="tabLinks">
+<li>
+<a href="#">Tests</a>
+</li>
+<li>
+<a href="#">Standard output</a>
+</li>
+</ul>
+<div class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Method name</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">정산 배치 포인트 지급 성공</td>
+<td class="success">pointSetJob_success()</td>
+<td class="success">0.121s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>2025-11-19T10:10:15.920+09:00  INFO 18272 --- [    Test worker] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [org.example.oddventure.domain.match.batch.PointJobConfigTest]: PointJobConfigTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2025-11-19T10:10:15.921+09:00  INFO 18272 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration org.example.oddventure.OddventureApplication for test class org.example.oddventure.domain.match.batch.PointJobConfigTest
+Hibernate: insert into users (created_at,is_deleted,deleted_at,email,password,point,updated_at,user_role,username,id) values (?,?,?,?,?,?,?,?,?,default)
+Hibernate: insert into users (created_at,is_deleted,deleted_at,email,password,point,updated_at,user_role,username,id) values (?,?,?,?,?,?,?,?,?,default)
+Hibernate: insert into &quot;match&quot; (created_at,is_deleted,deleted_at,end_time,fetch_id,loser,match_name,start_time,status,team_a,team_b,total_amounta,total_amountb,updated_at,view_count,winner,id) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,default)
+Hibernate: insert into bet (bet_amount,created_at,is_deleted,deleted_at,is_win,match_id,odds_at_betting,selected_team,updated_at,user_id,id) values (?,?,?,?,?,?,?,?,?,?,default)
+Hibernate: insert into bet (bet_amount,created_at,is_deleted,deleted_at,is_win,match_id,odds_at_betting,selected_team,updated_at,user_id,id) values (?,?,?,?,?,?,?,?,?,?,default)
+2025-11-19T10:10:15.940+09:00  INFO 18272 --- [    Test worker] o.s.b.c.l.s.TaskExecutorJobLauncher      : Job: [SimpleJob: [name=pointSetJob]] launched with the following parameters: [{'matchIds':'{value=101, type=class java.lang.String, identifying=true}','timestamp':'{value=1763514615938, type=class java.lang.Long, identifying=true}'}]
+2025-11-19T10:10:15.943+09:00  INFO 18272 --- [    Test worker] o.s.batch.core.job.SimpleStepHandler     : Executing step: [pointSetStep]
+Hibernate: select b1_0.id,b1_0.bet_amount,b1_0.created_at,b1_0.is_deleted,b1_0.deleted_at,b1_0.is_win,b1_0.match_id,m1_0.id,m1_0.created_at,m1_0.is_deleted,m1_0.deleted_at,m1_0.end_time,m1_0.fetch_id,m1_0.loser,m1_0.match_name,m1_0.start_time,m1_0.status,m1_0.team_a,m1_0.team_b,m1_0.total_amounta,m1_0.total_amountb,m1_0.updated_at,m1_0.view_count,m1_0.winner,b1_0.odds_at_betting,b1_0.selected_team,b1_0.updated_at,b1_0.user_id,u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from bet b1_0 join users u1_0 on u1_0.id=b1_0.user_id join &quot;match&quot; m1_0 on m1_0.id=b1_0.match_id where m1_0.id in (?) and b1_0.is_deleted=false order by b1_0.id offset ? rows fetch first ? rows only
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+2025-11-19T10:10:16.031+09:00  INFO 18272 --- [    Test worker] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=2000.0000, reason='배당금 지급', finalBalance=3000.0000
+Hibernate: select b1_0.id,b1_0.bet_amount,b1_0.created_at,b1_0.is_deleted,b1_0.deleted_at,b1_0.is_win,b1_0.match_id,b1_0.odds_at_betting,b1_0.selected_team,b1_0.updated_at,b1_0.user_id from bet b1_0 where b1_0.id=?
+Hibernate: select b1_0.id,b1_0.bet_amount,b1_0.created_at,b1_0.is_deleted,b1_0.deleted_at,b1_0.is_win,b1_0.match_id,b1_0.odds_at_betting,b1_0.selected_team,b1_0.updated_at,b1_0.user_id from bet b1_0 where b1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:16.038+09:00  INFO 18272 --- [    Test worker] o.s.batch.core.step.AbstractStep         : Step: [pointSetStep] executed in 95ms
+2025-11-19T10:10:16.041+09:00  INFO 18272 --- [    Test worker] o.s.b.c.l.s.TaskExecutorJobLauncher      : Job: [SimpleJob: [name=pointSetJob]] completed with the following parameters: [{'matchIds':'{value=101, type=class java.lang.String, identifying=true}','timestamp':'{value=1763514615938, type=class java.lang.Long, identifying=true}'}] and the following status: [COMPLETED] in 100ms
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="https://www.gradle.org">Gradle 8.14.3</a> at 2025. 11. 19. 오전 10:10:24</p>
+</div>
+</div>
+</body>
+</html>

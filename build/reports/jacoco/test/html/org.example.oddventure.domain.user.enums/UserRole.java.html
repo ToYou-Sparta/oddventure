@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserRole.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oddventure</a> &gt; <a href="index.source.html" class="el_package">org.example.oddventure.domain.user.enums</a> &gt; <span class="el_source">UserRole.java</span></div><h1>UserRole.java</h1><pre class="source lang-java linenums">package org.example.oddventure.domain.user.enums;
+
+import java.util.Arrays;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.example.oddventure.domain.user.exception.UserErrorCode;
+import org.example.oddventure.domain.user.exception.UserException;
+
+<span class="fc" id="L9">@Getter</span>
+@RequiredArgsConstructor
+public enum UserRole {
+
+<span class="fc" id="L13">    ROLE_USER(Authority.USER),</span>
+<span class="fc" id="L14">    ROLE_ADMIN(Authority.ADMIN);</span>
+
+    private final String userRole;
+
+    public static UserRole of(String userRole) {
+<span class="nc" id="L19">        return Arrays.stream(UserRole.values())</span>
+<span class="nc" id="L20">                .filter(r -&gt; r.name().equalsIgnoreCase(userRole))</span>
+<span class="nc" id="L21">                .findFirst()</span>
+<span class="nc" id="L22">                .orElseThrow(() -&gt; new UserException(UserErrorCode.INVALID_USER_ROLE));</span>
+    }
+
+<span class="nc" id="L25">    public static class Authority {</span>
+        public static final String USER = &quot;ROLE_USER&quot;;
+        public static final String ADMIN = &quot;ROLE_ADMIN&quot;;
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

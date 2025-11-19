@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Gradle: org.bsc.langgraph4j:langgraph4j-studio-springboot:1.7.2" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="org.bsc.langgraph4j" artifactId="langgraph4j-studio-springboot" version="1.7.2" baseVersion="1.7.2" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.bsc.langgraph4j/langgraph4j-studio-springboot/1.7.2/b57fbc25d709532b3e2c7f6fb9a3ad8456ad91f9/langgraph4j-studio-springboot-1.7.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

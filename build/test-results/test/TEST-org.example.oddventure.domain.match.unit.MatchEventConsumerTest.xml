@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.example.oddventure.domain.match.unit.MatchEventConsumerTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-11-19T01:10:16.434Z" hostname="DESKTOP-9Q5JQDP" time="0.002">
+  <properties/>
+  <testcase name="매치 스타트 이벤트를 소비하여 매치 상태값 변경에 성공한다." classname="org.example.oddventure.domain.match.unit.MatchEventConsumerTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

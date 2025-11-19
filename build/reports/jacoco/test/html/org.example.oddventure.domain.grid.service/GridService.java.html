@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GridService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oddventure</a> &gt; <a href="index.source.html" class="el_package">org.example.oddventure.domain.grid.service</a> &gt; <span class="el_source">GridService.java</span></div><h1>GridService.java</h1><pre class="source lang-java linenums">package org.example.oddventure.domain.grid.service;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.example.oddventure.common.config.WebClientConfig;
+import org.example.oddventure.domain.grid.dto.MatchResultDto;
+import org.example.oddventure.domain.grid.dto.MatchScheduleDto;
+import org.example.oddventure.domain.grid.dto.response.AllSeriesResponse;
+import org.example.oddventure.domain.grid.dto.response.SeriesStateResponse;
+import org.example.oddventure.domain.grid.dto.response.field.Edge;
+import org.example.oddventure.domain.grid.dto.response.field.Node;
+import org.example.oddventure.domain.grid.dto.response.field.PageInfo;
+import org.example.oddventure.domain.grid.dto.response.field.SeriesState;
+import org.example.oddventure.domain.grid.dto.response.field.SeriesState.Team;
+import org.example.oddventure.domain.grid.exception.GridErrorCode;
+import org.example.oddventure.domain.grid.exception.GridException;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Service;
+
+<span class="fc" id="L31">@Log4j2</span>
+@Service
+@RequiredArgsConstructor
+public class GridService {
+
+    private static final String GRID_CENTRAL_DATA_QUERY = &quot;&quot;&quot;
+            query GetAllSeriesInNext24Hours($after: Cursor, $gte: String, $lte: String) {
+              allSeries(
+                first: 50
+                after: $after
+                filter:{
+                  titleId: &quot;28&quot; # CS2
+                  startTimeScheduled:{
+                    gte: $gte
+                    lte: $lte
+                  }
+                }
+                orderBy: StartTimeScheduled
+              ) {
+                totalCount,
+                pageInfo{
+                  hasPreviousPage
+                  hasNextPage
+                  startCursor
+                  endCursor
+                }
+                edges{
+                  cursor
+                  node{
+                    ...seriesFields
+                  }
+                }
+              }
+            }
+            fragment seriesFields on Series {
+              id
+              title {
+                nameShortened
+              }
+              tournament {
+                nameShortened
+              }
+              startTimeScheduled
+              format {
+                nameShortened
+              }
+              teams {
+                baseInfo {
+                  name
+                }
+              }
+            }
+            &quot;&quot;&quot;;
+    private static final String GRID_LIVE_DATA_QUERY = &quot;&quot;&quot;
+            query GetLiveCS2SeriesState ($id: ID!){
+               seriesState(id: $id) {
+                 valid
+                 finished
+                 teams {
+                   name
+                   won
+                 }
+               }
+             }
+            &quot;&quot;&quot;;
+    private final WebClientConfig webClientConfig;
+    private final ObjectMapper objectMapper;
+
+    public List&lt;MatchScheduleDto&gt; fetchMatchSchedules() {
+<span class="fc" id="L100">        List&lt;MatchScheduleDto&gt; results = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L101">        Map&lt;String, Object&gt; variables = new HashMap&lt;&gt;();</span>
+
+<span class="fc" id="L103">        String gte = OffsetDateTime.now(ZoneId.of(&quot;Asia/Seoul&quot;))</span>
+<span class="fc" id="L104">                .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);</span>
+<span class="fc" id="L105">        String lte = OffsetDateTime.now(ZoneId.of(&quot;Asia/Seoul&quot;))</span>
+<span class="fc" id="L106">                .plusDays(1)</span>
+<span class="fc" id="L107">                .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);</span>
+<span class="fc" id="L108">        variables.put(&quot;gte&quot;, gte);</span>
+<span class="fc" id="L109">        variables.put(&quot;lte&quot;, lte);</span>
+
+<span class="fc" id="L111">        String cursor = null; // 페이지네이션 커서</span>
+        while (true) {
+<span class="fc" id="L113">            variables.put(&quot;after&quot;, cursor);</span>
+            String request;
+            try {
+<span class="fc" id="L116">                request = objectMapper.writeValueAsString(</span>
+<span class="fc" id="L117">                        Map.of(&quot;query&quot;, GRID_CENTRAL_DATA_QUERY,</span>
+                                &quot;variables&quot;, variables)
+                );
+//                log.info(&quot;Fetching matches from GRID: {}&quot;, request);
+<span class="nc" id="L121">            } catch (JsonProcessingException e) {</span>
+<span class="nc" id="L122">                throw new GridException(GridErrorCode.FAIL_TO_SERIALIZE);</span>
+<span class="fc" id="L123">            }</span>
+
+<span class="fc" id="L125">            AllSeriesResponse response = webClientConfig.gridCentralClient().post()</span>
+<span class="fc" id="L126">                    .contentType(MediaType.APPLICATION_JSON)</span>
+<span class="fc" id="L127">                    .bodyValue(request)</span>
+<span class="fc" id="L128">                    .retrieve()</span>
+<span class="fc" id="L129">                    .bodyToMono(AllSeriesResponse.class)</span>
+<span class="fc" id="L130">                    .block();</span>
+//            log.info(&quot;Got response from GRID central client: {}&quot;, response);
+<span class="pc bpc" id="L132" title="1 of 2 branches missed.">            if (response == null</span>
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">                    || response.data() == null</span>
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">                    || response.data().allSeries() == null</span>
+<span class="pc bpc" id="L135" title="1 of 2 branches missed.">                    || response.data().allSeries().edges() == null) {</span>
+<span class="nc" id="L136">                log.warn(&quot;가져온 매치 스케쥴 응답값이 비어있습니다.&quot;);</span>
+<span class="nc" id="L137">                return results;</span>
+            }
+
+<span class="fc" id="L140">            List&lt;Edge&gt; edges = response.data().allSeries().edges();</span>
+
+<span class="fc bfc" id="L142" title="All 2 branches covered.">            for (Edge edge : edges) {</span>
+<span class="fc" id="L143">                Node node = edge.node();</span>
+<span class="fc" id="L144">                String matchName = node.tournament().nameShortened();</span>
+<span class="fc" id="L145">                Long fetchId = Long.parseLong(node.id());</span>
+<span class="fc" id="L146">                String teamA = node.teams().get(0).baseInfo().name();</span>
+<span class="fc" id="L147">                String teamB = node.teams().get(1).baseInfo().name();</span>
+<span class="fc" id="L148">                LocalDateTime startTime = Instant.parse(node.startTimeScheduled())</span>
+<span class="fc" id="L149">                        .atZone(ZoneId.of(&quot;Asia/Seoul&quot;))</span>
+<span class="fc" id="L150">                        .toLocalDateTime();</span>
+
+<span class="fc" id="L152">                results.add(MatchScheduleDto.builder()</span>
+<span class="fc" id="L153">                        .fetchId(fetchId)</span>
+<span class="fc" id="L154">                        .matchName(matchName)</span>
+<span class="fc" id="L155">                        .teamA(teamA)</span>
+<span class="fc" id="L156">                        .teamB(teamB)</span>
+<span class="fc" id="L157">                        .startTime(startTime)</span>
+<span class="fc" id="L158">                        .build());</span>
+<span class="fc" id="L159">            }</span>
+
+<span class="fc" id="L161">            PageInfo pageInfo = response.data().allSeries().pageInfo();</span>
+<span class="pc bpc" id="L162" title="1 of 2 branches missed.">            if (!pageInfo.hasNextPage()) {</span>
+<span class="fc" id="L163">                break;</span>
+            }
+
+<span class="nc" id="L166">            cursor = pageInfo.endCursor();</span>
+<span class="nc" id="L167">        }</span>
+
+<span class="fc" id="L169">        return results;</span>
+    }
+
+    public MatchResultDto fetchMatchResult(Long fetchId) {
+<span class="fc" id="L173">        Map&lt;String, Object&gt; variables = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L174">        variables.put(&quot;id&quot;, fetchId.toString());</span>
+<span class="fc" id="L175">        String request = null;</span>
+        try {
+<span class="fc" id="L177">            request = objectMapper.writeValueAsString(</span>
+<span class="fc" id="L178">                    Map.of(&quot;query&quot;, GRID_LIVE_DATA_QUERY,</span>
+                            &quot;variables&quot;, variables)
+            );
+<span class="nc" id="L181">        } catch (JsonProcessingException e) {</span>
+<span class="nc" id="L182">            throw new GridException(GridErrorCode.FAIL_TO_SERIALIZE);</span>
+<span class="fc" id="L183">        }</span>
+
+<span class="fc" id="L185">        SeriesStateResponse response = webClientConfig.gridLiveClient().post()</span>
+<span class="fc" id="L186">                .contentType(MediaType.APPLICATION_JSON)</span>
+<span class="fc" id="L187">                .bodyValue(request)</span>
+<span class="fc" id="L188">                .retrieve()</span>
+<span class="fc" id="L189">                .bodyToMono(SeriesStateResponse.class)</span>
+<span class="fc" id="L190">                .block();</span>
+//        log.info(response.toString());
+<span class="pc bpc" id="L192" title="1 of 2 branches missed.">        if (response == null</span>
+<span class="pc bpc" id="L193" title="1 of 2 branches missed.">                || response.data() == null</span>
+<span class="pc bpc" id="L194" title="1 of 2 branches missed.">                || response.data().seriesState() == null</span>
+<span class="pc bpc" id="L195" title="1 of 2 branches missed.">                || response.data().seriesState().teams() == null) {</span>
+<span class="nc" id="L196">            throw new GridException(GridErrorCode.RESPONSE_NOT_FOUND);</span>
+        }
+
+<span class="fc" id="L199">        SeriesState seriesState = response.data().seriesState();</span>
+
+<span class="fc" id="L201">        boolean finished = seriesState.finished();</span>
+
+<span class="fc" id="L203">        List&lt;Team&gt; teams = seriesState.teams();</span>
+
+<span class="fc" id="L205">        String winner = teams.stream()</span>
+<span class="fc" id="L206">                .filter(Team::won)</span>
+<span class="fc" id="L207">                .map(Team::name)</span>
+<span class="fc" id="L208">                .findFirst()</span>
+<span class="pc" id="L209">                .orElseThrow(() -&gt; new GridException(GridErrorCode.RESPONSE_NOT_FOUND));</span>
+
+<span class="fc" id="L211">        String loser = teams.stream()</span>
+<span class="fc bfc" id="L212" title="All 2 branches covered.">                .filter(t -&gt; !t.won())</span>
+<span class="fc" id="L213">                .map(Team::name)</span>
+<span class="fc" id="L214">                .findFirst()</span>
+<span class="pc" id="L215">                .orElseThrow(() -&gt; new GridException(GridErrorCode.RESPONSE_NOT_FOUND));</span>
+
+<span class="fc" id="L217">        return MatchResultDto.builder()</span>
+<span class="fc" id="L218">                .fetchId(fetchId)</span>
+<span class="fc" id="L219">                .finished(finished)</span>
+<span class="fc" id="L220">                .winner(winner)</span>
+<span class="fc" id="L221">                .loser(loser)</span>
+<span class="fc" id="L222">                .build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

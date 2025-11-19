@@ -1,0 +1,8 @@
+|===
+|Path|Type|Description
+
+|`+password+`
+|`+String+`
+|비밀번호 확인
+
+|===

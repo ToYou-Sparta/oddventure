@@ -1,0 +1,8 @@
+[source,bash]
+----
+$ echo '{
+  "email" : "hello@naver.com",
+  "password" : "hello123!@#"
+}' | http POST 'http://localhost:8080/api/v1/auth/login' \
+    'Content-Type:application/json;charset=UTF-8'
+----

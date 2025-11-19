@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.example.oddventure.domain.hotkeyword.unit.HotkeywordServiceTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2025-11-19T01:10:12.338Z" hostname="DESKTOP-9Q5JQDP" time="0.114">
+  <properties/>
+  <testcase name="인기 검색어 Top5를 조회할 수 있다." classname="org.example.oddventure.domain.hotkeyword.unit.HotkeywordServiceTest" time="0.037"/>
+  <testcase name="Redis의 검색 카운트를 DB에 동기화할 수 있다." classname="org.example.oddventure.domain.hotkeyword.unit.HotkeywordServiceTest" time="0.076"/>
+  <system-out><![CDATA[2025-11-19T10:10:12.335+09:00  INFO 18272 --- [    Test worker] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [org.example.oddventure.domain.hotkeyword.unit.HotkeywordServiceTest]: HotkeywordServiceTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2025-11-19T10:10:12.336+09:00  INFO 18272 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration org.example.oddventure.OddventureApplication for test class org.example.oddventure.domain.hotkeyword.unit.HotkeywordServiceTest
+Hibernate: insert into hot_keywords (created_at,is_deleted,deleted_at,keyword,search_count,updated_at,id) values (?,?,?,?,?,?,default)
+Hibernate: insert into hot_keywords (created_at,is_deleted,deleted_at,keyword,search_count,updated_at,id) values (?,?,?,?,?,?,default)
+Hibernate: insert into hot_keywords (created_at,is_deleted,deleted_at,keyword,search_count,updated_at,id) values (?,?,?,?,?,?,default)
+Hibernate: insert into hot_keywords (created_at,is_deleted,deleted_at,keyword,search_count,updated_at,id) values (?,?,?,?,?,?,default)
+Hibernate: insert into hot_keywords (created_at,is_deleted,deleted_at,keyword,search_count,updated_at,id) values (?,?,?,?,?,?,default)
+Hibernate: insert into hot_keywords (created_at,is_deleted,deleted_at,keyword,search_count,updated_at,id) values (?,?,?,?,?,?,default)
+Hibernate: insert into hot_keywords (created_at,is_deleted,deleted_at,keyword,search_count,updated_at,id) values (?,?,?,?,?,?,default)
+Hibernate: insert into hot_keywords (created_at,is_deleted,deleted_at,keyword,search_count,updated_at,id) values (?,?,?,?,?,?,default)
+Hibernate: insert into hot_keywords (created_at,is_deleted,deleted_at,keyword,search_count,updated_at,id) values (?,?,?,?,?,?,default)
+Hibernate: insert into hot_keywords (created_at,is_deleted,deleted_at,keyword,search_count,updated_at,id) values (?,?,?,?,?,?,default)
+Hibernate: insert into hot_keywords (created_at,is_deleted,deleted_at,keyword,search_count,updated_at,id) values (?,?,?,?,?,?,default)
+Hibernate: insert into hot_keywords (created_at,is_deleted,deleted_at,keyword,search_count,updated_at,id) values (?,?,?,?,?,?,default)
+Hibernate: update hot_keywords hk1_0 set search_count=? where hk1_0.keyword=?
+Hibernate: update hot_keywords hk1_0 set search_count=? where hk1_0.keyword=?
+Hibernate: update hot_keywords hk1_0 set search_count=? where hk1_0.keyword=?
+Hibernate: update hot_keywords hk1_0 set search_count=? where hk1_0.keyword=?
+Hibernate: update hot_keywords hk1_0 set search_count=? where hk1_0.keyword=?
+Hibernate: update hot_keywords hk1_0 set search_count=? where hk1_0.keyword=?
+Hibernate: select hk1_0.id,hk1_0.created_at,hk1_0.is_deleted,hk1_0.deleted_at,hk1_0.keyword,hk1_0.search_count,hk1_0.updated_at from hot_keywords hk1_0
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

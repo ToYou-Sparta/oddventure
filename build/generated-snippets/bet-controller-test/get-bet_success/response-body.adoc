@@ -1,0 +1,30 @@
+[source,json,options="nowrap"]
+----
+{
+  "httpStatus" : "OK",
+  "code" : 200,
+  "success" : true,
+  "message" : "베팅 내역이 조회되었습니다.",
+  "data" : {
+    "content" : [ {
+      "betId" : 1,
+      "matchBetResponse" : {
+        "matchId" : 1,
+        "teamA" : "T1",
+        "teamB" : "GEN.G",
+        "startTime" : "2025-11-20T10:10:03.671681"
+      },
+      "selectedTeam" : "Team_A",
+      "betAmount" : 1000,
+      "oddsAtBetting" : 1.5,
+      "isWin" : false,
+      "createdAt" : "2025-11-19T10:10:03.671681"
+    } ],
+    "totalElements" : 1,
+    "totalPages" : 1,
+    "size" : 10,
+    "number" : 0
+  },
+  "timestamp" : "2025-11-19T10:10:03.678328"
+}
+----

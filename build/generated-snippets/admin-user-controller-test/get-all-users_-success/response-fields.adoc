@@ -1,0 +1,72 @@
+|===
+|Path|Type|Description
+
+|`+httpStatus+`
+|`+String+`
+|HTTP 상태 코드
+
+|`+code+`
+|`+Number+`
+|응답 코드
+
+|`+success+`
+|`+Boolean+`
+|성공 여부
+
+|`+message+`
+|`+String+`
+|응답 메시지
+
+|`+timestamp+`
+|`+String+`
+|응답 시간
+
+|`+data+`
+|`+Object+`
+|응답 데이터
+
+|`+data.content[]+`
+|`+Array+`
+|사용자 정보 목록
+
+|`+data.content[].userId+`
+|`+Number+`
+|사용자 ID
+
+|`+data.content[].username+`
+|`+String+`
+|사용자 이름
+
+|`+data.content[].email+`
+|`+String+`
+|사용자 이메일
+
+|`+data.content[].point+`
+|`+Number+`
+|보유 포인트
+
+|`+data.content[].role+`
+|`+String+`
+|사용자 역할
+
+|`+data.content[].createdAt+`
+|`+String+`
+|가입 일시
+
+|`+data.totalElements+`
+|`+Number+`
+|전체 항목 수
+
+|`+data.totalPages+`
+|`+Number+`
+|전체 페이지 수
+
+|`+data.size+`
+|`+Number+`
+|페이지 크기
+
+|`+data.number+`
+|`+Number+`
+|현재 페이지 번호 (0부터 시작)
+
+|===

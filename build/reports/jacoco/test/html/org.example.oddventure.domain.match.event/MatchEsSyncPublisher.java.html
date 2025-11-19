@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MatchEsSyncPublisher.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oddventure</a> &gt; <a href="index.source.html" class="el_package">org.example.oddventure.domain.match.event</a> &gt; <span class="el_source">MatchEsSyncPublisher.java</span></div><h1>MatchEsSyncPublisher.java</h1><pre class="source lang-java linenums">package org.example.oddventure.domain.match.event;
+
+import java.time.Duration;
+import java.util.Set;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.example.oddventure.common.config.RabbitMQConfig;
+import org.example.oddventure.domain.match.event.dto.MatchEsSyncEvent;
+import org.example.oddventure.domain.match.sync.AdaptiveEsSyncManager;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Component;
+
+/**
+ * Match 데이터 변경 시 Elasticsearch 동기화 이벤트 발행
+ */
+<span class="fc" id="L17">@Slf4j</span>
+@Component
+@RequiredArgsConstructor
+public class MatchEsSyncPublisher {
+
+    private static final String PENDING_SYNC_KEY = &quot;es:sync:pending:&quot;;
+    private final RabbitTemplate rabbitTemplate;
+    private final AdaptiveEsSyncManager syncManager;
+    private final RedisTemplate&lt;String, Object&gt; redisTemplate;
+
+    /**
+     * Match 생성 이벤트 발행
+     */
+    public void publishMatchCreated(Long matchId) {
+        // 대용량 모드 확인
+<span class="nc bnc" id="L32" title="All 2 branches missed.">        if (!syncManager.shouldUseRabbitMQ()) {</span>
+<span class="nc" id="L33">            storePendingSync(matchId, MatchEsSyncEvent.SyncType.CREATE);</span>
+<span class="nc" id="L34">            return;</span>
+            //RabbitMQ 발행 안함
+        }
+
+<span class="nc" id="L38">        MatchEsSyncEvent event = new MatchEsSyncEvent(</span>
+                MatchEsSyncEvent.SyncType.CREATE,
+                matchId
+        );
+
+<span class="nc" id="L43">        rabbitTemplate.convertAndSend(</span>
+                RabbitMQConfig.ES_SYNC_EXCHANGE,
+                RabbitMQConfig.ES_SYNC_CREATED_KEY,
+                event
+        );
+
+<span class="nc" id="L49">        log.info(&quot;Match 생성 이벤트 발행 - matchId: {}&quot;, matchId);</span>
+<span class="nc" id="L50">    }</span>
+
+    /**
+     * Match 업데이트 이벤트 발행
+     */
+    public void publishMatchUpdated(Long matchId) {
+        // 대용량 모드 확인
+<span class="nc bnc" id="L57" title="All 2 branches missed.">        if (!syncManager.shouldUseRabbitMQ()) {</span>
+<span class="nc" id="L58">            storePendingSync(matchId, MatchEsSyncEvent.SyncType.UPDATE);</span>
+<span class="nc" id="L59">            return;</span>
+        }
+
+<span class="nc" id="L62">        MatchEsSyncEvent event = new MatchEsSyncEvent(</span>
+                MatchEsSyncEvent.SyncType.UPDATE,
+                matchId
+        );
+
+<span class="nc" id="L67">        rabbitTemplate.convertAndSend(</span>
+                RabbitMQConfig.ES_SYNC_EXCHANGE,
+                RabbitMQConfig.ES_SYNC_UPDATED_KEY,
+                event
+        );
+
+<span class="nc" id="L73">        log.info(&quot;Match 업데이트 이벤트 발행 - matchId: {}&quot;, matchId);</span>
+<span class="nc" id="L74">    }</span>
+
+    /**
+     * Match 삭제 이벤트 발행
+     */
+    public void publishMatchDeleted(Long matchId) {
+        // 대용량 모드 확인
+<span class="nc bnc" id="L81" title="All 2 branches missed.">        if (!syncManager.shouldUseRabbitMQ()) {</span>
+<span class="nc" id="L82">            storePendingSync(matchId, MatchEsSyncEvent.SyncType.DELETE);</span>
+<span class="nc" id="L83">            return;</span>
+        }
+
+<span class="nc" id="L86">        MatchEsSyncEvent event = new MatchEsSyncEvent(</span>
+                MatchEsSyncEvent.SyncType.DELETE,
+                matchId
+        );
+
+<span class="nc" id="L91">        rabbitTemplate.convertAndSend(</span>
+                RabbitMQConfig.ES_SYNC_EXCHANGE,
+                RabbitMQConfig.ES_SYNC_DELETED_KEY,
+                event
+        );
+
+<span class="nc" id="L97">        log.info(&quot;Match 삭제 이벤트 발행 - matchId: {}&quot;, matchId);</span>
+<span class="nc" id="L98">    }</span>
+
+    /**
+     * 대용량 모드에서 동기화 대기 목록에 저장
+     */
+    private void storePendingSync(Long matchId, MatchEsSyncEvent.SyncType syncType) {
+<span class="nc" id="L104">        String key = PENDING_SYNC_KEY + syncType.name().toLowerCase();</span>
+<span class="nc" id="L105">        redisTemplate.opsForSet().add(key, matchId);</span>
+<span class="nc" id="L106">        redisTemplate.expire(key, Duration.ofHours(1));  // 1시간 TTL</span>
+
+<span class="nc" id="L108">        log.info(&quot;대용량 모드 - 동기화 대기 저장: {} (matchId: {})&quot;, syncType, matchId);</span>
+<span class="nc" id="L109">    }</span>
+
+    /**
+     * 대기 중인 동기화 목록 조회
+     */
+    public Set&lt;Object&gt; getPendingSyncIds(MatchEsSyncEvent.SyncType syncType) {
+<span class="nc" id="L115">        String key = PENDING_SYNC_KEY + syncType.name().toLowerCase();</span>
+<span class="nc" id="L116">        return redisTemplate.opsForSet().members(key);</span>
+    }
+
+    /**
+     * 대기 중인 동기화 목록 삭제
+     */
+    public void clearPendingSync(MatchEsSyncEvent.SyncType syncType) {
+<span class="nc" id="L123">        String key = PENDING_SYNC_KEY + syncType.name().toLowerCase();</span>
+<span class="nc" id="L124">        redisTemplate.delete(key);</span>
+<span class="nc" id="L125">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

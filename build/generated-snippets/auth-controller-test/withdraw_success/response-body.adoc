@@ -1,0 +1,11 @@
+[source,json,options="nowrap"]
+----
+{
+  "httpStatus" : "OK",
+  "code" : 200,
+  "success" : true,
+  "message" : "회원탈퇴 되었습니다.",
+  "data" : null,
+  "timestamp" : "2025-11-19T10:10:02.7611467"
+}
+----

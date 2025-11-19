@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MatchJdbcRepository.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oddventure</a> &gt; <a href="index.source.html" class="el_package">org.example.oddventure.domain.match.repository</a> &gt; <span class="el_source">MatchJdbcRepository.java</span></div><h1>MatchJdbcRepository.java</h1><pre class="source lang-java linenums">package org.example.oddventure.domain.match.repository;
+
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.example.oddventure.domain.match.entity.Match;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+
+@Repository
+@RequiredArgsConstructor
+public class MatchJdbcRepository {
+
+    private final JdbcTemplate jdbcTemplate;
+
+    public void saveAllMatches(List&lt;Match&gt; matches) {
+<span class="nc" id="L20">        String sql =</span>
+                &quot;INSERT INTO `match`(fetch_id, match_name, team_a, team_b, start_time, status, total_amounta, total_amountb) &quot;
+                        + &quot;VALUES (?, ?, ?, ?, ?, 'SCHEDULED', 1000, 1000)&quot;;
+<span class="nc" id="L23">        jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {</span>
+
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+<span class="nc" id="L27">                Match match = matches.get(i);</span>
+<span class="nc" id="L28">                ps.setLong(1, match.getFetchId());</span>
+<span class="nc" id="L29">                ps.setString(2, match.getMatchName());</span>
+<span class="nc" id="L30">                ps.setString(3, match.getTeamA());</span>
+<span class="nc" id="L31">                ps.setString(4, match.getTeamB());</span>
+<span class="nc" id="L32">                ps.setTimestamp(5, Timestamp.valueOf(match.getStartTime()));</span>
+<span class="nc" id="L33">            }</span>
+
+            @Override
+            public int getBatchSize() {
+<span class="nc" id="L37">                return matches.size();</span>
+            }
+        });
+<span class="nc" id="L40">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

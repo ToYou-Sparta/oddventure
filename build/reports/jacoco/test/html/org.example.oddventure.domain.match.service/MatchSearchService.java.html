@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MatchSearchService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oddventure</a> &gt; <a href="index.source.html" class="el_package">org.example.oddventure.domain.match.service</a> &gt; <span class="el_source">MatchSearchService.java</span></div><h1>MatchSearchService.java</h1><pre class="source lang-java linenums">package org.example.oddventure.domain.match.service;
+
+import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import co.elastic.clients.elasticsearch._types.query_dsl.RangeQuery;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.example.oddventure.domain.hotKeywords.service.HotKeywordsService;
+import org.example.oddventure.domain.match.document.MatchDocument;
+import org.example.oddventure.domain.match.dto.request.MatchSearchCondition;
+import org.example.oddventure.domain.match.dto.response.MatchResponse;
+import org.example.oddventure.domain.match.enums.MatchStatus;
+import org.example.oddventure.domain.match.repository.elasticsearch.MatchSearchRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.client.elc.NativeQuery;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.SearchHit;
+import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.stereotype.Service;
+
+<span class="fc" id="L27">@Slf4j</span>
+@Service
+@RequiredArgsConstructor
+public class MatchSearchService {
+
+    private final MatchSearchRepository matchSearchRepository;
+    private final ElasticsearchOperations elasticsearchOperations;
+    private final HotKeywordsService hotKeywordsService;
+
+    public Page&lt;MatchResponse&gt; searchMatches(MatchSearchCondition condition, Pageable pageable) {
+<span class="nc" id="L37">        log.info(&quot;Elasticsearch 검색 시작 - keyword: {}, fromDate: {}, toDate{}&quot;,</span>
+<span class="nc" id="L38">                condition.keyword(), condition.fromDate(), condition.toDate());</span>
+
+        // 키워드가 있으면 인기 검색어에 추가
+<span class="nc bnc" id="L41" title="All 4 branches missed.">        if (condition.keyword() != null &amp;&amp; !condition.keyword().isBlank()) {</span>
+<span class="nc" id="L42">            hotKeywordsService.incrementSearchScore(condition.keyword());</span>
+        }
+
+        // 검색 쿼리 빌드
+<span class="nc" id="L46">        NativeQuery searchQuery = buildSearchQuery(condition, pageable);</span>
+
+        //Elasticsearch 검색 실행
+<span class="nc" id="L49">        SearchHits&lt;MatchDocument&gt; searchHits = elasticsearchOperations.search(</span>
+                searchQuery,
+                MatchDocument.class
+        );
+
+        // 검색 결과를 MatchResponse로 변환
+<span class="nc" id="L55">        List&lt;MatchResponse&gt; matchResponses = searchHits.getSearchHits().stream()</span>
+<span class="nc" id="L56">                .map(SearchHit::getContent)</span>
+<span class="nc" id="L57">                .map(this::toMatchResponse)</span>
+<span class="nc" id="L58">                .toList();</span>
+
+<span class="nc" id="L60">        return new PageImpl&lt;&gt;(matchResponses, pageable, searchHits.getTotalHits());</span>
+    }
+
+    /**
+     * Elasticsearch NativeQuery 빌드
+     */
+    private NativeQuery buildSearchQuery(MatchSearchCondition condition, Pageable pageable) {
+<span class="nc" id="L67">        List&lt;Query&gt; mustQueries = new ArrayList&lt;&gt;();</span>
+
+        // 1. 키워드 검색 (matchName, teamA, teamB)
+<span class="nc bnc" id="L70" title="All 4 branches missed.">        if (condition.keyword() != null &amp;&amp; !condition.keyword().isBlank()) {</span>
+<span class="nc" id="L71">            Query keywordQuery = Query.of(q -&gt; q</span>
+<span class="nc" id="L72">                    .bool(BoolQuery.of(b -&gt; b</span>
+<span class="nc" id="L73">                            .should(Query.of(s -&gt; s</span>
+<span class="nc" id="L74">                                    .match(m -&gt; m</span>
+<span class="nc" id="L75">                                            .field(&quot;matchName&quot;)</span>
+<span class="nc" id="L76">                                            .query(condition.keyword())</span>
+<span class="nc" id="L77">                                            .boost(2.0f)  // 매치 이름 가중치 높임</span>
+                                    )
+                            ))
+<span class="nc" id="L80">                            .should(Query.of(s -&gt; s</span>
+<span class="nc" id="L81">                                    .match(m -&gt; m</span>
+<span class="nc" id="L82">                                            .field(&quot;teamA&quot;)</span>
+<span class="nc" id="L83">                                            .query(condition.keyword())</span>
+<span class="nc" id="L84">                                            .boost(1.5f)</span>
+                                    )
+                            ))
+<span class="nc" id="L87">                            .should(Query.of(s -&gt; s</span>
+<span class="nc" id="L88">                                    .match(m -&gt; m</span>
+<span class="nc" id="L89">                                            .field(&quot;teamB&quot;)</span>
+<span class="nc" id="L90">                                            .query(condition.keyword())</span>
+<span class="nc" id="L91">                                            .boost(1.5f)</span>
+                                    )
+                            ))
+<span class="nc" id="L94">                            .minimumShouldMatch(&quot;1&quot;)  // 최소 1개 조건 만족</span>
+                    ))
+            );
+<span class="nc" id="L97">            mustQueries.add(keywordQuery);</span>
+        }
+
+        // 2. 날짜 범위 필터
+<span class="nc bnc" id="L101" title="All 4 branches missed.">        if (condition.fromDate() != null || condition.toDate() != null) {</span>
+<span class="nc" id="L102">            RangeQuery dateRangeQuery = new RangeQuery.Builder()</span>
+<span class="nc" id="L103">                    .date(d -&gt; {</span>
+<span class="nc" id="L104">                        d.field(&quot;startTime&quot;);</span>
+<span class="nc bnc" id="L105" title="All 2 branches missed.">                        if (condition.fromDate() != null) {</span>
+<span class="nc" id="L106">                            d.gte(formatDateTime(condition.fromDate()));</span>
+                        }
+<span class="nc bnc" id="L108" title="All 2 branches missed.">                        if (condition.toDate() != null) {</span>
+<span class="nc" id="L109">                            d.lte(formatDateTime(condition.toDate()));</span>
+                        }
+<span class="nc" id="L111">                        return d;</span>
+                    })
+<span class="nc" id="L113">                    .build();</span>
+
+<span class="nc" id="L115">            mustQueries.add(dateRangeQuery._toQuery());</span>
+        }
+
+        // 3. BoolQuery로 조합
+<span class="nc" id="L119">        BoolQuery boolQuery = BoolQuery.of(b -&gt; {</span>
+<span class="nc" id="L120">            mustQueries.forEach(b::must);</span>
+<span class="nc" id="L121">            return b;</span>
+        });
+
+        // 4. NativeQuery 생성
+<span class="nc" id="L125">        return NativeQuery.builder()</span>
+<span class="nc" id="L126">                .withQuery(Query.of(q -&gt; q.bool(boolQuery)))</span>
+<span class="nc" id="L127">                .withPageable(pageable)</span>
+<span class="nc" id="L128">                .build();</span>
+    }
+
+    /**
+     * LocalDateTime을 Elasticsearch 날짜 형식으로 변환 date_hour_minute_second 포맷에 맞춰 밀리초 제거
+     */
+    private String formatDateTime(LocalDateTime dateTime) {
+<span class="nc" id="L135">        return dateTime.format(DateTimeFormatter.ofPattern(&quot;yyyy-MM-dd'T'HH:mm:ss&quot;));</span>
+    }
+
+    /**
+     * MatchDocument를 MatchResponse로 변환
+     */
+    private MatchResponse toMatchResponse(MatchDocument document) {
+<span class="nc" id="L142">        return new MatchResponse(</span>
+<span class="nc" id="L143">                Long.parseLong(document.getId()),</span>
+<span class="nc" id="L144">                document.getMatchName(),</span>
+<span class="nc" id="L145">                document.getTeamA(),</span>
+<span class="nc" id="L146">                document.getTeamB(),</span>
+<span class="nc" id="L147">                document.getTotalAmountA(),</span>
+<span class="nc" id="L148">                document.getTotalAmountB(),</span>
+<span class="nc" id="L149">                document.getStartTime(),</span>
+<span class="nc" id="L150">                document.getEndTime(),</span>
+<span class="nc" id="L151">                MatchStatus.valueOf(document.getStatus()),</span>
+<span class="nc" id="L152">                document.getWinner(),</span>
+<span class="nc" id="L153">                document.getLoser(),</span>
+<span class="nc" id="L154">                document.getViewCount(),</span>
+<span class="nc" id="L155">                document.getCreatedAt()</span>
+        );
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

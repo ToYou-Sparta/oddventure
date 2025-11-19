@@ -1,0 +1,13 @@
+[source,json,options="nowrap"]
+----
+{
+  "httpStatus" : "OK",
+  "code" : 200,
+  "success" : true,
+  "message" : "인기 검색어 top5를 조회했습니다.",
+  "data" : {
+    "hotKeywords" : [ "india", "japan", "england", "america", "korea", "china" ]
+  },
+  "timestamp" : "2025-11-19T10:10:12.312773"
+}
+----

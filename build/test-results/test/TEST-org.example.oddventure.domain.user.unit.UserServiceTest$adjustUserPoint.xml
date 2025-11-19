@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="사용자 포인트 지급" tests="3" skipped="0" failures="0" errors="0" timestamp="2025-11-19T01:10:20.970Z" hostname="DESKTOP-9Q5JQDP" time="0.006">
+  <properties/>
+  <testcase name="사용자 포인트 지급 성공 (분산 락)" classname="org.example.oddventure.domain.user.unit.UserServiceTest$adjustUserPoint" time="0.002"/>
+  <testcase name="사용자 포인트 지급 실패 - 트랜잭션 중 예외 발생" classname="org.example.oddventure.domain.user.unit.UserServiceTest$adjustUserPoint" time="0.002"/>
+  <testcase name="사용자 포인트 지급 실패 - 락 획득 실패" classname="org.example.oddventure.domain.user.unit.UserServiceTest$adjustUserPoint" time="0.001"/>
+  <system-out><![CDATA[2025-11-19T10:10:20.972+09:00  INFO 18272 --- [    Test worker] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=5000, reason='베팅 승리 보상', finalBalance=6000
+2025-11-19T10:10:20.977+09:00  WARN 18272 --- [    Test worker] o.e.o.domain.user.service.UserService    : 포인트 지급 락 획득 실패. userId: 1
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

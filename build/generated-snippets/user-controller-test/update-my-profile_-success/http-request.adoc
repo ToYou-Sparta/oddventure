@@ -1,0 +1,12 @@
+[source,http,options="nowrap"]
+----
+PATCH /api/v1/users/me?_csrf=AeaGOC7V3Pjq7fz-J1rwz7cmlIiJzasN_h8bSxhFix_MhPcGZ9XgDUjg7snH3s3OQ3fE-tERuent-sggzikuLnl9ui7-5sRn HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Content-Length: 60
+Host: localhost:8080
+
+{
+  "username" : "newName",
+  "email" : "new@email.com"
+}
+----

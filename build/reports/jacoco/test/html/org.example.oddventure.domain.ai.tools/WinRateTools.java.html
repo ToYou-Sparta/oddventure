@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WinRateTools.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oddventure</a> &gt; <a href="index.source.html" class="el_package">org.example.oddventure.domain.ai.tools</a> &gt; <span class="el_source">WinRateTools.java</span></div><h1>WinRateTools.java</h1><pre class="source lang-java linenums">package org.example.oddventure.domain.ai.tools;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.example.oddventure.domain.ai.dto.WinRateItem;
+import org.example.oddventure.domain.ai.dto.WinRateResponse;
+import org.example.oddventure.domain.match.repository.MatchRepository;
+import org.springframework.ai.tool.annotation.Tool;
+import org.springframework.ai.tool.annotation.ToolParam;
+import org.springframework.stereotype.Component;
+
+@Component
+@RequiredArgsConstructor
+public class WinRateTools {
+
+    private final MatchRepository matchRepository;
+
+    @Tool(
+            name = &quot;analyze_winning_rate&quot;,
+            description = &quot;팀별 승/패 집계를 기반으로 승률(%)을 계산한다.&quot; +
+                    &quot;teamA/teamB중 하나 또는 둘 다 전달 가능. 둘 다 있으면 비교 모드로 동작한다.&quot;
+    )
+    public WinRateResponse analyzeWinningRate(
+            @ToolParam(description = &quot;첫 번째 팀 이름&quot;, required = false) String teamA,
+            @ToolParam(description = &quot;두 번째 팀 이름(선택)&quot;, required = false) String teamB
+    ) {
+<span class="fc" id="L30">        List&lt;String&gt; winMatches = matchRepository.findByWinnerIsNotNull();</span>
+<span class="fc" id="L31">        List&lt;String&gt; loseMatches = matchRepository.findByLoserIsNotNull();</span>
+
+<span class="fc" id="L33">        Map&lt;String, Long&gt; winCount = winMatches.stream()</span>
+<span class="fc" id="L34">                .collect(Collectors.groupingBy((String winner) -&gt; winner, Collectors.counting()));</span>
+
+<span class="fc" id="L36">        Map&lt;String, Long&gt; loseCount = loseMatches.stream()</span>
+<span class="fc" id="L37">                .collect(Collectors.groupingBy((String loser) -&gt; loser, Collectors.counting()));</span>
+
+<span class="fc" id="L39">        Function&lt;String, WinRateItem&gt; toItem = team -&gt; {</span>
+<span class="fc" id="L40">            Long w = winCount.getOrDefault(team, 0L);</span>
+<span class="fc" id="L41">            Long l = loseCount.getOrDefault(team, 0L);</span>
+<span class="fc" id="L42">            return WinRateItem.of(team, w, l);</span>
+        };
+
+<span class="pc bpc" id="L45" title="1 of 4 branches missed.">        String a = (teamA == null || teamA.isBlank()) ? null : teamA.trim();</span>
+<span class="pc bpc" id="L46" title="1 of 4 branches missed.">        String b = (teamB == null || teamB.isBlank()) ? null : teamB.trim();</span>
+
+<span class="pc bpc" id="L48" title="1 of 4 branches missed.">        if (a == null &amp;&amp; b == null) {</span>
+<span class="fc" id="L49">            return WinRateResponse.teamNameIsNull(&quot;팀명을 알려주세요.&quot;);</span>
+        }
+
+        // 비교
+<span class="pc bpc" id="L53" title="1 of 4 branches missed.">        if (a != null &amp;&amp; b != null) {</span>
+<span class="fc" id="L54">            WinRateItem itemA = toItem.apply(a);</span>
+<span class="fc" id="L55">            WinRateItem itemB = toItem.apply(b);</span>
+
+<span class="fc" id="L57">            String content = String.format(</span>
+                    &quot;%s 승률 %d%%(승 %d · 패 %d), %s 승률 %d%%(승 %d · 패 %d). &quot; +
+                            &quot;표본 수에 따라 불확실성이 있을 수 있습니다.&quot;,
+<span class="fc" id="L60">                    itemA.team(), itemA.winningRate(), itemA.wins(), itemA.losses(),</span>
+<span class="fc" id="L61">                    itemB.team(), itemB.winningRate(), itemB.wins(), itemB.losses()</span>
+            );
+<span class="fc" id="L63">            return WinRateResponse.ok(List.of(itemA, itemB), a + &quot; vs &quot; + b, content);</span>
+        }
+
+        // 단일 팀
+<span class="pc bpc" id="L67" title="1 of 2 branches missed.">        String t = (a != null) ? a : b;</span>
+<span class="fc" id="L68">        WinRateItem item = toItem.apply(t);</span>
+<span class="fc" id="L69">        String content = String.format(</span>
+                &quot;%s의 누적 승률은 %d%%(승 %d · 패 %d)입니다. &quot; +
+                        &quot;최근 폼/상대전적/라인업 등 추가 요소는 별도 데이터 연동 시 반영 가능합니다.&quot;,
+<span class="fc" id="L72">                item.team(), item.winningRate(), item.wins(), item.losses()</span>
+        );
+<span class="fc" id="L74">        return WinRateResponse.ok(List.of(item), null, content);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

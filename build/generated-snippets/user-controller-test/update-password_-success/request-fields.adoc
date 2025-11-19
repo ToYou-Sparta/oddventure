@@ -1,0 +1,12 @@
+|===
+|Path|Type|Description
+
+|`+currentPassword+`
+|`+String+`
+|현재 비밀번호
+
+|`+newPassword+`
+|`+String+`
+|새 비밀번호 (영문, 숫자, 특수문자 포함 8~20자)
+
+|===

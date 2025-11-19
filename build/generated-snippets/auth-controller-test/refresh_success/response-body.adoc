@@ -1,0 +1,13 @@
+[source,json,options="nowrap"]
+----
+{
+  "httpStatus" : "OK",
+  "code" : 200,
+  "success" : true,
+  "message" : "토큰이 재발급되었습니다.",
+  "data" : {
+    "accessToken" : "newAccessToken"
+  },
+  "timestamp" : "2025-11-19T10:10:02.8893554"
+}
+----

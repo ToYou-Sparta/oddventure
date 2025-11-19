@@ -1,0 +1,34 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+Content-Length: 506
+
+{
+  "httpStatus" : "OK",
+  "code" : 200,
+  "success" : true,
+  "message" : "사용자 목록 조회에 성공했습니다.",
+  "data" : {
+    "content" : [ {
+      "userId" : 1,
+      "username" : "testuser1",
+      "email" : "test1@email.com",
+      "point" : 1000,
+      "role" : "ROLE_USER",
+      "createdAt" : "2025-11-19T10:10:00.0003251"
+    } ],
+    "totalElements" : 1,
+    "totalPages" : 1,
+    "size" : 5,
+    "number" : 0
+  },
+  "timestamp" : "2025-11-19T10:10:00.0239609"
+}
+----

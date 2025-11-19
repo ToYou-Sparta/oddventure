@@ -1,0 +1,22 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Set-Cookie: refreshToken=; Path=/; Max-Age=0; Expires=Thu, 1 Jan 1970 00:00:00 GMT; Secure; HttpOnly; SameSite=Strict
+Content-Type: application/json;charset=UTF-8
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+Content-Length: 179
+
+{
+  "httpStatus" : "OK",
+  "code" : 200,
+  "success" : true,
+  "message" : "로그아웃 되었습니다.",
+  "data" : null,
+  "timestamp" : "2025-11-19T10:10:02.7331296"
+}
+----

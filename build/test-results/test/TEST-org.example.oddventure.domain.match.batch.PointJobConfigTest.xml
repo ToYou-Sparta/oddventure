@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.example.oddventure.domain.match.batch.PointJobConfigTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-11-19T01:10:15.923Z" hostname="DESKTOP-9Q5JQDP" time="0.121">
+  <properties/>
+  <testcase name="정산 배치 포인트 지급 성공" classname="org.example.oddventure.domain.match.batch.PointJobConfigTest" time="0.121"/>
+  <system-out><![CDATA[2025-11-19T10:10:15.920+09:00  INFO 18272 --- [    Test worker] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [org.example.oddventure.domain.match.batch.PointJobConfigTest]: PointJobConfigTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2025-11-19T10:10:15.921+09:00  INFO 18272 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration org.example.oddventure.OddventureApplication for test class org.example.oddventure.domain.match.batch.PointJobConfigTest
+Hibernate: insert into users (created_at,is_deleted,deleted_at,email,password,point,updated_at,user_role,username,id) values (?,?,?,?,?,?,?,?,?,default)
+Hibernate: insert into users (created_at,is_deleted,deleted_at,email,password,point,updated_at,user_role,username,id) values (?,?,?,?,?,?,?,?,?,default)
+Hibernate: insert into "match" (created_at,is_deleted,deleted_at,end_time,fetch_id,loser,match_name,start_time,status,team_a,team_b,total_amounta,total_amountb,updated_at,view_count,winner,id) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,default)
+Hibernate: insert into bet (bet_amount,created_at,is_deleted,deleted_at,is_win,match_id,odds_at_betting,selected_team,updated_at,user_id,id) values (?,?,?,?,?,?,?,?,?,?,default)
+Hibernate: insert into bet (bet_amount,created_at,is_deleted,deleted_at,is_win,match_id,odds_at_betting,selected_team,updated_at,user_id,id) values (?,?,?,?,?,?,?,?,?,?,default)
+2025-11-19T10:10:15.940+09:00  INFO 18272 --- [    Test worker] o.s.b.c.l.s.TaskExecutorJobLauncher      : Job: [SimpleJob: [name=pointSetJob]] launched with the following parameters: [{'matchIds':'{value=101, type=class java.lang.String, identifying=true}','timestamp':'{value=1763514615938, type=class java.lang.Long, identifying=true}'}]
+2025-11-19T10:10:15.943+09:00  INFO 18272 --- [    Test worker] o.s.batch.core.job.SimpleStepHandler     : Executing step: [pointSetStep]
+Hibernate: select b1_0.id,b1_0.bet_amount,b1_0.created_at,b1_0.is_deleted,b1_0.deleted_at,b1_0.is_win,b1_0.match_id,m1_0.id,m1_0.created_at,m1_0.is_deleted,m1_0.deleted_at,m1_0.end_time,m1_0.fetch_id,m1_0.loser,m1_0.match_name,m1_0.start_time,m1_0.status,m1_0.team_a,m1_0.team_b,m1_0.total_amounta,m1_0.total_amountb,m1_0.updated_at,m1_0.view_count,m1_0.winner,b1_0.odds_at_betting,b1_0.selected_team,b1_0.updated_at,b1_0.user_id,u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from bet b1_0 join users u1_0 on u1_0.id=b1_0.user_id join "match" m1_0 on m1_0.id=b1_0.match_id where m1_0.id in (?) and b1_0.is_deleted=false order by b1_0.id offset ? rows fetch first ? rows only
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+2025-11-19T10:10:16.031+09:00  INFO 18272 --- [    Test worker] o.e.o.domain.user.service.UserService    : [ADMIN_POINT_ADJUSTMENT] userId=1, amount=2000.0000, reason='배당금 지급', finalBalance=3000.0000
+Hibernate: select b1_0.id,b1_0.bet_amount,b1_0.created_at,b1_0.is_deleted,b1_0.deleted_at,b1_0.is_win,b1_0.match_id,b1_0.odds_at_betting,b1_0.selected_team,b1_0.updated_at,b1_0.user_id from bet b1_0 where b1_0.id=?
+Hibernate: select b1_0.id,b1_0.bet_amount,b1_0.created_at,b1_0.is_deleted,b1_0.deleted_at,b1_0.is_win,b1_0.match_id,b1_0.odds_at_betting,b1_0.selected_team,b1_0.updated_at,b1_0.user_id from bet b1_0 where b1_0.id=?
+Hibernate: update users set is_deleted=?,deleted_at=?,email=?,password=?,point=?,updated_at=?,user_role=?,username=? where id=?
+2025-11-19T10:10:16.038+09:00  INFO 18272 --- [    Test worker] o.s.batch.core.step.AbstractStep         : Step: [pointSetStep] executed in 95ms
+2025-11-19T10:10:16.041+09:00  INFO 18272 --- [    Test worker] o.s.b.c.l.s.TaskExecutorJobLauncher      : Job: [SimpleJob: [name=pointSetJob]] completed with the following parameters: [{'matchIds':'{value=101, type=class java.lang.String, identifying=true}','timestamp':'{value=1763514615938, type=class java.lang.Long, identifying=true}'}] and the following status: [COMPLETED] in 100ms
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.is_deleted,u1_0.deleted_at,u1_0.email,u1_0.password,u1_0.point,u1_0.updated_at,u1_0.user_role,u1_0.username from users u1_0 where u1_0.id=?
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

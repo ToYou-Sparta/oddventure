@@ -1,0 +1,8 @@
+[source,bash]
+----
+$ echo '{
+  "currentPassword" : "currentPassword123!",
+  "newPassword" : "newPassword123!"
+}' | http PATCH 'http://localhost:8080/api/v1/users/password?_csrf=gOp1NDIvJFa66H-bc9fjmgyN8OZuk8qrHrwSgLMYiuy9uPiQ4t8QUgRJQmGX30yiFfrXqTS-3Ydepa-GeIsjsocu69mLj8Gh' \
+    'Content-Type:application/json;charset=UTF-8'
+----

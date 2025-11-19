@@ -1,0 +1,8 @@
+[source,bash]
+----
+$ echo '{
+  "amount" : 5000,
+  "reason" : ""
+}' | http POST 'http://localhost:8080/api/v1/admin/users/1/points?_csrf=iG6W44S319BPaf1YLL7wpBewuQv64hd9oX5Z3sF4m43xHb0vuwjw17SCsrNiXZhgFZPEliaClGnL0SFQmRg6vKUZrbXHLowe' \
+    'Content-Type:application/json;charset=UTF-8'
+----

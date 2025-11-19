@@ -1,0 +1,25 @@
+[source,json,options="nowrap"]
+----
+{
+  "httpStatus" : "OK",
+  "code" : 200,
+  "success" : true,
+  "message" : "매치 상세 조회에 성공했습니다.",
+  "data" : {
+    "matchId" : 1,
+    "matchName" : "LCK",
+    "teamA" : "T1",
+    "teamB" : "GEN.G",
+    "totalAmountA" : 10000,
+    "totalAmountB" : 8000,
+    "startTime" : "2025-10-16T18:00:00",
+    "endTime" : "2025-10-16T20:00:00",
+    "status" : "SCHEDULED",
+    "winner" : null,
+    "loser" : null,
+    "viewCount" : 153,
+    "createdAt" : "2025-10-10T20:00:00"
+  },
+  "timestamp" : "2025-11-19T10:10:16.3656292"
+}
+----

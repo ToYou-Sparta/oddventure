@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MatchEsSyncScheduler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oddventure</a> &gt; <a href="index.source.html" class="el_package">org.example.oddventure.domain.match.scheduler</a> &gt; <span class="el_source">MatchEsSyncScheduler.java</span></div><h1>MatchEsSyncScheduler.java</h1><pre class="source lang-java linenums">package org.example.oddventure.domain.match.scheduler;
+
+import java.util.Set;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.example.oddventure.domain.match.document.MatchDocument;
+import org.example.oddventure.domain.match.entity.Match;
+import org.example.oddventure.domain.match.event.MatchEsSyncPublisher;
+import org.example.oddventure.domain.match.event.dto.MatchEsSyncEvent;
+import org.example.oddventure.domain.match.repository.MatchRepository;
+import org.example.oddventure.domain.match.repository.elasticsearch.MatchSearchRepository;
+import org.example.oddventure.domain.match.sync.AdaptiveEsSyncManager;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+/**
+ * MySQL → Elasticsearch 동기화 스케줄러 (Spring Batch 기반)
+ *
+ * &lt;p&gt;주기적으로 Spring Batch Job을 실행하여 MySQL의 Match 데이터를 Elasticsearch에 동기화
+ *
+ * &lt;p&gt;기존 스케줄러 방식 대비 장점:
+ * &lt;ul&gt;
+ *   &lt;li&gt;자동 재시작: 실패 지점부터 재시작 가능&lt;/li&gt;
+ *   &lt;li&gt;트랜잭션 관리: Chunk 단위 커밋/롤백&lt;/li&gt;
+ *   &lt;li&gt;실행 이력: JobRepository에 모든 실행 이력 저장&lt;/li&gt;
+ *   &lt;li&gt;모니터링: JobExecution을 통한 상세 추적&lt;/li&gt;
+ * &lt;/ul&gt;
+ */
+<span class="fc" id="L34">@Slf4j</span>
+@Component
+@RequiredArgsConstructor
+public class MatchEsSyncScheduler {
+
+    private final MatchRepository matchRepository;
+    private final MatchSearchRepository matchSearchRepository;
+    private final AdaptiveEsSyncManager syncManager;
+    private final MatchEsSyncPublisher syncPublisher;
+    private final JobLauncher jobLauncher;
+    private final Job matchEsSyncJob;
+
+    /**
+     * MySQL → Elasticsearch 전체 동기화 (Spring Batch Job 실행) 매일 새벽 3시에 실행 (cron 표현식)
+     */
+    @Scheduled(cron = &quot;0 0 3 * * *&quot;, zone = &quot;Asia/Seoul&quot;)
+    public void syncAllMatchesToElasticsearch() {
+<span class="nc" id="L51">        log.info(&quot;=== MySQL → Elasticsearch 전체 동기화 Batch Job 시작 ===&quot;);</span>
+
+        try {
+            // JobParameters에 타임스탬프를 추가하여 매번 새로운 Job 인스턴스 생성
+<span class="nc" id="L55">            JobParameters jobParameters = new JobParametersBuilder()</span>
+<span class="nc" id="L56">                    .addLong(&quot;timestamp&quot;, System.currentTimeMillis())</span>
+<span class="nc" id="L57">                    .toJobParameters();</span>
+
+<span class="nc" id="L59">            jobLauncher.run(matchEsSyncJob, jobParameters);</span>
+
+<span class="nc" id="L61">            log.info(&quot;=== MySQL → Elasticsearch 전체 동기화 Batch Job 완료 ===&quot;);</span>
+
+<span class="nc" id="L63">        } catch (Exception e) {</span>
+<span class="nc" id="L64">            log.error(&quot;MySQL → Elasticsearch 전체 동기화 Batch Job 실패&quot;, e);</span>
+<span class="nc" id="L65">        }</span>
+<span class="nc" id="L66">    }</span>
+
+    /**
+     * 대용량 모드 체크 및 즉시 동기화 5분마다 실행하여 대용량 모드 감지 시 즉시 동기화
+     */
+    @Scheduled(fixedDelay = 300000)  // 5분마다 실행
+    @Transactional(readOnly = true)
+    public void syncPendingMatches() {
+        // 대용량 모드가 아니면 스킵
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">        if (!syncManager.isBulkMode()) {</span>
+<span class="fc" id="L76">            return;</span>
+        }
+
+<span class="nc" id="L79">        log.info(&quot;=== 대용량 모드 감지 - 대기 중인 데이터 동기화 시작 ===&quot;);</span>
+
+<span class="nc" id="L81">        long startTime = System.currentTimeMillis();</span>
+<span class="nc" id="L82">        int totalSynced = 0;</span>
+
+        try {
+            // CREATE 타입 동기화
+<span class="nc" id="L86">            totalSynced += syncPendingByType(MatchEsSyncEvent.SyncType.CREATE);</span>
+
+            // UPDATE 타입 동기화
+<span class="nc" id="L89">            totalSynced += syncPendingByType(MatchEsSyncEvent.SyncType.UPDATE);</span>
+
+            // DELETE 타입 동기화
+<span class="nc" id="L92">            totalSynced += syncPendingByType(MatchEsSyncEvent.SyncType.DELETE);</span>
+
+<span class="nc" id="L94">            long endTime = System.currentTimeMillis();</span>
+<span class="nc" id="L95">            log.info(&quot;=== 대기 데이터 동기화 완료 === 총 {}건, 소요 시간: {}ms&quot;,</span>
+<span class="nc" id="L96">                    totalSynced, (endTime - startTime));</span>
+
+            // 동기화 완료 후 대용량 모드 해제
+<span class="nc" id="L99">            syncManager.deactivateBulkMode();</span>
+
+<span class="nc" id="L101">        } catch (Exception e) {</span>
+<span class="nc" id="L102">            log.error(&quot;대기 데이터 동기화 실패&quot;, e);</span>
+<span class="nc" id="L103">        }</span>
+<span class="nc" id="L104">    }</span>
+
+    /**
+     * 특정 타입의 대기 중인 Match 동기화
+     */
+    private int syncPendingByType(MatchEsSyncEvent.SyncType syncType) {
+<span class="nc" id="L110">        Set&lt;Object&gt; pendingIds = syncPublisher.getPendingSyncIds(syncType);</span>
+
+<span class="nc bnc" id="L112" title="All 4 branches missed.">        if (pendingIds == null || pendingIds.isEmpty()) {</span>
+<span class="nc" id="L113">            return 0;</span>
+        }
+
+<span class="nc" id="L116">        log.info(&quot;{} 타입 동기화 시작 - 대기 건수: {}&quot;, syncType, pendingIds.size());</span>
+
+<span class="nc" id="L118">        int synced = 0;</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">        for (Object obj : pendingIds) {</span>
+            try {
+<span class="nc" id="L121">                Long matchId = Long.parseLong(obj.toString());</span>
+
+<span class="nc bnc" id="L123" title="All 2 branches missed.">                if (syncType == MatchEsSyncEvent.SyncType.DELETE) {</span>
+<span class="nc" id="L124">                    matchSearchRepository.deleteById(String.valueOf(matchId));</span>
+                } else {
+<span class="nc" id="L126">                    Match match = matchRepository.findById(matchId).orElse(null);</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">                    if (match != null) {</span>
+<span class="nc" id="L128">                        MatchDocument document = MatchDocument.from(match);</span>
+<span class="nc" id="L129">                        matchSearchRepository.save(document);</span>
+                    }
+                }
+
+<span class="nc" id="L133">                synced++;</span>
+<span class="nc" id="L134">            } catch (Exception e) {</span>
+<span class="nc" id="L135">                log.error(&quot;Match 동기화 실패 - matchId: {}&quot;, obj, e);</span>
+<span class="nc" id="L136">            }</span>
+<span class="nc" id="L137">        }</span>
+
+        // 동기화 완료 후 대기 목록 삭제
+<span class="nc" id="L140">        syncPublisher.clearPendingSync(syncType);</span>
+
+<span class="nc" id="L142">        log.info(&quot;{} 타입 동기화 완료 - {}건&quot;, syncType, synced);</span>
+<span class="nc" id="L143">        return synced;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

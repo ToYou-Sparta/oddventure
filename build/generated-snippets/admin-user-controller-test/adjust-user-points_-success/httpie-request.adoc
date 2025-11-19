@@ -1,0 +1,8 @@
+[source,bash]
+----
+$ echo '{
+  "amount" : 5000,
+  "reason" : "베팅 승리 보상"
+}' | http POST 'http://localhost:8080/api/v1/admin/users/1/points?_csrf=_KBCv9OK9mzcEefv5vDgNtNl3iCvhqNMYi7_LSw_IJczLdGkyZcj2eq9xFXxc9DW1t3UVeJV80HOvpBhBxbLGk8MRKNVT7eR' \
+    'Content-Type:application/json;charset=UTF-8'
+----

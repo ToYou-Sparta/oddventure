@@ -1,0 +1,12 @@
+[source,http,options="nowrap"]
+----
+PATCH /api/v1/users/password?_csrf=gOp1NDIvJFa66H-bc9fjmgyN8OZuk8qrHrwSgLMYiuy9uPiQ4t8QUgRJQmGX30yiFfrXqTS-3Ydepa-GeIsjsocu69mLj8Gh HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Content-Length: 87
+Host: localhost:8080
+
+{
+  "currentPassword" : "currentPassword123!",
+  "newPassword" : "newPassword123!"
+}
+----

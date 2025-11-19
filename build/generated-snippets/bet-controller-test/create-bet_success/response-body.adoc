@@ -1,0 +1,19 @@
+[source,json,options="nowrap"]
+----
+{
+  "httpStatus" : "CREATED",
+  "code" : 201,
+  "success" : true,
+  "message" : "베팅이 완료되었습니다.",
+  "data" : {
+    "betId" : 1,
+    "userId" : 1,
+    "selectedTeam" : "Team_A",
+    "selectedTeamName" : "T1",
+    "betAmount" : 1000,
+    "oddsAtBetting" : 1.5,
+    "userPointAfter" : 0
+  },
+  "timestamp" : "2025-11-19T10:10:03.7520565"
+}
+----

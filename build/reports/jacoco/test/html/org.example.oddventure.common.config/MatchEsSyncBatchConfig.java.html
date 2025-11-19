@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MatchEsSyncBatchConfig.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oddventure</a> &gt; <a href="index.source.html" class="el_package">org.example.oddventure.common.config</a> &gt; <span class="el_source">MatchEsSyncBatchConfig.java</span></div><h1>MatchEsSyncBatchConfig.java</h1><pre class="source lang-java linenums">package org.example.oddventure.common.config;
+
+import jakarta.persistence.EntityManagerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.example.oddventure.domain.match.document.MatchDocument;
+import org.example.oddventure.domain.match.entity.Match;
+import org.example.oddventure.domain.match.repository.elasticsearch.MatchSearchRepository;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.Step;
+import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.database.JpaPagingItemReader;
+import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.PlatformTransactionManager;
+
+import java.util.List;
+
+/**
+ * MySQL → Elasticsearch 동기화 Spring Batch 설정
+ *
+ * &lt;p&gt;Chunk 기반 처리로 안정적인 대용량 데이터 동기화 제공:
+ * &lt;ul&gt;
+ *   &lt;li&gt;자동 재시작: 실패 지점부터 재시작 가능&lt;/li&gt;
+ *   &lt;li&gt;트랜잭션 관리: Chunk 단위 커밋/롤백&lt;/li&gt;
+ *   &lt;li&gt;실행 이력: JobRepository에 모든 실행 이력 저장&lt;/li&gt;
+ *   &lt;li&gt;병렬 처리: Multi-thread Step 지원 가능&lt;/li&gt;
+ * &lt;/ul&gt;
+ */
+<span class="fc" id="L35">@Slf4j</span>
+@Configuration
+@RequiredArgsConstructor
+public class MatchEsSyncBatchConfig {
+
+    private static final int CHUNK_SIZE = 1000;  // Chunk 크기
+    private static final String JOB_NAME = &quot;matchEsSyncJob&quot;;
+    private static final String STEP_NAME = &quot;matchEsSyncStep&quot;;
+    private static final String READER_NAME = &quot;matchEsSyncReader&quot;;
+
+    private final JobRepository jobRepository; // Spring Batch 실행 이력 저장소
+    private final PlatformTransactionManager transactionManager; //Chunk 단위로 Commit/Rollback 처리
+    private final EntityManagerFactory entityManagerFactory; //Reader가 JPA 데이터 조회시 사용
+    private final MatchSearchRepository matchSearchRepository;
+
+    /**
+     * MySQL → Elasticsearch 전체 동기화 Job
+     */
+    @Bean
+    public Job matchEsSyncJob(Step matchEsSyncStep) {
+<span class="fc" id="L55">        return new JobBuilder(JOB_NAME, jobRepository)</span>
+<span class="fc" id="L56">                .start(matchEsSyncStep)</span>
+<span class="fc" id="L57">                .build();</span>
+    }
+
+    /**
+     * Match 동기화 Step (Chunk 기반)
+     *
+     * &lt;p&gt;처리 흐름:
+     * 1. Reader: MySQL에서 Match 페이징 조회
+     * 2. Processor: Match → MatchDocument 변환
+     * 3. Writer: Elasticsearch Bulk 저장
+     */
+    @Bean
+    public Step matchEsSyncStep(JpaPagingItemReader&lt;Match&gt; matchEsSyncReader) {
+<span class="fc" id="L70">        return new StepBuilder(STEP_NAME, jobRepository)</span>
+<span class="fc" id="L71">                .&lt;Match, MatchDocument&gt;chunk(CHUNK_SIZE, transactionManager)</span>
+<span class="fc" id="L72">                .reader(matchEsSyncReader)</span>
+<span class="fc" id="L73">                .processor(matchEsSyncProcessor())</span>
+<span class="fc" id="L74">                .writer(matchEsSyncWriter())</span>
+<span class="fc" id="L75">                .build();</span>
+    }
+
+    /**
+     * MySQL Match 읽기 (JPA Paging)
+     *
+     * &lt;p&gt;삭제되지 않은 모든 Match를 페이징으로 조회
+     */
+    @Bean
+    public JpaPagingItemReader&lt;Match&gt; matchEsSyncReader() {
+<span class="fc" id="L85">        return new JpaPagingItemReaderBuilder&lt;Match&gt;()</span>
+<span class="fc" id="L86">                .name(READER_NAME)</span>
+<span class="fc" id="L87">                .entityManagerFactory(entityManagerFactory)</span>
+<span class="fc" id="L88">                .queryString(</span>
+                        &quot;SELECT m FROM Match m &quot; +
+                        &quot;WHERE m.deleted = false &quot; +
+                        &quot;ORDER BY m.id&quot;
+                )
+<span class="fc" id="L93">                .pageSize(CHUNK_SIZE)</span>
+<span class="fc" id="L94">                .build();</span>
+    }
+
+    /**
+     * Match → MatchDocument 변환 Processor
+     */
+    @Bean
+    public ItemProcessor&lt;Match, MatchDocument&gt; matchEsSyncProcessor() {
+<span class="fc" id="L102">        return match -&gt; {</span>
+            try {
+<span class="fc" id="L104">                return MatchDocument.from(match);</span>
+<span class="nc" id="L105">            } catch (Exception e) {</span>
+<span class="nc" id="L106">                log.error(&quot;Match → MatchDocument 변환 실패 - matchId: {}&quot;, match.getId(), e);</span>
+                // 변환 실패 시 null 반환 (해당 항목은 Writer로 전달되지 않음)
+<span class="nc" id="L108">                return null;</span>
+            }
+        };
+    }
+
+    /**
+     * Elasticsearch Bulk 저장 Writer
+     *
+     * &lt;p&gt;Chunk 단위로 모아서 Elasticsearch에 Bulk 저장
+     */
+    @Bean
+    public ItemWriter&lt;MatchDocument&gt; matchEsSyncWriter() {
+<span class="fc" id="L120">        return chunk -&gt; {</span>
+<span class="fc" id="L121">            List&lt;? extends MatchDocument&gt; documents = chunk.getItems();</span>
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">            if (documents.isEmpty()) {</span>
+<span class="nc" id="L123">                return;</span>
+            }
+
+            try {
+<span class="fc" id="L127">                matchSearchRepository.saveAll(documents);</span>
+<span class="fc" id="L128">                log.info(&quot;Elasticsearch Bulk 저장 완료 - {}건&quot;, documents.size());</span>
+<span class="nc" id="L129">            } catch (Exception e) {</span>
+<span class="nc" id="L130">                log.error(&quot;Elasticsearch Bulk 저장 실패 - {}건&quot;, documents.size(), e);</span>
+<span class="nc" id="L131">                throw e;  // 실패 시 Chunk 롤백</span>
+<span class="fc" id="L132">            }</span>
+<span class="fc" id="L133">        };</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

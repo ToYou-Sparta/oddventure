@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - AgentExecutorTest</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>AgentExecutorTest</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/org.example.oddventure.domain.ai.unit.html">org.example.oddventure.domain.ai.unit</a> &gt; AgentExecutorTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">6</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">0.145s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="tab-container">
+<ul class="tabLinks">
+<li>
+<a href="#">Tests</a>
+</li>
+<li>
+<a href="#">Standard output</a>
+</li>
+</ul>
+<div class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Method name</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">cs2News agent를 호출한다.</td>
+<td class="success">callCs2NewsAgent_success()</td>
+<td class="success">0.060s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">default agent를 호출한다.</td>
+<td class="success">callDefaultAgent_success()</td>
+<td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">hotKeyword agent를 호출한다.</td>
+<td class="success">callHotKeywordAgent_success()</td>
+<td class="success">0.002s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">한 번에 여러 agent를 호출한다.</td>
+<td class="success">callMultiAgent_success()</td>
+<td class="success">0.079s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">schedule agent를 호출한다.</td>
+<td class="success">callScheduleAgent_success()</td>
+<td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">winRate agent를 호출한다.</td>
+<td class="success">callWinRateAgent_success()</td>
+<td class="success">0.002s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>2025-11-19T10:10:01.249+09:00  INFO 18272 --- [    Test worker] o.e.o.domain.ai.agent.AgentExecutor      : callCS2NewsAgent: {
+	input={question=CS2 최근 소식 알려줘.}
+	mid={intent=cs2News}
+	}
+2025-11-19T10:10:01.253+09:00  INFO 18272 --- [    Test worker] o.e.o.domain.ai.agent.AgentExecutor      : CS2News Agent Output: {cs2News=이제 StarLadder 부다페스트 메이저 대회 허브를 이용할 수 있습니다. 허브를 방문하여 토너먼트 아이템을 구매하고 승자 예측 도전을 플레이하는 등 다양한 콘텐츠를 즐겨보세요.}
+2025-11-19T10:10:01.255+09:00  INFO 18272 --- [    Test worker] o.e.o.domain.ai.agent.AgentExecutor      : callScheduleAgent: {
+	input={question=오늘은 어떤 경기가 있나요?}
+	mid={intent=schedule}
+	}
+2025-11-19T10:10:01.255+09:00  INFO 18272 --- [    Test worker] o.e.o.domain.ai.agent.AgentExecutor      : Schedule Agent Output: {schedule=안녕하세요! 오늘은 FaZe Clan과 Team Vitality의 경기가 있어요.}
+2025-11-19T10:10:01.256+09:00  INFO 18272 --- [    Test worker] o.e.o.domain.ai.agent.AgentExecutor      : callWinRateAgent: {
+	input={question=FaZe Clan 팀의 승률 알려줘.}
+	mid={intent=winRate}
+	}
+2025-11-19T10:10:01.257+09:00  INFO 18272 --- [    Test worker] o.e.o.domain.ai.agent.AgentExecutor      : WinRate Agent Output: {winRate=FaZe Clan과 Team Vitality의 승률은 각각 70%, 30% 입니다.}
+2025-11-19T10:10:01.258+09:00  INFO 18272 --- [    Test worker] o.e.o.domain.ai.agent.AgentExecutor      : callHotKeywordAgent: {
+	input={question=요즘 인기 있는 팀은 어디야?}
+	mid={intent=hotKeyword}
+	}
+2025-11-19T10:10:01.258+09:00  INFO 18272 --- [    Test worker] o.e.o.domain.ai.agent.AgentExecutor      : HotKeyword Agent Output: {hotKeyword=요즘은 FaZe Clan 팀의 경기가 인기있어요.}
+2025-11-19T10:10:01.260+09:00  INFO 18272 --- [    Test worker] o.e.o.domain.ai.agent.AgentExecutor      : callDefaultAgent: {
+	input={question=오늘 날씨 어때?}
+	mid={intent=default}
+	}
+2025-11-19T10:10:01.260+09:00  INFO 18272 --- [    Test worker] o.e.o.domain.ai.agent.AgentExecutor      : default Agent Output: {default=해당 정보가 부족하여 답변드릴 수 없습니다. e-sports 관련한 질문에 관해 답변해드릴게요!}
+2025-11-19T10:10:01.330+09:00  INFO 18272 --- [    Test worker] o.e.o.domain.ai.agent.AgentExecutor      : callClassifyAgent: {
+	output={}
+	input={question=요즘 인기 있는 팀의 승률 알려줘., userId=1}
+	mid={}
+	}
+2025-11-19T10:10:01.331+09:00  INFO 18272 --- [    Test worker] o.e.o.domain.ai.agent.AgentExecutor      : Classify Agent Output: {intent=hotKeyword,winRate}
+2025-11-19T10:10:01.333+09:00  INFO 18272 --- [    Test worker] o.e.o.domain.ai.agent.AgentExecutor      : shouldContinue state: {
+	output={}
+	input={question=요즘 인기 있는 팀의 승률 알려줘., userId=1}
+	mid={intent=hotKeyword,winRate}
+	}
+2025-11-19T10:10:01.334+09:00  INFO 18272 --- [    Test worker] o.e.o.domain.ai.agent.AgentExecutor      : callHotKeywordAgent: {
+	output={}
+	input={question=요즘 인기 있는 팀의 승률 알려줘., userId=1}
+	mid={intent=hotKeyword,winRate}
+	}
+2025-11-19T10:10:01.335+09:00  INFO 18272 --- [    Test worker] o.e.o.domain.ai.agent.AgentExecutor      : HotKeyword Agent Output: {hotKeyword=요즘 인기있는 팀은 FaZe Clan 입니다.}
+2025-11-19T10:10:01.335+09:00  INFO 18272 --- [    Test worker] o.e.o.domain.ai.agent.AgentExecutor      : shouldContinue state: {
+	output={hotKeyword=요즘 인기있는 팀은 FaZe Clan 입니다.}
+	input={question=요즘 인기 있는 팀의 승률 알려줘., userId=1}
+	mid={intent=winRate}
+	}
+2025-11-19T10:10:01.336+09:00  INFO 18272 --- [    Test worker] o.e.o.domain.ai.agent.AgentExecutor      : callWinRateAgent: {
+	output={hotKeyword=요즘 인기있는 팀은 FaZe Clan 입니다.}
+	input={question=요즘 인기 있는 팀의 승률 알려줘., userId=1}
+	mid={intent=winRate}
+	}
+2025-11-19T10:10:01.336+09:00  INFO 18272 --- [    Test worker] o.e.o.domain.ai.agent.AgentExecutor      : WinRate Agent Output: {hotKeyword=요즘 인기있는 팀은 FaZe Clan 입니다., winRate=FaZe Clan의 승률은 70% 입니다.}
+2025-11-19T10:10:01.336+09:00  INFO 18272 --- [    Test worker] o.e.o.domain.ai.agent.AgentExecutor      : shouldContinue state: {
+	output={hotKeyword=요즘 인기있는 팀은 FaZe Clan 입니다., winRate=FaZe Clan의 승률은 70% 입니다.}
+	input={question=요즘 인기 있는 팀의 승률 알려줘., userId=1}
+	mid={intent=}
+	}
+{hotKeyword=요즘 인기있는 팀은 FaZe Clan 입니다., winRate=FaZe Clan의 승률은 70% 입니다.}
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="https://www.gradle.org">Gradle 8.14.3</a> at 2025. 11. 19. 오전 10:10:24</p>
+</div>
+</div>
+</body>
+</html>

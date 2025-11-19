@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="베팅 생성 트랜잭션" tests="3" skipped="0" failures="0" errors="0" timestamp="2025-11-19T01:10:11.734Z" hostname="DESKTOP-9Q5JQDP" time="0.007">
+  <properties/>
+  <testcase name="실패 - 보유 포인트 부족" classname="org.example.oddventure.domain.bet.unit.BetTransactionServiceTest$CreateBetInternal" time="0.002"/>
+  <testcase name="성공 - 유저 포인트가 차감되고 베팅 금액이 저장된다" classname="org.example.oddventure.domain.bet.unit.BetTransactionServiceTest$CreateBetInternal" time="0.002"/>
+  <testcase name="실패 - 베팅 불가능한 매치 (ONGOING)" classname="org.example.oddventure.domain.bet.unit.BetTransactionServiceTest$CreateBetInternal" time="0.002"/>
+  <system-out><![CDATA[total: 2200
+probability: 0.50
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

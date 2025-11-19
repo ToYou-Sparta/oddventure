@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.example.oddventure.domain.auth.jwt.JwtUtilTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2025-11-19T01:10:02.170Z" hostname="DESKTOP-9Q5JQDP" time="0.072">
+  <properties/>
+  <testcase name="토큰 유효성 검증 실패" classname="org.example.oddventure.domain.auth.jwt.JwtUtilTest" time="0.039"/>
+  <testcase name="리프레시 토큰 생성 및 검증 성공" classname="org.example.oddventure.domain.auth.jwt.JwtUtilTest" time="0.029"/>
+  <testcase name="액세스 토큰 생성 성공" classname="org.example.oddventure.domain.auth.jwt.JwtUtilTest" time="0.003"/>
+  <testcase name="Bearer 접두사 제거 성공" classname="org.example.oddventure.domain.auth.jwt.JwtUtilTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

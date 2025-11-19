@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.example.oddventure.domain.auth.unit.AuthServiceTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2025-11-19T01:10:02.905Z" hostname="DESKTOP-9Q5JQDP" time="0.137">
+  <properties/>
+  <testcase name="토큰 재발급 실패 - 유효하지 않은 토큰" classname="org.example.oddventure.domain.auth.unit.AuthServiceTest" time="0.11"/>
+  <testcase name="회원가입 실패 - 이미 존재하는 이메일" classname="org.example.oddventure.domain.auth.unit.AuthServiceTest" time="0.002"/>
+  <testcase name="회원 탈퇴 실패 - 비밀번호 불일치" classname="org.example.oddventure.domain.auth.unit.AuthServiceTest" time="0.003"/>
+  <testcase name="회원 탈퇴 성공" classname="org.example.oddventure.domain.auth.unit.AuthServiceTest" time="0.002"/>
+  <testcase name="회원 탈퇴 실패 - 이미 탈퇴된 사용자" classname="org.example.oddventure.domain.auth.unit.AuthServiceTest" time="0.002"/>
+  <testcase name="로그인 성공" classname="org.example.oddventure.domain.auth.unit.AuthServiceTest" time="0.004"/>
+  <testcase name="로그인 실패 - 비밀번호 불일치" classname="org.example.oddventure.domain.auth.unit.AuthServiceTest" time="0.002"/>
+  <testcase name="회원가입 성공" classname="org.example.oddventure.domain.auth.unit.AuthServiceTest" time="0.002"/>
+  <testcase name="로그인 실패 - 존재하지 않는 이메일" classname="org.example.oddventure.domain.auth.unit.AuthServiceTest" time="0.001"/>
+  <testcase name="로그아웃 성공" classname="org.example.oddventure.domain.auth.unit.AuthServiceTest" time="0.001"/>
+  <testcase name="토큰 재발급 실패 - 저장된 토큰과 불일치" classname="org.example.oddventure.domain.auth.unit.AuthServiceTest" time="0.002"/>
+  <testcase name="토큰 재발급 성공" classname="org.example.oddventure.domain.auth.unit.AuthServiceTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

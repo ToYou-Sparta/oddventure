@@ -1,0 +1,12 @@
+[source,json,options="nowrap"]
+----
+{
+  "httpStatus" : "BAD_REQUEST",
+  "code" : 400,
+  "success" : false,
+  "message" : "포인트 조정 사유는 필수 입력 값입니다.",
+  "data" : null,
+  "timestamp" : "2025-11-19T10:10:00.1708107",
+  "requestUrl" : "/api/v1/admin/users/1/points"
+}
+----

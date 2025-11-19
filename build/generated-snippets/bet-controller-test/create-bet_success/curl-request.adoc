@@ -1,0 +1,10 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/api/v1/bets' -i -X POST \
+    -H 'Content-Type: application/json;charset=UTF-8' \
+    -d '{
+  "matchId" : 1,
+  "selectedTeam" : "Team_A",
+  "betAmount" : 1000
+}'
+----

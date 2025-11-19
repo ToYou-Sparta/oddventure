@@ -1,0 +1,22 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 400 Bad Request
+Content-Type: application/json;charset=UTF-8
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+Content-Length: 264
+
+{
+  "httpStatus" : "BAD_REQUEST",
+  "code" : 400,
+  "success" : false,
+  "message" : "포인트 조정 사유는 필수 입력 값입니다.",
+  "data" : null,
+  "timestamp" : "2025-11-19T10:10:00.1708107",
+  "requestUrl" : "/api/v1/admin/users/1/points"
+}
+----

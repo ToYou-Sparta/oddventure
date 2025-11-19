@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.example.oddventure.domain.match.unit.MatchServiceCacheTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-11-19T01:10:19.767Z" hostname="DESKTOP-9Q5JQDP" time="0.028">
+  <properties/>
+  <testcase name="종료된 경기 상세 조회 캐싱 성능 비교" classname="org.example.oddventure.domain.match.unit.MatchServiceCacheTest" time="0.028"/>
+  <system-out><![CDATA[2025-11-19T10:10:17.143+09:00  INFO 18272 --- [    Test worker] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [org.example.oddventure.domain.match.unit.MatchServiceCacheTest]: MatchServiceCacheTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2025-11-19T10:10:17.144+09:00  INFO 18272 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration org.example.oddventure.OddventureApplication for test class org.example.oddventure.domain.match.unit.MatchServiceCacheTest
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.5.6)
+
+2025-11-19T10:10:17.164+09:00  INFO 18272 --- [    Test worker] o.e.o.d.m.unit.MatchServiceCacheTest     : Starting MatchServiceCacheTest using Java 21.0.9 with PID 18272 (started by Main in C:\sparta\Project\oddventure)
+2025-11-19T10:10:17.164+09:00  INFO 18272 --- [    Test worker] o.e.o.d.m.unit.MatchServiceCacheTest     : The following 1 profile is active: "test"
+2025-11-19T10:10:17.375+09:00  INFO 18272 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-19T10:10:17.375+09:00  INFO 18272 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-11-19T10:10:17.377+09:00  INFO 18272 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 0 ms. Found 0 Redis repository interfaces.
+2025-11-19T10:10:17.447+09:00  INFO 18272 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-19T10:10:17.447+09:00  INFO 18272 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Elasticsearch repositories in DEFAULT mode.
+2025-11-19T10:10:17.470+09:00  INFO 18272 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data Elasticsearch - Could not safely identify store assignment for repository candidate interface org.example.oddventure.domain.bet.repository.BetRepository; If you want this repository to be a Elasticsearch repository, consider annotating your entities with one of these annotations: org.springframework.data.elasticsearch.annotations.Document (preferred), or consider extending one of the following types with your repository: org.springframework.data.elasticsearch.repository.ElasticsearchRepository
+2025-11-19T10:10:17.470+09:00  INFO 18272 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data Elasticsearch - Could not safely identify store assignment for repository candidate interface org.example.oddventure.domain.hotKeywords.repository.HotKeywordsRepository; If you want this repository to be a Elasticsearch repository, consider annotating your entities with one of these annotations: org.springframework.data.elasticsearch.annotations.Document (preferred), or consider extending one of the following types with your repository: org.springframework.data.elasticsearch.repository.ElasticsearchRepository
+2025-11-19T10:10:17.470+09:00  INFO 18272 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data Elasticsearch - Could not safely identify store assignment for repository candidate interface org.example.oddventure.domain.match.repository.MatchRepository; If you want this repository to be a Elasticsearch repository, consider annotating your entities with one of these annotations: org.springframework.data.elasticsearch.annotations.Document (preferred), or consider extending one of the following types with your repository: org.springframework.data.elasticsearch.repository.ElasticsearchRepository
+2025-11-19T10:10:17.470+09:00  INFO 18272 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data Elasticsearch - Could not safely identify store assignment for repository candidate interface org.example.oddventure.domain.team.repository.TeamRepository; If you want this repository to be a Elasticsearch repository, consider annotating your entities with one of these annotations: org.springframework.data.elasticsearch.annotations.Document (preferred), or consider extending one of the following types with your repository: org.springframework.data.elasticsearch.repository.ElasticsearchRepository
+2025-11-19T10:10:17.470+09:00  INFO 18272 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data Elasticsearch - Could not safely identify store assignment for repository candidate interface org.example.oddventure.domain.user.repository.UserRepository; If you want this repository to be a Elasticsearch repository, consider annotating your entities with one of these annotations: org.springframework.data.elasticsearch.annotations.Document (preferred), or consider extending one of the following types with your repository: org.springframework.data.elasticsearch.repository.ElasticsearchRepository
+2025-11-19T10:10:17.488+09:00  INFO 18272 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 41 ms. Found 1 Elasticsearch repository interface.
+2025-11-19T10:10:17.489+09:00  INFO 18272 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-19T10:10:17.489+09:00  INFO 18272 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Reactive Elasticsearch repositories in DEFAULT mode.
+2025-11-19T10:10:17.508+09:00  INFO 18272 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data Reactive Elasticsearch - Could not safely identify store assignment for repository candidate interface org.example.oddventure.domain.bet.repository.BetRepository; If you want this repository to be a Reactive Elasticsearch repository, consider annotating your entities with one of these annotations: org.springframework.data.elasticsearch.annotations.Document (preferred), or consider extending one of the following types with your repository: org.springframework.data.elasticsearch.repository.ReactiveElasticsearchRepository
+2025-11-19T10:10:17.508+09:00  INFO 18272 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data Reactive Elasticsearch - Could not safely identify store assignment for repository candidate interface org.example.oddventure.domain.hotKeywords.repository.HotKeywordsRepository; If you want this repository to be a Reactive Elasticsearch repository, consider annotating your entities with one of these annotations: org.springframework.data.elasticsearch.annotations.Document (preferred), or consider extending one of the following types with your repository: org.springframework.data.elasticsearch.repository.ReactiveElasticsearchRepository
+2025-11-19T10:10:17.508+09:00  INFO 18272 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data Reactive Elasticsearch - Could not safely identify store assignment for repository candidate interface org.example.oddventure.domain.match.repository.MatchRepository; If you want this repository to be a Reactive Elasticsearch repository, consider annotating your entities with one of these annotations: org.springframework.data.elasticsearch.annotations.Document (preferred), or consider extending one of the following types with your repository: org.springframework.data.elasticsearch.repository.ReactiveElasticsearchRepository
+2025-11-19T10:10:17.508+09:00  INFO 18272 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data Reactive Elasticsearch - Could not safely identify store assignment for repository candidate interface org.example.oddventure.domain.team.repository.TeamRepository; If you want this repository to be a Reactive Elasticsearch repository, consider annotating your entities with one of these annotations: org.springframework.data.elasticsearch.annotations.Document (preferred), or consider extending one of the following types with your repository: org.springframework.data.elasticsearch.repository.ReactiveElasticsearchRepository
+2025-11-19T10:10:17.508+09:00  INFO 18272 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data Reactive Elasticsearch - Could not safely identify store assignment for repository candidate interface org.example.oddventure.domain.user.repository.UserRepository; If you want this repository to be a Reactive Elasticsearch repository, consider annotating your entities with one of these annotations: org.springframework.data.elasticsearch.annotations.Document (preferred), or consider extending one of the following types with your repository: org.springframework.data.elasticsearch.repository.ReactiveElasticsearchRepository
+2025-11-19T10:10:17.508+09:00  INFO 18272 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 18 ms. Found 0 Reactive Elasticsearch repository interfaces.
+2025-11-19T10:10:17.510+09:00  INFO 18272 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-19T10:10:17.510+09:00  INFO 18272 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-11-19T10:10:17.529+09:00  INFO 18272 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data JPA - Could not safely identify store assignment for repository candidate interface org.example.oddventure.domain.match.repository.elasticsearch.MatchSearchRepository; If you want this repository to be a JPA repository, consider annotating your entities with one of these annotations: jakarta.persistence.Entity, jakarta.persistence.MappedSuperclass (preferred), or consider extending one of the following types with your repository: org.springframework.data.jpa.repository.JpaRepository
+2025-11-19T10:10:17.549+09:00  INFO 18272 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 38 ms. Found 5 JPA repository interfaces.
+2025-11-19T10:10:17.550+09:00  INFO 18272 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-19T10:10:17.550+09:00  INFO 18272 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-11-19T10:10:17.569+09:00  INFO 18272 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface org.example.oddventure.domain.bet.repository.BetRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-19T10:10:17.569+09:00  INFO 18272 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface org.example.oddventure.domain.hotKeywords.repository.HotKeywordsRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-19T10:10:17.569+09:00  INFO 18272 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface org.example.oddventure.domain.match.repository.elasticsearch.MatchSearchRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-19T10:10:17.569+09:00  INFO 18272 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface org.example.oddventure.domain.match.repository.MatchRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-19T10:10:17.569+09:00  INFO 18272 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface org.example.oddventure.domain.team.repository.TeamRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-19T10:10:17.569+09:00  INFO 18272 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface org.example.oddventure.domain.user.repository.UserRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-19T10:10:17.569+09:00  INFO 18272 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 18 ms. Found 0 Redis repository interfaces.
+2025-11-19T10:10:17.660+09:00  INFO 18272 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Starting...
+2025-11-19T10:10:17.661+09:00  INFO 18272 --- [    Test worker] com.zaxxer.hikari.pool.HikariPool        : HikariPool-4 - Added connection conn37: url=jdbc:h2:mem:testdb user=SA
+2025-11-19T10:10:17.661+09:00  INFO 18272 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Start completed.
+2025-11-19T10:10:17.704+09:00  INFO 18272 --- [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-11-19T10:10:17.707+09:00  INFO 18272 --- [    Test worker] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-11-19T10:10:17.714+09:00  INFO 18272 --- [    Test worker] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-11-19T10:10:17.715+09:00  INFO 18272 --- [    Test worker] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-4)']
+	Database driver: undefined/unknown
+	Database version: 2.3.232
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-11-19T10:10:17.794+09:00  INFO 18272 --- [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+Hibernate: drop table if exists bet cascade 
+Hibernate: drop table if exists hot_keywords cascade 
+Hibernate: drop table if exists "match" cascade 
+Hibernate: drop table if exists team cascade 
+Hibernate: drop table if exists users cascade 
+Hibernate: create table bet (bet_amount numeric(38,2) not null, is_deleted boolean, is_win boolean not null, odds_at_betting numeric(38,2) not null, created_at timestamp(6) not null, deleted_at timestamp(6), id bigint generated by default as identity, match_id bigint not null, updated_at timestamp(6) not null, user_id bigint not null, selected_team enum ('Team_A','Team_B') not null, primary key (id))
+Hibernate: create table hot_keywords (is_deleted boolean, search_count integer not null, created_at timestamp(6) not null, deleted_at timestamp(6), id bigint generated by default as identity, updated_at timestamp(6) not null, keyword varchar(255) not null, primary key (id))
+Hibernate: create table "match" (is_deleted boolean, total_amounta numeric(38,2) not null, total_amountb numeric(38,2) not null, created_at timestamp(6) not null, deleted_at timestamp(6), end_time timestamp(6), fetch_id bigint, id bigint generated by default as identity, start_time timestamp(6) not null, updated_at timestamp(6) not null, view_count bigint not null, loser varchar(255), match_name varchar(255) not null, team_a varchar(255) not null, team_b varchar(255) not null, winner varchar(255), status enum ('FINISHED','ONGOING','SCHEDULED') not null, primary key (id))
+Hibernate: create table team (id bigint generated by default as identity, name varchar(255) not null, primary key (id))
+Hibernate: create table users (is_deleted boolean, point numeric(38,2) not null, created_at timestamp(6) not null, deleted_at timestamp(6), id bigint generated by default as identity, updated_at timestamp(6) not null, email varchar(255) not null unique, password varchar(255) not null, username varchar(255) not null, user_role enum ('ROLE_ADMIN','ROLE_USER') not null, primary key (id))
+Hibernate: alter table if exists bet add constraint FK4eonx2b3kaqryea8jm5ddor5o foreign key (match_id) references "match"
+Hibernate: alter table if exists bet add constraint FKq5rv2e6soot2iosewr8r4i235 foreign key (user_id) references users
+2025-11-19T10:10:17.812+09:00  INFO 18272 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-11-19T10:10:18.221+09:00  INFO 18272 --- [    Test worker] org.redisson.Version                     : Redisson 3.52.0
+2025-11-19T10:10:18.246+09:00  INFO 18272 --- [sson-netty-28-5] o.redisson.connection.ConnectionsHolder  : 1 connections initialized for localhost/127.0.0.1:6379
+2025-11-19T10:10:18.273+09:00  INFO 18272 --- [son-netty-28-20] o.redisson.connection.ConnectionsHolder  : 24 connections initialized for localhost/127.0.0.1:6379
+2025-11-19T10:10:18.590+09:00  WARN 18272 --- [    Test worker] o.s.b.c.l.AbstractListenerFactoryBean    : org.springframework.batch.item.ItemProcessor is an interface. The implementing class will not be queried for annotation based listener configurations. If using @StepScope on a @Bean method, be sure to return the implementing class so listener annotations can be used.
+2025-11-19T10:10:18.718+09:00  WARN 18272 --- [    Test worker] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-11-19T10:10:18.798+09:00  INFO 18272 --- [    Test worker] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
+2025-11-19T10:10:18.941+09:00  INFO 18272 --- [    Test worker] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2025-11-19T10:10:18.965+09:00  WARN 18272 --- [    Test worker] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 78dbf89f-3a27-45be-9a77-a6e15ec2c352
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-11-19T10:10:18.967+09:00  INFO 18272 --- [    Test worker] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-11-19T10:10:19.699+09:00  INFO 18272 --- [    Test worker] o.s.m.s.b.SimpleBrokerMessageHandler     : Starting...
+2025-11-19T10:10:19.699+09:00  INFO 18272 --- [    Test worker] o.s.m.s.b.SimpleBrokerMessageHandler     : BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@1beae3db]]
+2025-11-19T10:10:19.699+09:00  INFO 18272 --- [    Test worker] o.s.m.s.b.SimpleBrokerMessageHandler     : Started.
+2025-11-19T10:10:19.718+09:00  INFO 18272 --- [    Test worker] o.s.a.r.c.CachingConnectionFactory       : Attempting to connect to: [localhost:5672]
+2025-11-19T10:10:19.722+09:00  INFO 18272 --- [    Test worker] o.s.a.r.c.CachingConnectionFactory       : Created new connection: rabbitConnectionFactory#1bd8db0b:0/SimpleConnection@94968ca [delegate=amqp://guest@127.0.0.1:5672/, localPort=55634]
+2025-11-19T10:10:19.765+09:00  INFO 18272 --- [    Test worker] o.e.o.d.m.unit.MatchServiceCacheTest     : Started MatchServiceCacheTest in 2.619 seconds (process running for 39.382)
+Hibernate: insert into "match" (created_at,is_deleted,deleted_at,end_time,fetch_id,loser,match_name,start_time,status,team_a,team_b,total_amounta,total_amountb,updated_at,view_count,winner,id) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,default)
+2025-11-19T10:10:19.781+09:00  INFO 18272 --- [    Test worker] o.e.o.domain.match.service.MatchService  : getMatch for matchId: 1
+Hibernate: select m1_0.id,m1_0.created_at,m1_0.is_deleted,m1_0.deleted_at,m1_0.end_time,m1_0.fetch_id,m1_0.loser,m1_0.match_name,m1_0.start_time,m1_0.status,m1_0.team_a,m1_0.team_b,m1_0.total_amounta,m1_0.total_amountb,m1_0.updated_at,m1_0.view_count,m1_0.winner from "match" m1_0 where m1_0.id=?
+2025-11-19T10:10:19.783+09:00  INFO 18272 --- [    Test worker] o.e.o.domain.match.service.MatchService  : getMatch for matchId: 1
+Hibernate: select m1_0.id,m1_0.created_at,m1_0.is_deleted,m1_0.deleted_at,m1_0.end_time,m1_0.fetch_id,m1_0.loser,m1_0.match_name,m1_0.start_time,m1_0.status,m1_0.team_a,m1_0.team_b,m1_0.total_amounta,m1_0.total_amountb,m1_0.updated_at,m1_0.view_count,m1_0.winner from "match" m1_0 where m1_0.id=?
+2025-11-19T10:10:19.784+09:00  INFO 18272 --- [    Test worker] o.e.o.domain.match.service.MatchService  : getMatch for matchId: 1
+Hibernate: select m1_0.id,m1_0.created_at,m1_0.is_deleted,m1_0.deleted_at,m1_0.end_time,m1_0.fetch_id,m1_0.loser,m1_0.match_name,m1_0.start_time,m1_0.status,m1_0.team_a,m1_0.team_b,m1_0.total_amounta,m1_0.total_amountb,m1_0.updated_at,m1_0.view_count,m1_0.winner from "match" m1_0 where m1_0.id=?
+2025-11-19T10:10:19.785+09:00  INFO 18272 --- [    Test worker] o.e.o.domain.match.service.MatchService  : getMatch for matchId: 1
+Hibernate: select m1_0.id,m1_0.created_at,m1_0.is_deleted,m1_0.deleted_at,m1_0.end_time,m1_0.fetch_id,m1_0.loser,m1_0.match_name,m1_0.start_time,m1_0.status,m1_0.team_a,m1_0.team_b,m1_0.total_amounta,m1_0.total_amountb,m1_0.updated_at,m1_0.view_count,m1_0.winner from "match" m1_0 where m1_0.id=?
+2025-11-19T10:10:19.785+09:00  INFO 18272 --- [    Test worker] o.e.o.domain.match.service.MatchService  : getMatch for matchId: 1
+Hibernate: select m1_0.id,m1_0.created_at,m1_0.is_deleted,m1_0.deleted_at,m1_0.end_time,m1_0.fetch_id,m1_0.loser,m1_0.match_name,m1_0.start_time,m1_0.status,m1_0.team_a,m1_0.team_b,m1_0.total_amounta,m1_0.total_amountb,m1_0.updated_at,m1_0.view_count,m1_0.winner from "match" m1_0 where m1_0.id=?
+2025-11-19T10:10:19.786+09:00  INFO 18272 --- [    Test worker] o.e.o.domain.match.service.MatchService  : getMatch for matchId: 1
+Hibernate: select m1_0.id,m1_0.created_at,m1_0.is_deleted,m1_0.deleted_at,m1_0.end_time,m1_0.fetch_id,m1_0.loser,m1_0.match_name,m1_0.start_time,m1_0.status,m1_0.team_a,m1_0.team_b,m1_0.total_amounta,m1_0.total_amountb,m1_0.updated_at,m1_0.view_count,m1_0.winner from "match" m1_0 where m1_0.id=?
+
+============================================================
+StopWatch 'FinishedMatch Cache Performance': 0.0052342 seconds
+--------------------------------------------------------------
+Seconds       %       Task name
+--------------------------------------------------------------
+0.0014708     28%     Cache Miss (DB)
+0.0005374     10%     Cache Hit #1
+0.0005901     11%     Cache Hit #2
+0.0005607     11%     Cache Hit #3
+0.0015435     29%     Cache Hit #4
+0.0005317     10%     Cache Hit #5
+
+============================================================
+
+성능 개선 결과:
+   Cache Miss (DB):     1 ms
+   Avg Cache Hit:       0 ms
+   개선율:              100.0%
+   응답속도 향상:       Infinity배
+
+Hibernate: select m1_0.id,m1_0.created_at,m1_0.is_deleted,m1_0.deleted_at,m1_0.end_time,m1_0.fetch_id,m1_0.loser,m1_0.match_name,m1_0.start_time,m1_0.status,m1_0.team_a,m1_0.team_b,m1_0.total_amounta,m1_0.total_amountb,m1_0.updated_at,m1_0.view_count,m1_0.winner from "match" m1_0
+Hibernate: delete from "match" where id=?
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

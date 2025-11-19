@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.example.oddventure.domain.team.unit.TeamServiceCacheTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-11-19T01:10:20.054Z" hostname="DESKTOP-9Q5JQDP" time="0.016">
+  <properties/>
+  <testcase name="팀 상세 조회 캐싱 적용 전/후 성능 비교" classname="org.example.oddventure.domain.team.unit.TeamServiceCacheTest" time="0.016"/>
+  <system-out><![CDATA[2025-11-19T10:10:20.018+09:00  INFO 18272 --- [    Test worker] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [org.example.oddventure.domain.team.unit.TeamServiceCacheTest]: TeamServiceCacheTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2025-11-19T10:10:20.053+09:00  INFO 18272 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration org.example.oddventure.OddventureApplication for test class org.example.oddventure.domain.team.unit.TeamServiceCacheTest
+Hibernate: select count(*) from team t1_0
+Hibernate: insert into team (name,id) values (?,default)
+Hibernate: select t1_0.id,t1_0.name from team t1_0 where t1_0.id=?
+Hibernate: select t1_0.id,t1_0.name from team t1_0 where t1_0.id=?
+StopWatch '': 0.0021927 seconds
+----------------------------------------
+Seconds       %       Task name
+----------------------------------------
+0.001547      71%     Cache Miss
+0.0006457     29%     Cache Hit
+
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

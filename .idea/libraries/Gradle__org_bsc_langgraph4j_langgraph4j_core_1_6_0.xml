@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Gradle: org.bsc.langgraph4j:langgraph4j-core:1.6.0" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="org.bsc.langgraph4j" artifactId="langgraph4j-core" version="1.6.0" baseVersion="1.6.0" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.bsc.langgraph4j/langgraph4j-core/1.6.0/55a6dcc603267c55a90ddadb5a98fa78fdb144d6/langgraph4j-core-1.6.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

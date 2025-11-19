@@ -1,0 +1,18 @@
+[source,json,options="nowrap"]
+----
+{
+  "httpStatus" : "OK",
+  "code" : 200,
+  "success" : true,
+  "message" : "매치 정보가 수정되었습니다.",
+  "data" : {
+    "matchId" : 1,
+    "matchName" : "LCK",
+    "teamA" : "New Team A",
+    "teamB" : "New Team B",
+    "startTime" : "2025-11-21T10:09:59",
+    "status" : "ONGOING"
+  },
+  "timestamp" : "2025-11-19T10:09:59.2967345"
+}
+----

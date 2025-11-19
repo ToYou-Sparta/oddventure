@@ -1,0 +1,41 @@
+spring:
+  config:
+    import: optional:file:.env[.properties]
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  ai:
+    openai:
+      api-key: ${API_KEY}
+      base-url: ${BASE_URL}
+  batch:
+    jdbc:
+      initialize-schema: always
+
+  elasticsearch:
+    uris: http://localhost:9200
+
+  threads:
+    virtual:
+      enabled: true
+
+jwt:
+  secret:
+    key: "${SECRET_KEY}"
+
+grid:
+  central-data:
+    base-url: ${GRID_CENTRAL_BASE_URL}
+  live-data:
+    base-url: ${GRID_LIVE_BASE_URL}
+  api-key: ${GRID_API_KEY}

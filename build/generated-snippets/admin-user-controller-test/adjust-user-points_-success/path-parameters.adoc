@@ -1,0 +1,8 @@
+.+/api/v1/admin/users/{userId}/points+
+|===
+|Parameter|Description
+
+|`+userId+`
+|포인트를 조정할 사용자 ID
+
+|===

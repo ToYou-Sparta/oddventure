@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MatchResponse.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oddventure</a> &gt; <a href="index.source.html" class="el_package">org.example.oddventure.domain.match.dto.response</a> &gt; <span class="el_source">MatchResponse.java</span></div><h1>MatchResponse.java</h1><pre class="source lang-java linenums">package org.example.oddventure.domain.match.dto.response;
+
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import org.example.oddventure.domain.match.dto.projection.MatchProjection;
+import org.example.oddventure.domain.match.entity.Match;
+import org.example.oddventure.domain.match.enums.MatchStatus;
+
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.CLASS,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = &quot;@class&quot;
+)
+
+<span class="fc" id="L17">public record MatchResponse(</span>
+        Long matchId,
+        String matchName,
+        String teamA,
+        String teamB,
+        BigDecimal totalAmountA,
+        BigDecimal totalAmountB,
+        LocalDateTime startTime,
+        LocalDateTime endTime,
+        MatchStatus status,
+        String winner,
+        String loser,
+        Long viewCount,
+        LocalDateTime createdAt
+) {
+    public static MatchResponse from(Match match) {
+<span class="fc" id="L33">        return new MatchResponse(</span>
+<span class="fc" id="L34">                match.getId(),</span>
+<span class="fc" id="L35">                match.getMatchName(),</span>
+<span class="fc" id="L36">                match.getTeamA(),</span>
+<span class="fc" id="L37">                match.getTeamB(),</span>
+<span class="fc" id="L38">                match.getTotalAmountA(),</span>
+<span class="fc" id="L39">                match.getTotalAmountB(),</span>
+<span class="fc" id="L40">                match.getStartTime(),</span>
+<span class="fc" id="L41">                match.getEndTime(),</span>
+<span class="fc" id="L42">                match.getStatus(),</span>
+<span class="fc" id="L43">                match.getWinner(),</span>
+<span class="fc" id="L44">                match.getLoser(),</span>
+<span class="fc" id="L45">                match.getViewCount(),</span>
+<span class="fc" id="L46">                match.getCreatedAt()</span>
+        );
+    }
+
+    public static MatchResponse of(MatchProjection projection) {
+<span class="fc" id="L51">        return new MatchResponse(</span>
+<span class="fc" id="L52">                projection.matchId(),</span>
+<span class="fc" id="L53">                projection.matchName(),</span>
+<span class="fc" id="L54">                projection.teamA(),</span>
+<span class="fc" id="L55">                projection.teamB(),</span>
+<span class="fc" id="L56">                projection.totalAmountA(),</span>
+<span class="fc" id="L57">                projection.totalAmountB(),</span>
+<span class="fc" id="L58">                projection.startTime(),</span>
+<span class="fc" id="L59">                projection.endTime(),</span>
+<span class="fc" id="L60">                projection.status(),</span>
+<span class="fc" id="L61">                projection.winner(),</span>
+<span class="fc" id="L62">                projection.loser(),</span>
+<span class="fc" id="L63">                projection.viewCount(),</span>
+<span class="fc" id="L64">                projection.createdAt()</span>
+        );
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

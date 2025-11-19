@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MatchProjection.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oddventure</a> &gt; <a href="index.source.html" class="el_package">org.example.oddventure.domain.match.dto.projection</a> &gt; <span class="el_source">MatchProjection.java</span></div><h1>MatchProjection.java</h1><pre class="source lang-java linenums">package org.example.oddventure.domain.match.dto.projection;
+
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import org.example.oddventure.domain.match.entity.Match;
+import org.example.oddventure.domain.match.enums.MatchStatus;
+
+<span class="fc" id="L9">public record MatchProjection(</span>
+        Long matchId,
+        String matchName,
+        String teamA,
+        String teamB,
+        BigDecimal totalAmountA,
+        BigDecimal totalAmountB,
+        LocalDateTime startTime,
+        LocalDateTime endTime,
+        MatchStatus status,
+        String winner,
+        String loser,
+        Long viewCount,
+        LocalDateTime createdAt
+) {
+    public static MatchProjection from(Match match) {
+<span class="fc" id="L25">        return new MatchProjection(</span>
+<span class="fc" id="L26">                match.getId(),</span>
+<span class="fc" id="L27">                match.getMatchName(),</span>
+<span class="fc" id="L28">                match.getTeamA(),</span>
+<span class="fc" id="L29">                match.getTeamB(),</span>
+<span class="fc" id="L30">                match.getTotalAmountA(),</span>
+<span class="fc" id="L31">                match.getTotalAmountB(),</span>
+<span class="fc" id="L32">                match.getStartTime(),</span>
+<span class="fc" id="L33">                match.getEndTime(),</span>
+<span class="fc" id="L34">                match.getStatus(),</span>
+<span class="fc" id="L35">                match.getWinner(),</span>
+<span class="fc" id="L36">                match.getLoser(),</span>
+<span class="fc" id="L37">                match.getViewCount(),</span>
+<span class="fc" id="L38">                match.getCreatedAt()</span>
+        );
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MatchScheduler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oddventure</a> &gt; <a href="index.source.html" class="el_package">org.example.oddventure.domain.match.scheduler</a> &gt; <span class="el_source">MatchScheduler.java</span></div><h1>MatchScheduler.java</h1><pre class="source lang-java linenums">package org.example.oddventure.domain.match.scheduler;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.example.oddventure.domain.bet.exception.BetErrorCode;
+import org.example.oddventure.domain.bet.exception.BetException;
+import org.example.oddventure.domain.grid.dto.MatchResultDto;
+import org.example.oddventure.domain.grid.service.GridService;
+import org.example.oddventure.domain.match.entity.Match;
+import org.example.oddventure.domain.match.enums.MatchStatus;
+import org.example.oddventure.domain.match.repository.MatchRepository;
+import org.example.oddventure.domain.match.service.MatchService;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.data.redis.core.Cursor;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+<span class="fc" id="L27">@Slf4j</span>
+@Component
+@RequiredArgsConstructor
+public class MatchScheduler {
+
+    private final MatchRepository matchRepository;
+    private final MatchService matchService;
+    private final GridService gridService;
+    private final JobLauncher jobLauncher;
+    private final Job matchScheduleJob;
+    private final Job pointSetJob;
+    private final RedisTemplate&lt;String, Object&gt; redisTemplate;
+
+    @Scheduled(cron = &quot;0 0 4 * * *&quot;, zone = &quot;Asia/Seoul&quot;)
+    public void runMatchScheduleJob() throws Exception {
+<span class="nc" id="L42">        JobParameters params = new JobParametersBuilder()</span>
+<span class="nc" id="L43">                .addLong(&quot;timestamp&quot;, System.currentTimeMillis())</span>
+<span class="nc" id="L44">                .toJobParameters();</span>
+
+<span class="nc" id="L46">        jobLauncher.run(matchScheduleJob, params);</span>
+<span class="nc" id="L47">    }</span>
+
+    @Scheduled(cron = &quot;0 0 13 * * *&quot;, zone = &quot;Asia/Seoul&quot;)
+    public void autoFinishMatches() {
+<span class="nc" id="L51">        List&lt;Match&gt; matches = matchRepository.findByMatchStatus(MatchStatus.ONGOING, LocalDateTime.now().minusDays(2));</span>
+<span class="nc" id="L52">        List&lt;Long&gt; matchIds = new ArrayList&lt;&gt;();</span>
+
+<span class="nc" id="L54">        matches.forEach(match -&gt; {</span>
+<span class="nc bnc" id="L55" title="All 2 branches missed.">            if (match.isDeleted()) {</span>
+<span class="nc" id="L56">                log.info(&quot;삭제된 매치입니다. matchId={}, fetchId={}&quot;, match.getId(), match.getFetchId());</span>
+<span class="nc" id="L57">                return;</span>
+            }
+
+<span class="nc" id="L60">            MatchResultDto result = gridService.fetchMatchResult(match.getFetchId());</span>
+
+<span class="nc bnc" id="L62" title="All 2 branches missed.">            if (!result.finished()) {</span>
+<span class="nc" id="L63">                log.info(&quot;끝나지 않은 경기입니다. matchId={}, fetchId={}&quot;, match.getId(), match.getFetchId());</span>
+<span class="nc" id="L64">                return;</span>
+            }
+
+<span class="nc" id="L67">            matchService.updateMatchResult(match.getFetchId(), result.winner(), result.loser());</span>
+
+<span class="nc" id="L69">            matchIds.add(match.getId());</span>
+<span class="nc" id="L70">        });</span>
+
+<span class="nc bnc" id="L72" title="All 2 branches missed.">        if (matchIds.isEmpty()) {</span>
+<span class="nc" id="L73">            log.info(&quot;종료된 매치가 없습니다.&quot;);</span>
+<span class="nc" id="L74">            return;</span>
+        }
+
+<span class="nc" id="L77">        JobParameters jobParameters = new JobParametersBuilder()</span>
+<span class="nc" id="L78">                .addString(&quot;matchIds&quot;, matchIds.stream()</span>
+<span class="nc" id="L79">                        .map(String::valueOf)</span>
+<span class="nc" id="L80">                        .collect(Collectors.joining(&quot;,&quot;)))</span>
+<span class="nc" id="L81">                .addLong(&quot;timestamp&quot;, System.currentTimeMillis())</span>
+<span class="nc" id="L82">                .toJobParameters();</span>
+
+        try {
+<span class="nc" id="L85">            jobLauncher.run(pointSetJob, jobParameters);</span>
+<span class="nc" id="L86">        } catch (Exception e) {</span>
+<span class="nc" id="L87">            throw new BetException(BetErrorCode.POINT_BATCH_EXCEPTION);</span>
+<span class="nc" id="L88">        }</span>
+<span class="nc" id="L89">    }</span>
+
+    // 5분마다 Redis의 조회수를 RDB로 동기화
+    @Scheduled(cron = &quot;0 */5 * * * *&quot;) // 5분마다 실행
+    public void syncViewCountsToDB() {
+<span class="fc" id="L94">        log.info(&quot;Redis 조회수 DB 동기화 시작&quot;);</span>
+<span class="fc" id="L95">        String pattern = &quot;match:viewcount:*&quot;;</span>
+<span class="fc" id="L96">        ScanOptions options = ScanOptions.scanOptions().match(pattern).count(100).build();</span>
+<span class="fc" id="L97">        Cursor&lt;String&gt; cursor = redisTemplate.scan(options);</span>
+
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">        while (cursor.hasNext()) {</span>
+<span class="nc" id="L100">            String key = cursor.next();</span>
+            try {
+                // 1. Redis에서 현재 조회수 가져오기
+<span class="nc" id="L103">                Object rawValue = redisTemplate.opsForValue().get(key);</span>
+<span class="nc bnc" id="L104" title="All 2 branches missed.">                if (rawValue == null) {</span>
+<span class="nc" id="L105">                    continue;</span>
+                }
+
+<span class="nc" id="L108">                Long viewCount = Long.parseLong(String.valueOf(rawValue));</span>
+
+                // 2. Key에서 matchId 파싱 (예: &quot;match:viewcount:1&quot; -&gt; &quot;1&quot;)
+<span class="nc" id="L111">                Long matchId = Long.parseLong(key.substring(key.lastIndexOf(':') + 1));</span>
+
+                // 3. MatchService의 @Transactional 메서드를 호출하여 DB 업데이트
+<span class="nc" id="L114">                matchService.updateViewCount(matchId, viewCount);</span>
+
+<span class="nc" id="L116">            } catch (Exception e) {</span>
+<span class="nc" id="L117">                log.error(&quot;키 처리 중 오류 발생: {} (key: {})&quot;, e.getMessage(), key);</span>
+<span class="nc" id="L118">            }</span>
+<span class="nc" id="L119">        }</span>
+<span class="fc" id="L120">        log.info(&quot;Redis 조회수 DB 동기화 완료.&quot;);</span>
+<span class="fc" id="L121">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

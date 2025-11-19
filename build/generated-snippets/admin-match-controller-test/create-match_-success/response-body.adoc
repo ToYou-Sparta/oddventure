@@ -1,0 +1,14 @@
+[source,json,options="nowrap"]
+----
+{
+  "httpStatus" : "CREATED",
+  "code" : 201,
+  "success" : true,
+  "message" : "매치가 생성되었습니다.",
+  "data" : {
+    "totalMatches" : 1,
+    "fetchIds" : [ 1 ]
+  },
+  "timestamp" : "2025-11-19T10:09:58.7873267"
+}
+----

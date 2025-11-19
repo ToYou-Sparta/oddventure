@@ -1,0 +1,8 @@
+[source,json,options="nowrap"]
+----
+{
+  "matchId" : 1,
+  "selectedTeam" : "Team_A",
+  "betAmount" : 1000
+}
+----

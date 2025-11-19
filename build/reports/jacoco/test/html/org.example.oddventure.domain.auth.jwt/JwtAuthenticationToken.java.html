@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JwtAuthenticationToken.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oddventure</a> &gt; <a href="index.source.html" class="el_package">org.example.oddventure.domain.auth.jwt</a> &gt; <span class="el_source">JwtAuthenticationToken.java</span></div><h1>JwtAuthenticationToken.java</h1><pre class="source lang-java linenums">package org.example.oddventure.domain.auth.jwt;
+
+import org.example.oddventure.domain.auth.dto.AuthUser;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
+
+// AuthUser를 Spring Security에서 사용하기 위한 작업을 하는 클래스
+public class JwtAuthenticationToken extends AbstractAuthenticationToken {
+
+    private final AuthUser authUser;
+
+    /**
+     * AuthUser를 받아 인증 토큰을 만드는 메서드
+     *
+     * @param authUser 인증된 사용자 정보
+     */
+    public JwtAuthenticationToken(AuthUser authUser) {
+<span class="fc" id="L17">        super(authUser.getAuthorities());</span>
+<span class="fc" id="L18">        this.authUser = authUser;</span>
+<span class="fc" id="L19">        setAuthenticated(true);</span>
+<span class="fc" id="L20">    }</span>
+
+    @Override
+    public Object getCredentials() {
+        // JWT 기반 인증은 별도의 자격 증명(credentials)을 사용하지 않음
+<span class="nc" id="L25">        return null;</span>
+    }
+
+    /**
+     * Principal를 반환하는 메서드
+     *
+     * @return AuthUser 객체
+     */
+    @Override
+    public AuthUser getPrincipal() {
+<span class="fc" id="L35">        return authUser;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
