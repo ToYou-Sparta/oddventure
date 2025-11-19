@@ -120,12 +120,6 @@ const MyBetsPage: React.FC = () => {
                   </div>
                 </div>
 
-                {bet.matchBetResponse.status === 'FINISHED' && (
-                  <div className="bet-result">
-                    <strong>경기 결과:</strong> {bet.matchBetResponse.winner} 승리
-                  </div>
-                )}
-
                 {bet.matchBetResponse.status === 'SCHEDULED' && (
                   <button
                     onClick={() => handleCancelBet(bet.betId)}
