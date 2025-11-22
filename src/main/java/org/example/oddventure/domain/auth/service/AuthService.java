@@ -1,5 +1,7 @@
 package org.example.oddventure.domain.auth.service;
 
+import static org.example.oddventure.domain.auth.jwt.JwtConstants.ACCESS_TOKEN_BLACKLIST_PREFIX;
+import static org.example.oddventure.domain.auth.jwt.JwtConstants.BEARER_PREFIX;
 import static org.example.oddventure.domain.auth.jwt.JwtConstants.REFRESH_TOKEN_PREFIX;
 
 import java.time.Duration;
@@ -7,8 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.oddventure.domain.auth.dto.request.LoginRequest;
 import org.example.oddventure.domain.auth.dto.request.SignupRequest;
 import org.example.oddventure.domain.auth.dto.request.WithdrawRequest;
-import org.example.oddventure.domain.auth.dto.response.AccessTokenResponse;
-import org.example.oddventure.domain.auth.dto.response.LoginResponse;
+import org.example.oddventure.domain.auth.dto.response.TokenResponse;
 import org.example.oddventure.domain.auth.dto.response.SignupResponse;
 import org.example.oddventure.domain.auth.exception.AuthErrorCode;
 import org.example.oddventure.domain.auth.exception.AuthException;
@@ -22,6 +23,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -50,7 +52,7 @@ public class AuthService {
     }
 
     @Transactional(readOnly = true)
-    public LoginResponse login(LoginRequest request) {
+    public TokenResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new AuthException(AuthErrorCode.INVALID_CREDENTIALS));
 
@@ -67,11 +69,12 @@ public class AuthService {
                 Duration.ofMillis(JwtConstants.REFRESH_TOKEN_EXPIRATION)
         );
 
-        return LoginResponse.of(accessToken, refreshToken);
+        return TokenResponse.of(accessToken, refreshToken);
     }
 
     @Transactional
-    public void logout(Long userId) {
+    public void logout(Long userId, String accessToken) {
+        blacklistAccessToken(accessToken);
         redisTemplate.delete(REFRESH_TOKEN_PREFIX + userId);
     }
 
@@ -92,7 +95,7 @@ public class AuthService {
         redisTemplate.delete(REFRESH_TOKEN_PREFIX + userId);
     }
 
-    public AccessTokenResponse refresh(String refreshToken) {
+    public TokenResponse refresh(String refreshToken) {
         if (refreshToken == null || !jwtUtil.validateToken(refreshToken)) {
             throw new AuthException(AuthErrorCode.TOKEN_INVALID);
         }
@@ -108,7 +111,29 @@ public class AuthService {
                 .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
 
         String newAccessToken = jwtUtil.createAccessToken(userId, user.getUserRole());
+        String newRefreshToken = jwtUtil.createRefreshToken(userId);
 
-        return AccessTokenResponse.of(newAccessToken);
+        redisTemplate.opsForValue().set(
+                REFRESH_TOKEN_PREFIX + userId,
+                newRefreshToken,
+                Duration.ofMillis(JwtConstants.REFRESH_TOKEN_EXPIRATION)
+        );
+
+        return TokenResponse.of(newAccessToken, newRefreshToken);
+    }
+
+    private void blacklistAccessToken(String rawToken) {
+        if (!StringUtils.hasText(rawToken) || !rawToken.startsWith(BEARER_PREFIX)) {
+            return;
+        }
+
+        String token = jwtUtil.substringToken(rawToken);
+        String jti = jwtUtil.extractJti(token);
+
+        redisTemplate.opsForValue().set(
+                ACCESS_TOKEN_BLACKLIST_PREFIX + jti,
+                "true",
+                Duration.ofMillis(JwtConstants.ACCESS_TOKEN_EXPIRATION)
+        );
     }
 }

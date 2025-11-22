@@ -1,5 +1,7 @@
 package org.example.oddventure.domain.auth.jwt;
 
+import static org.example.oddventure.domain.auth.jwt.JwtConstants.ACCESS_TOKEN_BLACKLIST_PREFIX;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -17,6 +19,7 @@ import org.example.oddventure.common.dto.response.ApiErrorResponse;
 import org.example.oddventure.domain.auth.dto.AuthUser;
 import org.example.oddventure.domain.auth.exception.AuthErrorCode;
 import org.example.oddventure.domain.user.enums.UserRole;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -28,6 +31,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final ObjectMapper objectMapper;
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Override
     protected void doFilterInternal(
@@ -43,6 +47,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             try {
                 Claims claims = jwtUtil.extractClaims(jwt);
+
+                String jti = claims.getId();
+                String blacklistKey = ACCESS_TOKEN_BLACKLIST_PREFIX + jti;
+
+                if (redisTemplate.hasKey(blacklistKey)) {
+                    log.warn("블랙리스트에 등록된 AccessToken 사용 시도: jti={}", jti);
+                    sendErrorResponse(httpRequest, httpResponse, AuthErrorCode.TOKEN_INVALID);
+                    return;
+                }
 
                 if (SecurityContextHolder.getContext().getAuthentication() == null) {
                     setAuthentication(claims);

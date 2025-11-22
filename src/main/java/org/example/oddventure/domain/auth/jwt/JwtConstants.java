@@ -7,4 +7,5 @@ public class JwtConstants {
     public static final long REFRESH_TOKEN_EXPIRATION = 7 * 24 * 60 * 60 * 1000L; // 7일
     public static final String REFRESH_TOKEN_PREFIX = "refresh_token:";
     public static final String CLAIM_USER_ROLE = "userRole";
+    public static final String ACCESS_TOKEN_BLACKLIST_PREFIX = "blacklist:access_token:";
 }

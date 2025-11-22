@@ -1,5 +1,6 @@
 package org.example.oddventure.domain.auth.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.time.Duration;
@@ -10,8 +11,7 @@ import org.example.oddventure.domain.auth.dto.AuthUser;
 import org.example.oddventure.domain.auth.dto.request.LoginRequest;
 import org.example.oddventure.domain.auth.dto.request.SignupRequest;
 import org.example.oddventure.domain.auth.dto.request.WithdrawRequest;
-import org.example.oddventure.domain.auth.dto.response.AccessTokenResponse;
-import org.example.oddventure.domain.auth.dto.response.LoginResponse;
+import org.example.oddventure.domain.auth.dto.response.TokenResponse;
 import org.example.oddventure.domain.auth.dto.response.SignupResponse;
 import org.example.oddventure.domain.auth.service.AuthService;
 import org.springframework.http.ResponseCookie;
@@ -40,12 +40,11 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<LoginResponse>> login(
+    public ResponseEntity<ApiResponse<TokenResponse>> login(
             @Valid @RequestBody LoginRequest request,
             HttpServletResponse httpResponse
     ) {
-        LoginResponse response = authService.login(request);
-
+        TokenResponse response = authService.login(request);
         refreshTokenCookie(httpResponse, response.refreshToken(), 7);
 
         return ApiResponse.success(response, "로그인 되었습니다.");
@@ -54,10 +53,12 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<Void>> logout(
             @AuthenticationPrincipal AuthUser user,
-            HttpServletResponse httpResponse
+            HttpServletResponse httpResponse,
+            HttpServletRequest httpRequest
     ) {
-        authService.logout(user.id());
+        String accessTokenHeader = httpRequest.getHeader("Authorization");
 
+        authService.logout(user.id(), accessTokenHeader);
         refreshTokenCookie(httpResponse, "", 0);
 
         return ApiResponse.success("로그아웃 되었습니다.");
@@ -74,11 +75,14 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<ApiResponse<AccessTokenResponse>> refresh(
-            @CookieValue(value = "refreshToken", required = false) String refreshToken
+    public ResponseEntity<ApiResponse<TokenResponse>> refresh(
+            @CookieValue(value = "refreshToken", required = false) String refreshToken,
+            HttpServletResponse httpResponse
     ) {
-        AccessTokenResponse newAccessToken = authService.refresh(refreshToken);
-        return ApiResponse.success(newAccessToken, "토큰이 재발급되었습니다.");
+        TokenResponse response = authService.refresh(refreshToken);
+        refreshTokenCookie(httpResponse, response.refreshToken(), 7);
+
+        return ApiResponse.success(response, "토큰이 재발급되었습니다.");
     }
 
     private void refreshTokenCookie(HttpServletResponse response, String refreshToken, long days) {
