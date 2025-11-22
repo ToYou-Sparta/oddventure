@@ -11,9 +11,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Base64;
 import org.example.oddventure.base.restdocs.RestDocsTestSupport;
 import org.example.oddventure.base.restdocs.RestDocsUtils;
 import org.example.oddventure.domain.auth.config.SecurityConfig;
@@ -22,8 +26,7 @@ import org.example.oddventure.domain.auth.dto.AuthUser;
 import org.example.oddventure.domain.auth.dto.request.LoginRequest;
 import org.example.oddventure.domain.auth.dto.request.SignupRequest;
 import org.example.oddventure.domain.auth.dto.request.WithdrawRequest;
-import org.example.oddventure.domain.auth.dto.response.AccessTokenResponse;
-import org.example.oddventure.domain.auth.dto.response.LoginResponse;
+import org.example.oddventure.domain.auth.dto.response.TokenResponse;
 import org.example.oddventure.domain.auth.dto.response.SignupResponse;
 import org.example.oddventure.domain.auth.jwt.JwtUtil;
 import org.example.oddventure.domain.auth.service.AuthService;
@@ -35,6 +38,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -47,6 +51,9 @@ public class AuthControllerTest extends RestDocsTestSupport {
 
     @MockitoBean
     private AuthService authService;
+
+    @MockitoBean
+    private RedisTemplate<String, String> redisTemplate;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -126,7 +133,7 @@ public class AuthControllerTest extends RestDocsTestSupport {
         // given
         Long userId = 1L;
         LoginRequest request = new LoginRequest("hello@naver.com", "hello123!@#");
-        LoginResponse response = new LoginResponse("accessToken", "refreshToken");
+        TokenResponse response = new TokenResponse("accessToken", "refreshToken");
         when(authService.login(request)).thenReturn(response);
 
         // when
@@ -155,11 +162,13 @@ public class AuthControllerTest extends RestDocsTestSupport {
     @DisplayName("POST /logout - 로그아웃 성공")
     void logout() throws Exception {
         // given
-        AuthUser authUser = new AuthUser(1L, UserRole.ROLE_USER);
-        doNothing().when(authService).logout(authUser.id());
+        Long userId = 1L;
+        AuthUser authUser = new AuthUser(userId, UserRole.ROLE_USER);
+        String testAccessToken = createTestAccessToken(userId);
 
         // when
         ResultActions result = mockMvc.perform(post("/api/v1/auth/logout")
+                .header("Authorization", "Bearer " + testAccessToken)
                 .with(authentication(
                         new UsernamePasswordAuthenticationToken(authUser, null, authUser.getAuthorities()))));
         // then
@@ -204,7 +213,7 @@ public class AuthControllerTest extends RestDocsTestSupport {
     void refresh_success() throws Exception {
         // given
         String refreshToken = "validRefreshToken";
-        AccessTokenResponse response = new AccessTokenResponse("newAccessToken");
+        TokenResponse response = new TokenResponse("newAccessToken", "newRefreshToken");
 
         when(authService.refresh(refreshToken)).thenReturn(response);
 
@@ -218,8 +227,18 @@ public class AuthControllerTest extends RestDocsTestSupport {
                 .andExpect(jsonPath("$.success").value(true))
                 .andDo(restDocs.document(
                         RestDocsUtils.successWithDataFields(
-                                fieldWithPath("data.accessToken").description("새로 발급된 액세스 토큰")
+                                fieldWithPath("data.accessToken").description("새로 발급된 액세스 토큰"),
+                                fieldWithPath("data.refreshToken").description("새로 발급된 리프레시 토큰")
                         )
                 ));
+    }
+
+    private String createTestAccessToken(Long userId) {
+        String secretKey = "dGVzdC1zZWNyZXQta2V5LWZvci10ZXN0aW5nLWp3dC10b2tlbi1nZW5lcmF0aW9uLW1pbmltdW0tMzItYnl0ZXM";
+        byte[] decodedKey = Base64.getDecoder().decode(secretKey);
+        return Jwts.builder()
+                .setSubject("1")
+                .signWith(Keys.hmacShaKeyFor(decodedKey), SignatureAlgorithm.HS256)
+                .compact();
     }
 }

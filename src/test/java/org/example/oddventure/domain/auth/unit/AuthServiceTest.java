@@ -1,5 +1,6 @@
 package org.example.oddventure.domain.auth.unit;
 
+import static org.example.oddventure.domain.auth.jwt.JwtConstants.REFRESH_TOKEN_EXPIRATION;
 import static org.example.oddventure.domain.auth.jwt.JwtConstants.REFRESH_TOKEN_PREFIX;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -9,12 +10,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.Duration;
 import java.util.Optional;
 import org.example.oddventure.domain.auth.dto.request.LoginRequest;
 import org.example.oddventure.domain.auth.dto.request.SignupRequest;
 import org.example.oddventure.domain.auth.dto.request.WithdrawRequest;
-import org.example.oddventure.domain.auth.dto.response.AccessTokenResponse;
-import org.example.oddventure.domain.auth.dto.response.LoginResponse;
+import org.example.oddventure.domain.auth.dto.response.TokenResponse;
 import org.example.oddventure.domain.auth.dto.response.SignupResponse;
 import org.example.oddventure.domain.auth.exception.AuthException;
 import org.example.oddventure.domain.auth.jwt.JwtUtil;
@@ -102,7 +103,7 @@ public class AuthServiceTest {
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
 
         // when
-        LoginResponse response = authService.login(request);
+        TokenResponse response = authService.login(request);
 
         // then
         assertNotNull(response);
@@ -142,7 +143,7 @@ public class AuthServiceTest {
         Long userId = 1L;
 
         // when
-        authService.logout(userId);
+        authService.logout(userId, "accessToken");
 
         // then
         verify(redisTemplate).delete(REFRESH_TOKEN_PREFIX + userId);
@@ -202,25 +203,31 @@ public class AuthServiceTest {
     @DisplayName("토큰 재발급 성공")
     void refresh_success() {
         // given
-        String refreshToken = "validRefreshToken";
+        String oldRT = "oldRefreshToken";
+        String newRT = "newRefreshToken";
         Long userId = 1L;
         String newAccessToken = "newAccessToken";
 
         User user = createMockUser("hello", "hello@naver.com");
 
-        when(jwtUtil.validateToken(refreshToken)).thenReturn(true);
-        when(jwtUtil.extractUserId(refreshToken)).thenReturn(userId);
+        when(jwtUtil.validateToken(oldRT)).thenReturn(true);
+        when(jwtUtil.extractUserId(oldRT)).thenReturn(userId);
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
-        when(valueOperations.get(REFRESH_TOKEN_PREFIX + userId)).thenReturn(refreshToken);
+        when(valueOperations.get(REFRESH_TOKEN_PREFIX + userId)).thenReturn(oldRT);
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(jwtUtil.createAccessToken(userId, UserRole.ROLE_USER)).thenReturn(newAccessToken);
+        when(jwtUtil.createRefreshToken(userId)).thenReturn(newRT);
 
         // when
-        AccessTokenResponse response = authService.refresh(refreshToken);
+        TokenResponse response = authService.refresh(oldRT);
 
         // then
         assertNotNull(response);
         assertEquals(newAccessToken, response.accessToken());
+        verify(valueOperations).set(
+                REFRESH_TOKEN_PREFIX + userId,
+                newRT,
+                Duration.ofMillis(REFRESH_TOKEN_EXPIRATION));
     }
 
     @Test
@@ -248,6 +255,23 @@ public class AuthServiceTest {
 
         // when & then
         assertThrows(AuthException.class, () -> authService.refresh(refreshToken));
+    }
+
+    @Test
+    @DisplayName("토큰 재발급 실패 - RT Rotation 이후 기존 RT 재사용")
+    void refresh_fail_reuse_old_rt_after_rotation() {
+        // given
+        String oldRT = "oldRefreshToken";
+        String newRT = "newRefreshToken";
+        Long userId = 1L;
+
+        when(jwtUtil.validateToken(oldRT)).thenReturn(true);
+        when(jwtUtil.extractUserId(oldRT)).thenReturn(userId);
+        when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+        when(valueOperations.get(REFRESH_TOKEN_PREFIX + userId)).thenReturn(newRT);
+
+        // when & then
+        assertThrows(AuthException.class, () -> authService.refresh(oldRT));
     }
 
     private User createMockUser(String username, String email) {

@@ -30,6 +30,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.ResultActions;
@@ -41,10 +42,12 @@ public class UserControllerTest extends RestDocsTestSupport {
 
     @Autowired
     protected ObjectMapper objectMapper;
+
     @MockitoBean
     private UserService userService;
+
     @MockitoBean
-    private JwtUtil jwtUtil;
+    private RedisTemplate<String, String> redisTemplate;
 
     @Test
     @DisplayName("GET /me - 내 프로필 조회 API")
