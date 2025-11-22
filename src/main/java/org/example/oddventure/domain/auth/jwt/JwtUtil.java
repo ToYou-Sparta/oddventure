@@ -71,6 +71,7 @@ public class JwtUtil {
                 .setSubject(String.valueOf(userId))
                 .setExpiration(new Date(date.getTime() + REFRESH_TOKEN_EXPIRATION))
                 .setIssuedAt(date)
+                .setId(UUID.randomUUID().toString())
                 .signWith(key, signatureAlgorithm)
                 .compact();
     }
