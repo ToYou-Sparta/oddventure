@@ -38,6 +38,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
@@ -51,6 +52,9 @@ public class BetControllerTest extends RestDocsTestSupport {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockitoBean
+    private RedisTemplate<String, String> redisTemplate;
 
     @Test
     @DisplayName("POST /bets - 베팅 생성 성공")

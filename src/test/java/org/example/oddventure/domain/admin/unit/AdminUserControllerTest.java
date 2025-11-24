@@ -41,6 +41,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.ResultActions;
@@ -60,7 +61,7 @@ public class AdminUserControllerTest extends RestDocsTestSupport {
     private UserService userService;
 
     @MockitoBean
-    private JwtUtil jwtUtil;
+    private RedisTemplate<String, String> redisTemplate;
 
     @Test
     @DisplayName("사용자 목록 조회 API 성공")

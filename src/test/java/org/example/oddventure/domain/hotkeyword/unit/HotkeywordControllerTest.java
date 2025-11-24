@@ -19,6 +19,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -29,6 +30,9 @@ public class HotkeywordControllerTest extends RestDocsTestSupport {
 
     @MockitoBean
     private HotKeywordsService hotKeywordsService;
+
+    @MockitoBean
+    private RedisTemplate<String, String> redisTemplate;
 
     @Test
     @DisplayName("인기 검색어 Top5를 조회할 수 있다.")

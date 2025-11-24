@@ -14,6 +14,7 @@ import jakarta.annotation.PostConstruct;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.example.oddventure.domain.auth.exception.AuthErrorCode;
 import org.example.oddventure.domain.auth.exception.AuthException;
@@ -53,6 +54,7 @@ public class JwtUtil {
                 .claim(CLAIM_USER_ROLE, userRole)
                 .setExpiration(new Date(date.getTime() + ACCESS_TOKEN_EXPIRATION))
                 .setIssuedAt(date)
+                .setId(UUID.randomUUID().toString())
                 .signWith(key, signatureAlgorithm)
                 .compact();
     }
@@ -69,6 +71,7 @@ public class JwtUtil {
                 .setSubject(String.valueOf(userId))
                 .setExpiration(new Date(date.getTime() + REFRESH_TOKEN_EXPIRATION))
                 .setIssuedAt(date)
+                .setId(UUID.randomUUID().toString())
                 .signWith(key, signatureAlgorithm)
                 .compact();
     }
@@ -138,5 +141,15 @@ public class JwtUtil {
      */
     public UserRole extractUserRole(String token) {
         return UserRole.valueOf(extractClaims(token).get(CLAIM_USER_ROLE, String.class));
+    }
+
+    /**
+     * JWT 토큰에서 JTI(JWT ID)를 추출하는 메서드
+     *
+     * @param token JWT 문자열
+     * @return 토큰의 JTI 값(UUID)
+     */
+    public String extractJti(String token) {
+        return extractClaims(token).getId();
     }
 }
