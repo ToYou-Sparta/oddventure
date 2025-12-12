@@ -1,0 +1,112 @@
+{
+  "family": "oddventure-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "${EXECUTION_ROLE_ARN}",
+  "taskRoleArn": "${TASK_ROLE_ARN}",
+  "containerDefinitions": [
+    {
+      "name": "app",
+      "image": "${ECR_IMAGE_URI}",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 8080,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {
+          "name": "SPRING_PROFILES_ACTIVE",
+          "value": "ecs"
+        },
+        {
+          "name": "JAVA_OPTS",
+          "value": "-Xms256m -Xmx512m -XX:+UseContainerSupport"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "DB_HOST",
+          "valueFrom": "arn:aws:ssm:ap-northeast-2:${AWS_ACCOUNT_ID}:parameter/oddventure/db/host"
+        },
+        {
+          "name": "DB_USERNAME",
+          "valueFrom": "arn:aws:ssm:ap-northeast-2:${AWS_ACCOUNT_ID}:parameter/oddventure/db/username"
+        },
+        {
+          "name": "DB_PASSWORD",
+          "valueFrom": "arn:aws:ssm:ap-northeast-2:${AWS_ACCOUNT_ID}:parameter/oddventure/db/password"
+        },
+        {
+          "name": "DB_NAME",
+          "valueFrom": "arn:aws:ssm:ap-northeast-2:${AWS_ACCOUNT_ID}:parameter/oddventure/db/name"
+        },
+        {
+          "name": "REDIS_HOST",
+          "valueFrom": "arn:aws:ssm:ap-northeast-2:${AWS_ACCOUNT_ID}:parameter/oddventure/redis/host"
+        },
+        {
+          "name": "RABBITMQ_HOST",
+          "valueFrom": "arn:aws:ssm:ap-northeast-2:${AWS_ACCOUNT_ID}:parameter/oddventure/rabbitmq/host"
+        },
+        {
+          "name": "RABBITMQ_USERNAME",
+          "valueFrom": "arn:aws:ssm:ap-northeast-2:${AWS_ACCOUNT_ID}:parameter/oddventure/rabbitmq/username"
+        },
+        {
+          "name": "RABBITMQ_PASSWORD",
+          "valueFrom": "arn:aws:ssm:ap-northeast-2:${AWS_ACCOUNT_ID}:parameter/oddventure/rabbitmq/password"
+        },
+        {
+          "name": "ELASTICSEARCH_URIS",
+          "valueFrom": "arn:aws:ssm:ap-northeast-2:${AWS_ACCOUNT_ID}:parameter/oddventure/elasticsearch/uris"
+        },
+        {
+          "name": "JWT_SECRET_KEY",
+          "valueFrom": "arn:aws:ssm:ap-northeast-2:${AWS_ACCOUNT_ID}:parameter/oddventure/jwt/secret"
+        },
+        {
+          "name": "OPENAI_API_KEY",
+          "valueFrom": "arn:aws:ssm:ap-northeast-2:${AWS_ACCOUNT_ID}:parameter/oddventure/openai/api-key"
+        },
+        {
+          "name": "GRID_API_KEY",
+          "valueFrom": "arn:aws:ssm:ap-northeast-2:${AWS_ACCOUNT_ID}:parameter/oddventure/grid/api-key"
+        }
+      ],
+      "healthCheck": {
+        "command": [
+          "CMD-SHELL",
+          "curl -f http://localhost:8080/actuator/health || exit 1"
+        ],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 60
+      },
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/oddventure",
+          "awslogs-region": "ap-northeast-2",
+          "awslogs-stream-prefix": "ecs",
+          "awslogs-create-group": "true"
+        }
+      }
+    }
+  ],
+  "tags": [
+    {
+      "key": "Project",
+      "value": "oddventure"
+    },
+    {
+      "key": "Environment",
+      "value": "production"
+    }
+  ]
+}
+

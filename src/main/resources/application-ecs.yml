@@ -1,0 +1,78 @@
+spring:
+  config:
+    activate:
+      on-profile: ecs
+
+  batch:
+    job:
+      enabled: false
+
+  datasource:
+    url: jdbc:mysql://${DB_HOST:${RDS_HOST}}:${DB_PORT:3306}/${DB_NAME:oddventure}?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  data:
+    redis:
+      host: ${REDIS_HOST:${VALKEY_HOST}}
+      port: ${REDIS_PORT:6379}
+      timeout: 2000
+
+  # Amazon MQ (RabbitMQ) 설정
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    port: ${RABBITMQ_PORT:5671}
+    username: ${RABBITMQ_USERNAME}
+    password: ${RABBITMQ_PASSWORD}
+    ssl:
+      enabled: ${RABBITMQ_SSL_ENABLED:true}
+    virtual-host: ${RABBITMQ_VHOST:/}
+    connection-timeout: 10000
+    publisher-confirm-type: correlated
+    publisher-returns: true
+
+  # OpenSearch/Elasticsearch 설정
+  elasticsearch:
+    uris: ${ELASTICSEARCH_URIS}
+    connection-timeout: 5s
+    socket-timeout: 30s
+
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      base-url: ${OPENAI_BASE_URL:https://api.groq.com/openai/v1}
+
+  cloud:
+    aws:
+      region:
+        static: ap-northeast-2
+      credentials:
+        instance-profile: true
+
+jwt:
+  secret:
+    key: ${JWT_SECRET_KEY}
+
+grid:
+  central-data:
+    base-url: ${GRID_CENTRAL_BASE_URL:https://api-op.grid.gg/central-data/graphql}
+  live-data:
+    base-url: ${GRID_LIVE_BASE_URL:https://api-op.grid.gg/live-data-feed/series-state/graphql}
+  api-key: ${GRID_API_KEY}
+
+cookie:
+  secure: ${COOKIE_SECURE:true}
+  same-site: ${COOKIE_SAMESITE:None}
+
+# Steam API 설정
+steam:
+  api:
+    base-url: ${STEAM_API_BASE_URL:https://api.steampowered.com}
